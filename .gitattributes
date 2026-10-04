@@ -1,0 +1,8 @@
+# Consistent source/config line endings on Windows and Linux
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.woff binary
+*.woff2 binary

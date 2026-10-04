@@ -1,0 +1,22 @@
+{
+  "name": "rawan",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.8.0",
+  "engines": {
+    "node": "^24.0.0 || ^26.0.0"
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "db:generate": "pnpm --filter @rawan/database generate",
+    "db:validate": "pnpm --filter @rawan/database validate",
+    "db:migrate": "pnpm --filter @rawan/database migrate:dev",
+    "db:deploy": "pnpm --filter @rawan/database migrate:deploy"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.6"
+  }
+}

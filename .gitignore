@@ -1,0 +1,73 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Local environment and credentials; examples are intentionally committed
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+service-account*.json
+*-service-account.json
+credentials.json
+
+# Framework, build, test, and cache output
+.next/
+.next-profiles/
+out/
+.turbo/
+dist/
+build/
+coverage/
+.nyc_output/
+.cache/
+next-env.d.ts
+*.tsbuildinfo
+/packages/database/src/generated/prisma/
+
+# Logs and runtime files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+lerna-debug.log*
+pids/
+*.pid
+*.pid.lock
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# OS, editor, and deployment-local state
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.vercel/
+.project
+.classpath
+.settings/
+*.sublime-workspace
+
+# Temporary files
+.temp/
+.tmp/
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Locally installed Prisma assistant resources, not application dependencies
+/packages/database/.agents/
+/packages/database/.claude/
+/packages/database/.cursor/
+/packages/database/.devin/
+/packages/database/.windsurf/
+/packages/database/skills-lock.json
