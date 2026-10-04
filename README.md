@@ -1,6 +1,6 @@
 # Rawan
 
-Rawan is an author-focused creative writing and worldbuilding platform under active development. The current backend provides authentication, author profiles, user access controls, and health checks. The website and author workspace are still starter applications; the worker is a placeholder.
+Rawan is an author-focused creative writing and worldbuilding platform under active development. The backend provides authentication, author profiles, user access controls, health checks, and the Project → Book → Chapter → Scene manuscript hierarchy. The website has a public landing page; the author workspace is still a starter application and the worker is a placeholder.
 
 ## Structure
 
@@ -99,6 +99,7 @@ Turborepo builds shared dependencies before starting dependent apps. Local defau
 An explicit API `PORT` overrides its default; ensure your local ports do not collide. The worker currently only logs its startup. You can run one workspace with `pnpm --filter @rawan/api dev`, for example, after building its shared dependencies.
 
 See [API documentation](apps/api/README.md) for endpoints, validation, authentication responses, and production environment rules.
+See [manuscript domain documentation](docs/manuscript-domain.md) for ownership, hierarchy routes, ordering, content, and the new migration.
 
 ## Checks and builds
 

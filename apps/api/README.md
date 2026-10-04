@@ -1,6 +1,6 @@
 # Rawan API foundation
 
-NestJS API using PostgreSQL, Prisma 7.10.0 with the PostgreSQL adapter, Argon2id, and Passport JWT. No frontend or additional feature domains are implemented here.
+NestJS API using PostgreSQL, Prisma 7.10.0 with the PostgreSQL adapter, Argon2id, and Passport JWT. The API also implements the author-owned Project → Book → Chapter → Scene hierarchy; see [manuscript domain documentation](../../docs/manuscript-domain.md) for its routes and database smoke check.
 
 ## Setup
 

@@ -42,3 +42,44 @@ export interface Project {
   createdAt: Date;
   updatedAt: Date;
 }
+
+/** JSON contracts for the manuscript hierarchy. Timestamps use ISO 8601 strings. */
+export interface ApiProject {
+  id: string;
+  authorId: string;
+  title: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiBook {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string | null;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiChapter {
+  id: string;
+  bookId: string;
+  title: string;
+  description: string | null;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiScene {
+  id: string;
+  chapterId: string;
+  title: string;
+  description: string | null;
+  position: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}

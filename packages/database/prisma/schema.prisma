@@ -36,9 +36,65 @@ model Author {
   avatarUrl   String?
 
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects    Project[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  authorId    String
+  title       String
+  description String?
+  author      Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  books       Book[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+}
+
+model Book {
+  id          String   @id @default(cuid())
+  projectId   String
+  title       String
+  description String?
+  position    Int      @default(0)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  chapters    Chapter[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId, position])
+}
+
+model Chapter {
+  id          String   @id @default(cuid())
+  bookId      String
+  title       String
+  description String?
+  position    Int      @default(0)
+  book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  scenes      Scene[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([bookId, position])
+}
+
+model Scene {
+  id          String   @id @default(cuid())
+  chapterId   String
+  title       String
+  description String?
+  content     String   @default("")
+  position    Int      @default(0)
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([chapterId, position])
 }
