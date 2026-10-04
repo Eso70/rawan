@@ -12,9 +12,5 @@
     "skipLibCheck": true
   },
   "include": ["src/index.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src/generated"
-  ]
+  "exclude": ["node_modules", "dist", "src/generated"]
 }

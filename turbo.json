@@ -3,16 +3,28 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "src/generated/prisma/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**",
+        "src/generated/prisma/**"
+      ]
     },
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true,
-      "passThroughEnv": ["DATABASE_URL", "JWT_SECRET", "NODE_ENV", "PORT", "CORS_ORIGINS"]
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "JWT_SECRET",
+        "NODE_ENV",
+        "PORT",
+        "CORS_ORIGINS"
+      ]
     },
     "lint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.oxlintrc.json"]
     },
     "typecheck": {
       "dependsOn": ["^build"],
@@ -21,6 +33,14 @@
     "@rawan/api#typecheck": {
       "dependsOn": ["build"],
       "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "@rawan/api#test": {
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }

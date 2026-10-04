@@ -1,0 +1,19 @@
+# Respect root .gitignore as well as these generated/local resources.
+pnpm-lock.yaml
+**/node_modules/**
+**/dist/**
+**/.next/**
+**/.turbo/**
+**/coverage/**
+**/next-env.d.ts
+packages/database/src/generated/**
+packages/database/.agents/**
+packages/database/.claude/**
+packages/database/.cursor/**
+packages/database/.devin/**
+packages/database/.windsurf/**
+packages/database/skills-lock.json
+# Framework-managed instructions and historical reports.
+**/AGENTS.md
+**/CLAUDE.md
+docs/*-report.md

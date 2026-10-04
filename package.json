@@ -11,12 +11,20 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "test:e2e": "pnpm --filter @rawan/api test:e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "db:generate": "pnpm --filter @rawan/database generate",
     "db:validate": "pnpm --filter @rawan/database validate",
     "db:migrate": "pnpm --filter @rawan/database migrate:dev",
-    "db:deploy": "pnpm --filter @rawan/database migrate:deploy"
+    "db:deploy": "pnpm --filter @rawan/database migrate:deploy",
+    "db:studio": "pnpm --filter @rawan/database studio"
   },
   "devDependencies": {
-    "turbo": "^2.11.6"
+    "turbo": "^2.11.6",
+    "oxlint": "^1.58.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "prettier": "^3.4.2"
   }
 }

@@ -7,9 +7,11 @@
     "build": "pnpm generate && tsc",
     "generate": "prisma generate",
     "validate": "prisma validate",
+    "lint": "oxlint --config ../../.oxlintrc.json --type-aware src/index.ts prisma.config.ts",
     "typecheck": "pnpm generate && tsc --noEmit",
     "migrate:dev": "prisma migrate dev",
-    "migrate:deploy": "prisma migrate deploy"
+    "migrate:deploy": "prisma migrate deploy",
+    "studio": "prisma studio"
   },
   "keywords": [],
   "author": "",
@@ -17,12 +19,12 @@
   "private": true,
   "devDependencies": {
     "@types/node": "^26.6.4",
+    "dotenv": "^18.0.5",
     "prisma": "7.10.0",
     "typescript": "7.0.2"
   },
   "dependencies": {
-    "@prisma/client": "7.10.0",
-    "dotenv": "^18.0.5"
+    "@prisma/client": "7.10.0"
   },
   "types": "./dist/index.d.ts",
   "exports": {
