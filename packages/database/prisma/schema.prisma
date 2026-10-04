@@ -16,13 +16,13 @@ enum UserRole {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  password  String?
-  role      UserRole @default(AUTHOR)
+  id       String   @id @default(cuid())
+  email    String   @unique
+  name     String
+  password String?
+  role     UserRole @default(AUTHOR)
 
-  author    Author?
+  author Author?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -35,38 +35,42 @@ model Author {
   bio         String?
   avatarUrl   String?
 
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projects    Project[]
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects Project[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
 }
 
 model Project {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   authorId    String
   title       String
   description String?
-  author      Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      Author      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   books       Book[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  characters  Character[]
+  places      Place[]
+  factions    Faction[]
+  artifacts   Artifact[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([authorId])
 }
 
 model Book {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   projectId   String
   title       String
   description String?
-  position    Int      @default(0)
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  position    Int       @default(0)
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   chapters    Chapter[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([projectId, position])
 }
@@ -97,4 +101,61 @@ model Scene {
   updatedAt   DateTime @updatedAt
 
   @@index([chapterId, position])
+}
+
+model Character {
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String
+  summary     String?
+  description String?
+  role        String?
+  status      String?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId, name])
+}
+
+model Place {
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String
+  summary     String?
+  description String?
+  type        String?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId, name])
+}
+
+model Faction {
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String
+  summary     String?
+  description String?
+  type        String?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId, name])
+}
+
+model Artifact {
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String
+  summary     String?
+  description String?
+  type        String?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId, name])
 }

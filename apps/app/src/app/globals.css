@@ -507,3 +507,56 @@ input::placeholder {
       border-color 0.15s;
   }
 }
+.project-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.project-nav > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.project-nav .eyebrow {
+  margin: 0;
+}
+.project-nav a {
+  text-transform: capitalize;
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 5px;
+}
+.project-nav a[aria-current] {
+  color: var(--foreground);
+  background: #192537;
+}
+.world-label {
+  text-transform: capitalize;
+}
+.world-description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-bottom: 30px;
+  max-width: 850px;
+}
+.delete-panel {
+  margin-top: 30px;
+  max-width: 600px;
+}
+.delete-panel summary {
+  cursor: pointer;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.delete-confirm {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+}
+.delete-confirm input {
+  width: auto;
+  margin: 5px 0 0;
+}

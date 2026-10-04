@@ -1,0 +1,56 @@
+import { Transform } from 'class-transformer';
+import {
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
+
+export class CreateArtifactDto {
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString()
+  @Length(1, 200)
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  summary?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(10000)
+  description?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  type?: string | null;
+}
+export class UpdateArtifactDto {
+  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @IsString()
+  @Length(1, 200)
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  summary?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(10000)
+  description?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  type?: string | null;
+}

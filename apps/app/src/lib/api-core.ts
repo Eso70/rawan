@@ -37,7 +37,7 @@ export async function requestJson<T>(
   path: string,
   options: {
     token?: string;
-    method?: "GET" | "POST" | "PATCH";
+    method?: "GET" | "POST" | "PATCH" | "DELETE";
     body?: unknown;
   } = {},
   fetcher: typeof fetch = fetch,
@@ -66,6 +66,7 @@ export async function requestJson<T>(
     throw new ApiError(503);
   }
   if (!response.ok) throw new ApiError(response.status);
+  if (response.status === 204) return undefined as T;
   try {
     return (await response.json()) as T;
   } catch {

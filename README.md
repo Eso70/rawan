@@ -102,6 +102,7 @@ An explicit API `PORT` overrides its default; ensure your local ports do not col
 
 See [API documentation](apps/api/README.md) for endpoints, validation, authentication responses, and production environment rules.
 See [manuscript domain documentation](docs/manuscript-domain.md) for ownership, hierarchy routes, ordering, content, and the new migration.
+See [worldbuilding core documentation](docs/worldbuilding-core.md) for project-level Characters, Places, Factions, and Artifacts, their protected APIs, workspace pages, migration, and verification results.
 See [author experience documentation](docs/author-experience.md) for app routes, server-side API configuration, HttpOnly sessions and the live-flow setup checklist.
 
 ## Checks and builds

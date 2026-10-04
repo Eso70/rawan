@@ -4,6 +4,7 @@ import { readResource } from "@/lib/data";
 import { collectionPath, resourcePath } from "@/lib/paths";
 import { Breadcrumbs, PageHeader, ResourceList, formatDate } from "./workspace";
 import { CreateForm, SceneForm } from "./forms";
+import { ProjectNav } from "./project-nav";
 type Resource = ApiProject | ApiBook | ApiChapter | ApiScene;
 const kinds = ["project", "book", "chapter", "scene"];
 export async function HierarchyPage({ ids }: { ids: string[] }) {
@@ -30,6 +31,7 @@ export async function HierarchyPage({ ids }: { ids: string[] }) {
     return (
       <>
         <Breadcrumbs items={breadcrumbs} />
+        <ProjectNav projectId={ids[0]} />
         <PageHeader
           eyebrow="Scene"
           title={scene.title}
@@ -46,6 +48,7 @@ export async function HierarchyPage({ ids }: { ids: string[] }) {
   return (
     <>
       <Breadcrumbs items={breadcrumbs} />
+      <ProjectNav projectId={ids[0]} />
       <PageHeader
         eyebrow={kinds[ids.length - 1]}
         title={current.title}

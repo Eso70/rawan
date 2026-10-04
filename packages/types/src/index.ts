@@ -83,3 +83,27 @@ export interface ApiScene {
   createdAt: string;
   updatedAt: string;
 }
+
+export type WorldKind = "characters" | "places" | "factions" | "artifacts";
+export interface ApiWorldEntity {
+  id: string;
+  projectId: string;
+  name: string;
+  summary: string | null;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface ApiCharacter extends ApiWorldEntity {
+  role: string | null;
+  status: string | null;
+}
+export interface ApiPlace extends ApiWorldEntity {
+  type: string | null;
+}
+export interface ApiFaction extends ApiWorldEntity {
+  type: string | null;
+}
+export interface ApiArtifact extends ApiWorldEntity {
+  type: string | null;
+}

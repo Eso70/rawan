@@ -38,7 +38,7 @@ export async function clearSession() {
 
 export async function authenticatedRequest<T>(
   path: string,
-  init: { method?: "GET" | "POST" | "PATCH"; body?: unknown } = {},
+  init: { method?: "GET" | "POST" | "PATCH" | "DELETE"; body?: unknown } = {},
 ): Promise<T> {
   const token = await sessionToken();
   if (!token) throw new ApiError(401);
