@@ -15,13 +15,13 @@ pnpm --filter @rawan/api dev
 
 Copy `apps/api/.env.example` to `apps/api/.env` and supply your local database credentials and a random JWT secret. Existing local `.env` files are preserved. The API loads its own `.env` regardless of the working directory; process environment values take precedence.
 
-| Variable | Requirement |
-| --- | --- |
-| `DATABASE_URL` | Required PostgreSQL URL including a database name |
-| `JWT_SECRET` | Required, at least 32 characters after excluding leading/trailing padding; generate a random secret |
-| `NODE_ENV` | `development`, `test`, or `production`; defaults to `development` |
-| `PORT` | Integer 1–65535; defaults to `3002` |
-| `CORS_ORIGINS` | Comma-separated exact origins without paths, wildcards, or trailing slashes |
+| Variable       | Requirement                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL` | Required PostgreSQL URL including a database name                                                   |
+| `JWT_SECRET`   | Required, at least 32 characters after excluding leading/trailing padding; generate a random secret |
+| `NODE_ENV`     | `development`, `test`, or `production`; defaults to `development`                                   |
+| `PORT`         | Integer 1–65535; defaults to `3002`                                                                 |
+| `CORS_ORIGINS` | Comma-separated exact origins without paths, wildcards, or trailing slashes                         |
 
 Development/test defaults allow `http://localhost:3000` and `http://localhost:3001` for the future website and app. Production requires an explicit list of HTTPS origins. Bearer authentication does not use cookies, and CORS credentials are disabled. CORS controls browser access; it does not replace authentication.
 
@@ -37,14 +37,14 @@ For production, configure real secrets through the deployment environment and us
 
 All routes use `/api/v1`. Previous unprefixed routes are no longer served.
 
-| Method | Path | Access | Success |
-| --- | --- | --- | --- |
-| GET | `/api/v1/health` | Public | 200, `{ "status": "ok", "service": "rawan-api" }` |
-| POST | `/api/v1/auth/register` | Public | 201, authentication response |
-| POST | `/api/v1/auth/login` | Public | 200, authentication response |
-| GET | `/api/v1/users/me` | AUTHOR or ADMIN | 200, public user |
-| GET | `/api/v1/users` | ADMIN | 200, public user array |
-| GET | `/api/v1/users/:id` | ADMIN | 200, public user; 404 if absent |
+| Method | Path                    | Access          | Success                                           |
+| ------ | ----------------------- | --------------- | ------------------------------------------------- |
+| GET    | `/api/v1/health`        | Public          | 200, `{ "status": "ok", "service": "rawan-api" }` |
+| POST   | `/api/v1/auth/register` | Public          | 201, authentication response                      |
+| POST   | `/api/v1/auth/login`    | Public          | 200, authentication response                      |
+| GET    | `/api/v1/users/me`      | AUTHOR or ADMIN | 200, public user                                  |
+| GET    | `/api/v1/users`         | ADMIN           | 200, public user array                            |
+| GET    | `/api/v1/users/:id`     | ADMIN           | 200, public user; 404 if absent                   |
 
 The health endpoint is a liveness check, not a database readiness probe. The former Hello World route has been replaced. `/users/me` is declared before `/users/:id`.
 
@@ -80,6 +80,10 @@ Both auth endpoints return:
 
 Use `Authorization: Bearer <JWT>`. Tokens expire after seven days and use HS256. Protected requests look up the current user and role, so deleted accounts receive 401 and role changes apply immediately. AUTHOR access to admin routes returns 403. Public users are selected and explicitly serialized without passwords/hashes. Shared `ApiUser` and `AuthResponse` types describe the JSON contract in `@rawan/types`; the existing `User` domain type retains Date fields.
 
+Future author-owned modules must derive ownership from `CurrentUser().userId` and scope database queries to that user's Author profile. A role check alone does not establish ownership; never trust an owner ID submitted by the client. No ownership domain modules are implemented yet.
+
+The bootstrap uses Nest's built-in logging, Helmet, a strict global ValidationPipe, the `/api/v1` prefix, and shutdown hooks that disconnect Prisma. The application does not intentionally log request bodies, passwords, JWTs, or connection strings. Standard Nest exceptions provide predictable 400/401/403/404/409 responses; unhandled failures return the default safe 500 response. No custom response envelope is used.
+
 Case-insensitive authentication lookups support older mixed-case emails without changing existing data. Existing users are not automatically given missing Author profiles. This change does not rewrite accounts or migrations.
 
 ## Prisma and builds
@@ -105,7 +109,12 @@ pnpm --filter @rawan/api test:e2e
 pnpm --filter @rawan/api test:database
 pnpm --filter @rawan/api lint
 pnpm --filter @rawan/api exec tsc --noEmit
+pnpm test
+pnpm test:e2e
+pnpm format:check
 ```
+
+Root test commands build required packages automatically. Root Oxlint and Prettier configuration provide lint and formatting; the API retains its established single-quote style.
 
 Unit tests cover registration, password hashing, duplicate races, transaction failure, login, safe user queries, and startup environment rules. HTTP tests automatically build the API and its dependencies, then exercise the compiled production Nest application with isolated persistence, real Argon2 hashing, JWT signatures, DTO validation, route ordering, role checks, safe serialization, CORS, Helmet, account deletion, and role changes. They do not require or modify a live database. These tests validate the application wiring; the database transaction itself is provided by Prisma/PostgreSQL.
 

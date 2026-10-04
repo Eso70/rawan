@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc",
+    "lint": "oxlint --config ../../.oxlintrc.json --type-aware src/",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],

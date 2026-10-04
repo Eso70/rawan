@@ -197,6 +197,15 @@ importers:
 
   .:
     devDependencies:
+      oxlint:
+        specifier: ^1.58.0
+        version: 1.86.0(oxlint-tsgolint@7.0.2003)
+      oxlint-tsgolint:
+        specifier: ^7.0.2001
+        version: 7.0.2003
+      prettier:
+        specifier: ^3.4.2
+        version: 3.9.9
       turbo:
         specifier: ^2.11.6
         version: 2.11.6
@@ -222,7 +231,7 @@ importers:
         specifier: ^12.0.1
         version: 12.1.2(@nestjs/common@12.1.2(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@12.1.2)(supports-color@7.2.0)
       '@prisma/adapter-pg':
-        specifier: ^7.10.0
+        specifier: 7.10.0
         version: 7.10.0
       '@rawan/database':
         specifier: workspace:*
@@ -288,15 +297,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.2
         version: 4.1.11(vitest@4.1.11)
-      oxlint:
-        specifier: ^1.58.0
-        version: 1.86.0(oxlint-tsgolint@7.0.2003)
-      oxlint-tsgolint:
-        specifier: ^7.0.2001
-        version: 7.0.2003
-      prettier:
-        specifier: ^3.4.2
-        version: 3.9.9
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
@@ -398,13 +398,13 @@ importers:
       '@prisma/client':
         specifier: 7.10.0
         version: 7.10.0(prisma@7.10.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(magicast@0.5.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(typescript@7.0.2)
-      dotenv:
-        specifier: ^18.0.5
-        version: 18.0.5
     devDependencies:
       '@types/node':
         specifier: ^26.6.4
         version: 26.6.4
+      dotenv:
+        specifier: ^18.0.5
+        version: 18.0.5
       prisma:
         specifier: 7.10.0
         version: 7.10.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(magicast@0.5.5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2)

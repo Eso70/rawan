@@ -1,0 +1,12 @@
+{
+  "trailingComma": "all",
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "apps/api/**/*.{ts,mjs}",
+      "options": {
+        "singleQuote": true
+      }
+    }
+  ]
+}
