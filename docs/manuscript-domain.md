@@ -24,12 +24,12 @@ Project creation requires an existing Author profile (403 if absent). Existing l
 
 All routes start with `/api/v1`:
 
-| Resource | Collection path |
-| --- | --- |
-| Project | `/projects` |
-| Book | `/projects/:projectId/books` |
-| Chapter | `/projects/:projectId/books/:bookId/chapters` |
-| Scene | `/projects/:projectId/books/:bookId/chapters/:chapterId/scenes` |
+| Resource | Collection path                                                 |
+| -------- | --------------------------------------------------------------- |
+| Project  | `/projects`                                                     |
+| Book     | `/projects/:projectId/books`                                    |
+| Chapter  | `/projects/:projectId/books/:bookId/chapters`                   |
+| Scene    | `/projects/:projectId/books/:bookId/chapters/:chapterId/scenes` |
 
 Each collection supports GET (list, 200) and POST (create, 201). Append `/:projectId`, `/:bookId`, `/:chapterId`, or `/:sceneId` respectively for GET (read, 200), PATCH (update, 200), and DELETE (204 without a body). Lists return flat arrays; reads return one record. Retrieve each collection to traverse the hierarchy. Responses include IDs, the immediate parent ID, title, nullable description, and ISO 8601 `createdAt`/`updatedAt`; children also include `position`, and Scenes include `content`. Shared `ApiProject`, `ApiBook`, `ApiChapter`, and `ApiScene` types describe the JSON contracts. The earlier Date-based `Project` type is preserved.
 

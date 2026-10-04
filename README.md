@@ -1,6 +1,6 @@
 # Rawan
 
-Rawan is an author-focused creative writing and worldbuilding platform under active development. The backend provides authentication, author profiles, user access controls, health checks, and the Project → Book → Chapter → Scene manuscript hierarchy. The website has a public landing page; the author workspace is still a starter application and the worker is a placeholder.
+Rawan is an author-focused creative writing and worldbuilding platform under active development. The backend provides authentication, author profiles, user access controls, health checks, and the Project → Book → Chapter → Scene manuscript hierarchy. The website has a public landing page; the private author workspace supports authentication, hierarchy creation/navigation and basic scene text saving. The worker is a placeholder.
 
 ## Structure
 
@@ -102,6 +102,7 @@ An explicit API `PORT` overrides its default; ensure your local ports do not col
 
 See [API documentation](apps/api/README.md) for endpoints, validation, authentication responses, and production environment rules.
 See [manuscript domain documentation](docs/manuscript-domain.md) for ownership, hierarchy routes, ordering, content, and the new migration.
+See [author experience documentation](docs/author-experience.md) for app routes, server-side API configuration, HttpOnly sessions and the live-flow setup checklist.
 
 ## Checks and builds
 

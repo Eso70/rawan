@@ -2,6 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
+      "env": ["API_URL"],
       "dependsOn": ["^build"],
       "outputs": [
         ".next/**",
@@ -19,7 +20,8 @@
         "JWT_SECRET",
         "NODE_ENV",
         "PORT",
-        "CORS_ORIGINS"
+        "CORS_ORIGINS",
+        "API_URL"
       ]
     },
     "lint": {
