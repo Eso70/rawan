@@ -40,6 +40,16 @@ describe('safe UsersService queries', () => {
     }
   });
 
+  it('bounds the admin list with a stable ID tie-breaker', async () => {
+    await service.findAll();
+    expect(findMany.mock.calls[0][0]).toMatchObject({
+      take: 50,
+      skip: 0,
+      orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+    });
+    await service.findAll({ limit: 20, offset: 5 });
+    expect(findMany.mock.calls[1][0]).toMatchObject({ take: 20, skip: 5 });
+  });
   it('returns 404 for an unknown id', async () => {
     findUnique.mockResolvedValue(null);
     await expect(service.findById('missing')).rejects.toBeInstanceOf(

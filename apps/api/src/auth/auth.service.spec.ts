@@ -4,6 +4,7 @@ import { Prisma } from '@rawan/database';
 import * as argon2 from 'argon2';
 import { PrismaService } from '../database/prisma.service.js';
 import { AuthService } from './auth.service.js';
+import { PASSWORD_HASH_OPTIONS } from '../security/password-work.js';
 
 vi.mock('argon2', () => ({
   argon2id: 2,
@@ -59,9 +60,10 @@ describe('AuthService', () => {
       where: { email: { equals: 'author@example.com', mode: 'insensitive' } },
       select: { id: true },
     });
-    expect(argon2.hash).toHaveBeenCalledWith(dto.password, {
-      type: argon2.argon2id,
-    });
+    expect(argon2.hash).toHaveBeenCalledWith(
+      dto.password,
+      PASSWORD_HASH_OPTIONS,
+    );
     expect(transaction).toHaveBeenCalledOnce();
     expect(create).toHaveBeenCalledWith(
       expect.objectContaining({

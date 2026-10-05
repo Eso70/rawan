@@ -2,14 +2,8 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "env": ["API_URL"],
       "dependsOn": ["^build"],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**",
-        "src/generated/prisma/**"
-      ]
+      "outputs": ["dist/**", "src/generated/prisma/**"]
     },
     "dev": {
       "dependsOn": ["^build"],
@@ -21,7 +15,22 @@
         "NODE_ENV",
         "PORT",
         "CORS_ORIGINS",
-        "API_URL"
+        "HTTP_RATE_LIMIT_ENABLED",
+        "HTTP_TRUSTED_PROXIES",
+        "REDIS_URL",
+        "QUEUE_PREFIX",
+        "MEDIA_STORAGE_DRIVER",
+        "MEDIA_LOCAL_PATH",
+        "MEDIA_MAX_FILE_SIZE",
+        "MEDIA_CLEANUP_INTERVAL_MS",
+        "MEDIA_CLEANUP_SCHEDULE_ENABLED",
+        "WORKER_CONCURRENCY",
+        "AI_PROVIDER",
+        "AI_MODEL",
+        "AI_REQUEST_TIMEOUT_MS",
+        "AI_WORKER_CONCURRENCY",
+        "AI_API_KEY",
+        "OPENAPI_ENABLED"
       ]
     },
     "lint": {

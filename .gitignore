@@ -17,8 +17,6 @@ service-account*.json
 credentials.json
 
 # Framework, build, test, and cache output
-.next/
-.next-profiles/
 out/
 .turbo/
 dist/
@@ -26,11 +24,11 @@ build/
 coverage/
 .nyc_output/
 .cache/
-next-env.d.ts
 *.tsbuildinfo
 /packages/database/src/generated/prisma/
 
 # Logs and runtime files
+.data/
 logs/
 *.log
 npm-debug.log*
@@ -50,7 +48,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
-.vercel/
 .project
 .classpath
 .settings/

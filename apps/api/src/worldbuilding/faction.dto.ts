@@ -1,3 +1,4 @@
+import { DocumentDto } from '../contracts/document-dto.js';
 import { Transform } from 'class-transformer';
 import {
   IsOptional,
@@ -7,6 +8,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 
+@DocumentDto()
 export class CreateFactionDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -30,6 +32,7 @@ export class CreateFactionDto {
   @MaxLength(100)
   type?: string | null;
 }
+@DocumentDto()
 export class UpdateFactionDto {
   @ValidateIf((_object, value: unknown) => value !== undefined)
   @Transform(({ value }: { value: unknown }) =>

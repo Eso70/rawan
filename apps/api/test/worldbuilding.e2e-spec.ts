@@ -25,7 +25,14 @@ describe('worldbuilding over HTTP', () => {
   const stores: Record<string, Map<string, Row>> = Object.fromEntries(
     ['author', ...names].map((name) => [name, new Map<string, Row>()]),
   );
-  const envKeys = ['NODE_ENV', 'DATABASE_URL', 'JWT_SECRET', 'CORS_ORIGINS'];
+  const envKeys = [
+    'NODE_ENV',
+    'DATABASE_URL',
+    'JWT_SECRET',
+    'CORS_ORIGINS',
+    'REDIS_URL',
+    'MEDIA_CLEANUP_SCHEDULE_ENABLED',
+  ];
   const originalEnv = Object.fromEntries(
     envKeys.map((key) => [key, process.env[key]]),
   );
@@ -127,6 +134,10 @@ describe('worldbuilding over HTTP', () => {
     ]),
   );
   const prisma = {
+    mediaCleanup: {
+      findMany: vi.fn(async () => []),
+      findFirst: vi.fn(async () => null),
+    },
     ...delegates,
     author: {
       findUnique: vi.fn(
@@ -151,10 +162,12 @@ describe('worldbuilding over HTTP', () => {
 
   beforeAll(async () => {
     process.env.NODE_ENV = 'test';
+    process.env.REDIS_URL = '';
+    process.env.MEDIA_CLEANUP_SCHEDULE_ENABLED = 'false';
     process.env.DATABASE_URL =
       'postgresql://unused:unused@localhost:5432/unused';
     process.env.JWT_SECRET = 'manuscript-test-secret-longer-than-32-characters';
-    process.env.CORS_ORIGINS = 'http://localhost:3000';
+    process.env.CORS_ORIGINS = 'https://allowed.example';
     const { AppModule } = await import('../dist/app.module.js');
     const { PrismaService } =
       await import('../dist/database/prisma.service.js');
@@ -165,7 +178,7 @@ describe('worldbuilding over HTTP', () => {
       .compile();
     app = module.createNestApplication();
     configureApp(app);
-    await app.init();
+    await app.listen(0, '127.0.0.1');
     jwt = app.get(JwtService);
   });
 
@@ -210,7 +223,7 @@ describe('worldbuilding over HTTP', () => {
         await request(app.getHttpServer())
           .get(collection)
           .set('Authorization', alice)
-          .expect(200, []);
+          .expect(200, { items: [], nextOffset: null });
         for (const body of [
           { name: ' ' },
           { name: null },
@@ -297,10 +310,9 @@ describe('worldbuilding over HTTP', () => {
           .get(collection)
           .set('Authorization', alice)
           .expect(200);
-        expect(listed.body.map((row: { name: string }) => row.name)).toEqual([
-          'Alpha',
-          'Zed',
-        ]);
+        expect(
+          listed.body.items.map((row: { name: string }) => row.name),
+        ).toEqual(['Alpha', 'Zed']);
         await request(app.getHttpServer())
           .delete(path)
           .set('Authorization', alice)

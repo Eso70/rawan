@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "lint": "oxlint --config ../../.oxlintrc.json --type-aware src/",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev": "tsc --watch"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./jobs": {
+      "types": "./dist/jobs.d.ts",
+      "import": "./dist/jobs.js"
     }
   }
 }

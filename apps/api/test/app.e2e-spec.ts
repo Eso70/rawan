@@ -22,7 +22,14 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
   let hash: string;
   const users = new Map<string, RecordUser>();
   const profiles = new Map<string, { displayName: string }>();
-  const envKeys = ['NODE_ENV', 'DATABASE_URL', 'JWT_SECRET', 'CORS_ORIGINS'];
+  const envKeys = [
+    'NODE_ENV',
+    'DATABASE_URL',
+    'JWT_SECRET',
+    'CORS_ORIGINS',
+    'REDIS_URL',
+    'MEDIA_CLEANUP_SCHEDULE_ENABLED',
+  ];
   const originalEnv = Object.fromEntries(
     envKeys.map((key) => [key, process.env[key]]),
   );
@@ -71,10 +78,12 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
 
   beforeAll(async () => {
     process.env.NODE_ENV = 'test';
+    process.env.REDIS_URL = '';
+    process.env.MEDIA_CLEANUP_SCHEDULE_ENABLED = 'false';
     process.env.DATABASE_URL =
       'postgresql://unused:unused@localhost:5432/unused';
     process.env.JWT_SECRET = 'test-only-secret-with-more-than-32-characters';
-    process.env.CORS_ORIGINS = 'http://localhost:3000,http://localhost:3001';
+    process.env.CORS_ORIGINS = 'https://allowed.example,https://second.example';
     // Exercise the compiled production application: TypeScript emits Nest's DI/DTO metadata.
     const { AppModule } = await import('../dist/app.module.js');
     const { PrismaService } =
@@ -87,7 +96,7 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
       .compile();
     app = module.createNestApplication();
     configureApp(app);
-    await app.init();
+    await app.listen(0, '127.0.0.1');
     jwt = app.get(JwtService);
     hash = await argon2.hash('correct password', { type: argon2.argon2id });
   });
@@ -347,12 +356,12 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
   it('allows configured CORS origins and omits CORS permission for others', async () => {
     const allowed = await request(app.getHttpServer())
       .options('/api/v1/auth/login')
-      .set('Origin', 'http://localhost:3000')
+      .set('Origin', 'https://allowed.example')
       .set('Access-Control-Request-Method', 'POST')
       .set('Access-Control-Request-Headers', 'authorization,content-type')
       .expect(204);
     expect(allowed.headers['access-control-allow-origin']).toBe(
-      'http://localhost:3000',
+      'https://allowed.example',
     );
     expect(allowed.headers['access-control-allow-credentials']).toBeUndefined();
     const denied = await request(app.getHttpServer())
@@ -360,5 +369,54 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
       .set('Origin', 'https://untrusted.example')
       .expect(200);
     expect(denied.headers['access-control-allow-origin']).toBeUndefined();
+  });
+  it('returns stable safe codes for validation/auth/role/private/conflict errors and bounded IDs', async () => {
+    const invalid = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        email: 'invalid',
+        password: 'short',
+        name: 'Test',
+        role: 'ADMIN',
+      })
+      .expect(400);
+    expect(invalid.body).toMatchObject({
+      statusCode: 400,
+      code: 'VALIDATION_ERROR',
+      error: 'Bad Request',
+      details: expect.any(Array),
+    });
+    expect(
+      invalid.body.details.some((d: { field: string }) => d.field === 'role'),
+    ).toBe(true);
+    expect(JSON.stringify(invalid.body)).not.toContain('short');
+    const unauthorized = await request(app.getHttpServer())
+      .get('/api/v1/users/me')
+      .expect(401);
+    expect(unauthorized.body.code).toBe('UNAUTHORIZED');
+    const forbidden = await request(app.getHttpServer())
+      .get('/api/v1/users')
+      .set('Authorization', await bearer('author'))
+      .expect(403);
+    expect(forbidden.body.code).toBe('FORBIDDEN');
+    const missing = await request(app.getHttpServer())
+      .get('/api/v1/users/missing')
+      .set('Authorization', await bearer('admin'))
+      .expect(404);
+    expect(missing.body.code).toBe('NOT_FOUND');
+    const id = await request(app.getHttpServer())
+      .get('/api/v1/users/' + 'x'.repeat(129))
+      .set('Authorization', await bearer('admin'))
+      .expect(400);
+    expect(id.body.code).toBe('VALIDATION_ERROR');
+    const conflict = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        email: 'author@example.com',
+        name: 'Test',
+        password: 'valid-password-long',
+      })
+      .expect(409);
+    expect(conflict.body.code).toBe('CONFLICT');
   });
 });

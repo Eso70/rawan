@@ -13,6 +13,12 @@ import { ACCESS_TOKEN_TTL_SECONDS, type JwtPayload } from './auth.types.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { normalizeEmail } from './normalize-email.js';
+import {
+  passwordWork,
+  PASSWORD_HASH_OPTIONS,
+} from '../security/password-work.js';
+
+let dummyHash: Promise<string> | undefined;
 
 @Injectable()
 export class AuthService {
@@ -30,7 +36,9 @@ export class AuthService {
     });
     if (existing) throw new ConflictException('Email already exists');
 
-    const password = await argon2.hash(dto.password, { type: argon2.argon2id });
+    const password = await passwordWork(() =>
+      argon2.hash(dto.password, PASSWORD_HASH_OPTIONS),
+    );
     const name = dto.name.trim();
     let user;
     try {
@@ -66,10 +74,22 @@ export class AuthService {
       },
       select: { ...PUBLIC_USER_SELECT, password: true },
     });
-    if (
-      !user?.password ||
-      !(await argon2.verify(user.password, dto.password))
-    ) {
+    const matches = await passwordWork(async () => {
+      const hash =
+        user?.password ??
+        (await (dummyHash ??= argon2
+          .hash('non-account-password-for-timing-only', PASSWORD_HASH_OPTIONS)
+          .catch((error) => {
+            dummyHash = undefined;
+            throw error;
+          })));
+      try {
+        return await argon2.verify(hash, dto.password);
+      } catch {
+        return false;
+      }
+    });
+    if (!user?.password || !matches) {
       throw new UnauthorizedException('Invalid email or password');
     }
     return this.createToken(user);

@@ -1,3 +1,13 @@
+import { arrayPagination } from '../query/query.js';
+import { PaginationQueryDto } from '../query/query.dto.js';
+import { ProjectQueryDto, SceneQueryDto } from '../query/query.dto.js';
+import {
+  contains,
+  page,
+  pagination,
+  requireTag,
+  sorting,
+} from '../query/query.js';
 import {
   ForbiddenException,
   Injectable,
@@ -6,6 +16,7 @@ import {
 import { Prisma } from '@rawan/database';
 import type { ApiProject, ApiBook, ApiChapter, ApiScene } from '@rawan/types';
 import { PrismaService } from '../database/prisma.service.js';
+import { MediaCleanupService } from '../media/media-cleanup.service.js';
 import {
   CreateProjectDto,
   UpdateProjectDto,
@@ -33,7 +44,10 @@ function serialize<T extends { createdAt: Date; updatedAt: Date }>(record: T) {
 
 @Injectable()
 export class ManuscriptService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mediaCleanup: MediaCleanupService,
+  ) {}
 
   private async persist<T>(operation: () => Promise<T>): Promise<T> {
     try {
@@ -52,12 +66,34 @@ export class ManuscriptService {
   async listProjects(
     userId: string,
     _ids: ManuscriptIds,
-  ): Promise<ApiProject[]> {
+    query: ProjectQueryDto = {},
+  ) {
     const records = await this.prisma.project.findMany({
-      where: { author: { userId } },
-      orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+      where: {
+        author: { userId },
+        ...(query.q
+          ? {
+              OR: [
+                { title: contains(query.q) },
+                { description: contains(query.q) },
+              ],
+            }
+          : {}),
+      },
+      orderBy: sorting<Prisma.ProjectOrderByWithRelationInput>(
+        query,
+        {
+          title: (order) => ({ title: order }),
+          createdAt: (order) => ({ createdAt: order }),
+          updatedAt: (order) => ({ updatedAt: order }),
+        },
+        [{ createdAt: 'desc' }, { id: 'asc' }],
+        'createdAt',
+        'desc',
+      ),
+      ...pagination(query),
     });
-    return records.map(serialize);
+    return page(records, query, serialize);
   }
 
   async getProject(
@@ -125,17 +161,14 @@ export class ManuscriptService {
     _ids: ManuscriptIds,
     id: string,
   ): Promise<void> {
-    await this.persist(() =>
-      this.prisma.project.delete({
-        where: {
-          id,
-          author: { userId },
-        },
-      }),
-    );
+    await this.persist(() => this.mediaCleanup.deleteProject(userId, id));
   }
 
-  async listBooks(userId: string, ids: ManuscriptIds): Promise<ApiBook[]> {
+  async listBooks(
+    userId: string,
+    ids: ManuscriptIds,
+    query: PaginationQueryDto = {},
+  ): Promise<ApiBook[]> {
     const parent = await this.prisma.project.findFirst({
       where: {
         id: ids.projectId,
@@ -146,6 +179,7 @@ export class ManuscriptService {
     if (!parent) throw new NotFoundException('Project not found');
     const records = await this.prisma.book.findMany({
       where: { projectId: ids.projectId, project: { author: { userId } } },
+      ...arrayPagination(query),
       orderBy: [{ position: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
     });
     return records.map(serialize);
@@ -230,6 +264,7 @@ export class ManuscriptService {
   async listChapters(
     userId: string,
     ids: ManuscriptIds,
+    query: PaginationQueryDto = {},
   ): Promise<ApiChapter[]> {
     const parent = await this.prisma.book.findFirst({
       where: {
@@ -245,6 +280,7 @@ export class ManuscriptService {
         bookId: ids.bookId,
         book: { projectId: ids.projectId, project: { author: { userId } } },
       },
+      ...arrayPagination(query),
       orderBy: [{ position: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
     });
     return records.map(serialize);
@@ -336,7 +372,11 @@ export class ManuscriptService {
     );
   }
 
-  async listScenes(userId: string, ids: ManuscriptIds): Promise<ApiScene[]> {
+  async listScenes(
+    userId: string,
+    ids: ManuscriptIds,
+    query: SceneQueryDto = {},
+  ) {
     const parent = await this.prisma.chapter.findFirst({
       where: {
         id: ids.chapterId,
@@ -349,17 +389,54 @@ export class ManuscriptService {
       select: { id: true },
     });
     if (!parent) throw new NotFoundException('Chapter not found');
+    if (query.tagId) {
+      if (!ids.projectId) throw new NotFoundException('Project not found');
+      await requireTag(this.prisma, userId, ids.projectId, query.tagId);
+    }
     const records = await this.prisma.scene.findMany({
       where: {
         chapterId: ids.chapterId,
+        ...(query.q
+          ? {
+              OR: [
+                { title: contains(query.q) },
+                { description: contains(query.q) },
+                { content: contains(query.q) },
+              ],
+            }
+          : {}),
+        ...(query.tagId
+          ? { tagAssignments: { some: { tagId: query.tagId } } }
+          : {}),
         chapter: {
           bookId: ids.bookId,
           book: { projectId: ids.projectId, project: { author: { userId } } },
         },
       },
-      orderBy: [{ position: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
+      select: {
+        id: true,
+        chapterId: true,
+        title: true,
+        description: true,
+        position: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: sorting<Prisma.SceneOrderByWithRelationInput>(
+        query,
+        {
+          title: (order) => ({ title: order }),
+          position: (order) => ({ position: order }),
+          createdAt: (order) => ({ createdAt: order }),
+          updatedAt: (order) => ({ updatedAt: order }),
+        },
+        [{ position: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
+        'position',
+        'asc',
+      ),
+      ...pagination(query),
     });
-    return records.map(serialize);
+    return page(records, query, serialize);
   }
 
   async getScene(

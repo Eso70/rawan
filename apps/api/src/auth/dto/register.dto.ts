@@ -1,7 +1,9 @@
+import { DocumentDto } from '../../contracts/document-dto.js';
 import { Transform } from 'class-transformer';
 import { IsEmail, IsString, Length, Matches, MaxLength } from 'class-validator';
 import { normalizeEmail } from '../normalize-email.js';
 
+@DocumentDto()
 export class RegisterDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? normalizeEmail(value) : value,

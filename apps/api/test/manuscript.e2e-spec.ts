@@ -25,7 +25,14 @@ describe('manuscript hierarchy over HTTP', () => {
   const stores: Record<string, Map<string, Row>> = Object.fromEntries(
     ['author', ...names].map((name) => [name, new Map<string, Row>()]),
   );
-  const envKeys = ['NODE_ENV', 'DATABASE_URL', 'JWT_SECRET', 'CORS_ORIGINS'];
+  const envKeys = [
+    'NODE_ENV',
+    'DATABASE_URL',
+    'JWT_SECRET',
+    'CORS_ORIGINS',
+    'REDIS_URL',
+    'MEDIA_CLEANUP_SCHEDULE_ENABLED',
+  ];
   const originalEnv = Object.fromEntries(
     envKeys.map((key) => [key, process.env[key]]),
   );
@@ -117,6 +124,10 @@ describe('manuscript hierarchy over HTTP', () => {
     ]),
   );
   const prisma = {
+    mediaCleanup: {
+      findMany: vi.fn(async () => []),
+      findFirst: vi.fn(async () => null),
+    },
     ...delegates,
     author: {
       findUnique: vi.fn(
@@ -141,10 +152,12 @@ describe('manuscript hierarchy over HTTP', () => {
 
   beforeAll(async () => {
     process.env.NODE_ENV = 'test';
+    process.env.REDIS_URL = '';
+    process.env.MEDIA_CLEANUP_SCHEDULE_ENABLED = 'false';
     process.env.DATABASE_URL =
       'postgresql://unused:unused@localhost:5432/unused';
     process.env.JWT_SECRET = 'manuscript-test-secret-longer-than-32-characters';
-    process.env.CORS_ORIGINS = 'http://localhost:3000';
+    process.env.CORS_ORIGINS = 'https://allowed.example';
     const { AppModule } = await import('../dist/app.module.js');
     const { PrismaService } =
       await import('../dist/database/prisma.service.js');
@@ -155,7 +168,7 @@ describe('manuscript hierarchy over HTTP', () => {
       .compile();
     app = module.createNestApplication();
     configureApp(app);
-    await app.init();
+    await app.listen(0, '127.0.0.1');
     jwt = app.get(JwtService);
   });
 
@@ -210,7 +223,9 @@ describe('manuscript hierarchy over HTTP', () => {
         .get(path)
         .set('Authorization', authorization)
         .expect(200);
-      expect(list.body).toHaveLength(1);
+      expect(
+        name === 'project' || name === 'scene' ? list.body.items : list.body,
+      ).toHaveLength(1);
       await request(app.getHttpServer())
         .get(`${path}/${id}`)
         .set('Authorization', authorization)
@@ -261,7 +276,7 @@ describe('manuscript hierarchy over HTTP', () => {
         .get('/api/v1/projects')
         .set('Authorization', authorization)
         .expect(200);
-      expect(projects.body).toEqual([]);
+      expect(projects.body).toEqual({ items: [], nextOffset: null });
       for (const { name, path, id } of levels) {
         await request(app.getHttpServer())
           .get(`${path}/${id}`)
@@ -376,7 +391,7 @@ describe('manuscript hierarchy over HTTP', () => {
   it('orders children by editable position with stable ties', async () => {
     const levels = await hierarchy();
     const authorization = await token();
-    for (const { path, id } of levels.slice(1)) {
+    for (const { name, path, id } of levels.slice(1)) {
       await request(app.getHttpServer())
         .patch(`${path}/${id}`)
         .set('Authorization', authorization)
@@ -391,10 +406,11 @@ describe('manuscript hierarchy over HTTP', () => {
         .get(path)
         .set('Authorization', authorization)
         .expect(200);
-      expect(list.body.map((row: Row) => row.id)).toEqual([
-        earlier.body.id,
-        id,
-      ]);
+      expect(
+        (name === 'scene' ? list.body.items : list.body).map(
+          (row: Row) => row.id,
+        ),
+      ).toEqual([earlier.body.id, id]);
     }
   });
 
@@ -424,7 +440,7 @@ describe('manuscript hierarchy over HTTP', () => {
   it('allows browser preflight for editing and deleting', async () => {
     const response = await request(app.getHttpServer())
       .options('/api/v1/projects/example')
-      .set('Origin', 'http://localhost:3000')
+      .set('Origin', 'https://allowed.example')
       .set('Access-Control-Request-Method', 'PATCH')
       .expect(204);
     expect(response.headers['access-control-allow-methods']).toContain('PATCH');

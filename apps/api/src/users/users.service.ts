@@ -1,3 +1,5 @@
+import { arrayPagination } from '../query/query.js';
+import { PaginationQueryDto } from '../query/query.dto.js';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { ApiUser } from '@rawan/types';
 import { PrismaService } from '../database/prisma.service.js';
@@ -8,10 +10,11 @@ import { normalizeEmail } from '../auth/normalize-email.js';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<ApiUser[]> {
+  async findAll(query: PaginationQueryDto = {}): Promise<ApiUser[]> {
     const users = await this.prisma.user.findMany({
       select: PUBLIC_USER_SELECT,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+      ...arrayPagination(query),
     });
     return users.map(toApiUser);
   }

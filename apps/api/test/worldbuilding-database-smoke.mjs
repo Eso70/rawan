@@ -1,3 +1,4 @@
+import './disable-queues.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
@@ -9,7 +10,6 @@ import pg from 'pg';
 import { AppModule } from '../dist/app.module.js';
 import { PrismaService } from '../dist/database/prisma.service.js';
 import { configureApp } from '../dist/config/configure-app.js';
-import { verifyFrontend } from './worldbuilding-frontend-smoke.mjs';
 
 // Opt-in: apply committed migrations only inside a disposable PostgreSQL schema.
 // Existing tables, accounts, data and migration history are never modified.
@@ -130,7 +130,9 @@ try {
     assert.equal(updated.description, '  مرحبا\nWorld  ');
     await call('POST', collection, alice.accessToken, { name: 'Alpha' }, 201);
     assert.deepEqual(
-      (await call('GET', collection, alice.accessToken)).map((row) => row.name),
+      (await call('GET', collection, alice.accessToken)).items.map(
+        (row) => row.name,
+      ),
       ['Alpha', 'Edited'],
     );
     await call(
@@ -162,8 +164,6 @@ try {
       404,
     );
   }
-  if (process.env.VERIFY_WORLD_FRONTEND === '1')
-    await verifyFrontend(base, password, project, alice, bob);
   await call(
     'DELETE',
     '/projects/' + project.id,

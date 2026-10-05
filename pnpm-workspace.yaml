@@ -7,4 +7,10 @@ allowBuilds:
   esbuild: true
   prisma: true
   unrs-resolver: true
-  workerd: true
+  msgpackr-extract: true
+  "@scarf/scarf": false
+
+# Security fixes for Prisma CLI transitives; Prisma itself remains 7.10.0.
+overrides:
+  "@prisma/config>deepmerge-ts": "8.0.0"
+  "prisma>mysql2": "3.23.1"

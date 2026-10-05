@@ -1,3 +1,4 @@
+import './disable-queues.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
@@ -173,7 +174,7 @@ try {
       );
       const list = await call('GET', path, alice.accessToken);
       assert.deepEqual(
-        list.map((row) => row.id),
+        (model === 'scene' ? list.items : list).map((row) => row.id),
         [earlier.id, record.id],
       );
     }

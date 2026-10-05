@@ -1,5 +1,13 @@
 # Rawan API foundation
 
+Pagination, safe sorting, resource search, tag filtering, and project-wide search are documented in [search/query documentation](../../docs/search-domain.md). Part 9 changes Projects, Scenes, world entities, and Relationships from arrays to `{ items, nextOffset }` pages; scene list items omit content. The opt-in database check is `test:search:database`.
+
+Notes, project tags, and assignments across eight resource kinds are documented in [organization domain documentation](../../docs/organization-domain.md), including both query directions and the opt-in `test:organization:database` check.
+
+Plot planning, ordered points, atomic reorder, and scene/event/world entity associations are documented in [plot domain documentation](../../docs/plot-domain.md), including project boundaries, compact responses, and the opt-in `test:plot:database` check.
+
+Timeline, era, event CRUD and world entity associations are documented in [timeline domain documentation](../../docs/timeline-domain.md), including exact fictional chronology strings, filtering, pagination, ownership, deletion semantics, and the opt-in `test:timeline:database` check.
+
 NestJS API using PostgreSQL, Prisma 7.10.0 with the PostgreSQL adapter, Argon2id, and Passport JWT. The API also implements the author-owned Project → Book → Chapter → Scene hierarchy; see [manuscript domain documentation](../../docs/manuscript-domain.md) for its routes and database smoke check.
 
 ## Setup
@@ -13,7 +21,7 @@ pnpm --filter @rawan/api... build
 pnpm --filter @rawan/api dev
 ```
 
-Copy `apps/api/.env.example` to `apps/api/.env` and supply your local database credentials and a random JWT secret. Existing local `.env` files are preserved. The API loads its own `.env` regardless of the working directory; process environment values take precedence.
+Copy `apps/api/.env.example` to `apps/api/.env` and supply your local database credentials and a random JWT secret. Existing local `.env` files are preserved. Development/test loads the API .env regardless of the working directory; process environment values take precedence. Production uses process environment only. See [native local setup](../../docs/local-development.md).
 
 | Variable       | Requirement                                                                                         |
 | -------------- | --------------------------------------------------------------------------------------------------- |
@@ -23,7 +31,7 @@ Copy `apps/api/.env.example` to `apps/api/.env` and supply your local database c
 | `PORT`         | Integer 1–65535; defaults to `3002`                                                                 |
 | `CORS_ORIGINS` | Comma-separated exact origins without paths, wildcards, or trailing slashes                         |
 
-Development/test defaults allow `http://localhost:3000` and `http://localhost:3001` for the future website and app. Production requires an explicit list of HTTPS origins. Bearer authentication does not use cookies, and CORS credentials are disabled. CORS controls browser access; it does not replace authentication.
+Development/test defaults allow no browser origins. Set CORS_ORIGINS explicitly when browser access is required. Production requires an explicit list of HTTPS origins. Bearer authentication does not use cookies, and CORS credentials are disabled. CORS controls browser access; it does not replace authentication.
 
 Generate a secret without embedding it in source:
 
@@ -31,7 +39,7 @@ Generate a secret without embedding it in source:
 node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 ```
 
-For production, configure real secrets through the deployment environment and use `pnpm --filter @rawan/api start:prod` after building. Rotating the JWT secret invalidates existing tokens. Frontend ports must be configured independently; their source is unchanged.
+For production, configure real secrets through the deployment environment and use `pnpm --filter @rawan/api start:prod` after building. Rotating the JWT secret invalidates existing tokens.
 
 ## Endpoints
 
@@ -78,11 +86,11 @@ Both auth endpoints return:
 }
 ```
 
-Use `Authorization: Bearer <JWT>`. Tokens expire after seven days and use HS256. Protected requests look up the current user and role, so deleted accounts receive 401 and role changes apply immediately. AUTHOR access to admin routes returns 403. Public users are selected and explicitly serialized without passwords/hashes. Shared `ApiUser` and `AuthResponse` types describe the JSON contract in `@rawan/types`; the existing `User` domain type retains Date fields.
+Use `Authorization: Bearer <JWT>`. Tokens expire after seven days and use HS256. Protected requests look up the current user and role, so deleted accounts receive 401 and role changes apply immediately. AUTHOR access to admin routes returns 403. Public users are selected and explicitly serialized without passwords/hashes. Shared `ApiUser` and `AuthResponse` types describe the JSON contract in `@rawan/types`. All frontend contracts use JSON timestamp strings.
 
-Future author-owned modules must derive ownership from `CurrentUser().userId` and scope database queries to that user's Author profile. A role check alone does not establish ownership; never trust an owner ID submitted by the client. No ownership domain modules are implemented yet.
+Author-owned modules must derive ownership from `CurrentUser().userId` and scope database queries to that user's Author profile. A role check alone does not establish ownership; never trust an owner ID submitted by the client. Manuscript, worldbuilding, and relationship queries enforce author ownership.
 
-The bootstrap uses Nest's built-in logging, Helmet, a strict global ValidationPipe, the `/api/v1` prefix, and shutdown hooks that disconnect Prisma. The application does not intentionally log request bodies, passwords, JWTs, or connection strings. Standard Nest exceptions provide predictable 400/401/403/404/409 responses; unhandled failures return the default safe 500 response. No custom response envelope is used.
+The bootstrap uses Nest's built-in logging, Helmet, a strict global ValidationPipe, the `/api/v1` prefix, and shutdown hooks that disconnect Prisma. The application does not intentionally log request bodies, passwords, JWTs, or connection strings. The global exception filter returns the stable statusCode/code/error/message/details error contract; unhandled failures return generic 500. Successful responses have no generic envelope. See [API documentation](../../docs/api.md) for request limits, paging and integration rules.
 
 Case-insensitive authentication lookups support older mixed-case emails without changing existing data. Existing users are not automatically given missing Author profiles. This change does not rewrite accounts or migrations.
 
@@ -119,3 +127,11 @@ Root test commands build required packages automatically. Root Oxlint and Pretti
 Unit tests cover registration, password hashing, duplicate races, transaction failure, login, safe user queries, and startup environment rules. HTTP tests automatically build the API and its dependencies, then exercise the compiled production Nest application with isolated persistence, real Argon2 hashing, JWT signatures, DTO validation, route ordering, role checks, safe serialization, CORS, Helmet, account deletion, and role changes. They do not require or modify a live database. These tests validate the application wiring; the database transaction itself is provided by Prisma/PostgreSQL.
 
 `test:database` is an opt-in smoke check against the configured PostgreSQL database. It creates accounts with random test emails, verifies real profile creation, concurrent duplicate registration, login, live role changes, deletion, and transaction rollback, and cleans up those accounts in a finally block. Existing accounts are untouched. Use a development/test database for this command.
+
+## Background queues
+
+The API owns one managed BullMQ maintenance producer. Configure REDIS_URL and the same QUEUE_PREFIX/MEDIA_LOCAL_PATH as the worker. Redis is required in production; development API queues are disabled when REDIS_URL is absent. Stale media cleanup runs through the worker while normal CRUD/deletion remains synchronous.
+
+GET /api/v1/health remains liveness. GET /api/v1/health/queues returns disabled/ready or safe 503; it does not assert worker presence. No public arbitrary-job enqueue/status endpoints exist.
+
+See [queue architecture, setup and verification](../../docs/background-jobs.md) for operator commands, configuration, retention, tests and failure semantics.

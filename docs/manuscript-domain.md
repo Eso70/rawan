@@ -1,6 +1,6 @@
 # Manuscript domain
 
-The first writing domain is Project → Book → Chapter → Scene. An Author owns many Projects; a Project has many Books, a Book has many Chapters, and a Chapter has many Scenes. Scene content is plain text. The public website and author workspace have not been changed by this implementation.
+The first writing domain is Project → Book → Chapter → Scene. An Author owns many Projects; a Project has many Books, a Book has many Chapters, and a Chapter has many Scenes. Scene content is plain text.
 
 ## Database
 
@@ -18,7 +18,7 @@ Building regenerates Prisma without applying migrations. The implementation's da
 
 Every manuscript endpoint requires an existing bearer JWT. Every database query checks ownership through the current user's Author profile; ADMIN accounts have access only to their own manuscripts. Missing resources, someone else's resources, and mismatched ancestors return 404. Writes include ownership and ancestor constraints in the Prisma mutation or parent connect operation, rather than relying on an earlier authorization check.
 
-Project creation requires an existing Author profile (403 if absent). Existing legacy accounts without a profile are not silently modified. Empty project lists return `[]`. Child lists require a valid owned parent (404 otherwise). Ownership and parent IDs come from the authenticated user and URL; clients cannot reassign either in request bodies.
+Project creation requires an existing Author profile (403 if absent). Existing legacy accounts without a profile are not silently modified. Empty project lists return `{ items: [], nextOffset: null }`. Child lists require a valid owned parent (404 otherwise). Ownership and parent IDs come from the authenticated user and URL; clients cannot reassign either in request bodies.
 
 ## Routes
 
@@ -31,7 +31,9 @@ All routes start with `/api/v1`:
 | Chapter  | `/projects/:projectId/books/:bookId/chapters`                   |
 | Scene    | `/projects/:projectId/books/:bookId/chapters/:chapterId/scenes` |
 
-Each collection supports GET (list, 200) and POST (create, 201). Append `/:projectId`, `/:bookId`, `/:chapterId`, or `/:sceneId` respectively for GET (read, 200), PATCH (update, 200), and DELETE (204 without a body). Lists return flat arrays; reads return one record. Retrieve each collection to traverse the hierarchy. Responses include IDs, the immediate parent ID, title, nullable description, and ISO 8601 `createdAt`/`updatedAt`; children also include `position`, and Scenes include `content`. Shared `ApiProject`, `ApiBook`, `ApiChapter`, and `ApiScene` types describe the JSON contracts. The earlier Date-based `Project` type is preserved.
+Each collection supports GET (list, 200) and POST (create, 201). Append `/:projectId`, `/:bookId`, `/:chapterId`, or `/:sceneId` respectively for GET (read, 200), PATCH (update, 200), and DELETE (204 without a body). Project and Scene lists return `{ items, nextOffset }` pages; Book and Chapter lists retain flat ordered arrays. Reads return one record. Retrieve each collection to traverse the hierarchy. Responses include IDs, the immediate parent ID, title, nullable description, and ISO 8601 `createdAt`/`updatedAt`; children also include `position`, and Scene detail responses include `content`; Scene list summaries omit it. Shared `ApiProject`, `ApiBook`, `ApiChapter`, and `ApiScene` types describe the JSON contracts. The earlier Date-based `Project` type is preserved.
+
+Projects and Scenes support validated search, sorting, and paging; Scenes also support project-owned `tagId`. See [Part 9 query contracts](search-domain.md) for allowed fields, defaults, and intentional response changes.
 
 ## Input and ordering
 

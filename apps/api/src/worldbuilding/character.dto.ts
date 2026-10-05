@@ -1,3 +1,4 @@
+import { DocumentDto } from '../contracts/document-dto.js';
 import { Transform } from 'class-transformer';
 import {
   IsOptional,
@@ -7,6 +8,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 
+@DocumentDto()
 export class CreateCharacterDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -35,6 +37,7 @@ export class CreateCharacterDto {
   @MaxLength(100)
   status?: string | null;
 }
+@DocumentDto()
 export class UpdateCharacterDto {
   @ValidateIf((_object, value: unknown) => value !== undefined)
   @Transform(({ value }: { value: unknown }) =>

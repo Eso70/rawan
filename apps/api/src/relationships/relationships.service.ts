@@ -1,3 +1,4 @@
+import { contains, page, pagination, sorting } from '../query/query.js';
 import {
   BadRequestException,
   ConflictException,
@@ -7,6 +8,7 @@ import {
 import { Prisma } from '@rawan/database';
 import type { ApiRelationship, WorldEntityReference } from '@rawan/types';
 import { PrismaService } from '../database/prisma.service.js';
+import { isTransactionWriteConflict } from '../database/transaction-errors.js';
 import {
   CreateRelationshipDto,
   UpdateRelationshipDto,
@@ -132,6 +134,7 @@ export class RelationshipsService {
     userId: string,
     projectId: string,
     entity: WorldEntityReference,
+    db: Prisma.TransactionClient = this.prisma,
   ) {
     const query = {
       where: { id: entity.id, projectId, project: { author: { userId } } },
@@ -140,16 +143,16 @@ export class RelationshipsService {
     let found;
     switch (entity.kind) {
       case 'CHARACTER':
-        found = await this.prisma.character.findFirst(query);
+        found = await db.character.findFirst(query);
         break;
       case 'PLACE':
-        found = await this.prisma.place.findFirst(query);
+        found = await db.place.findFirst(query);
         break;
       case 'FACTION':
-        found = await this.prisma.faction.findFirst(query);
+        found = await db.faction.findFirst(query);
         break;
       case 'ARTIFACT':
-        found = await this.prisma.artifact.findFirst(query);
+        found = await db.artifact.findFirst(query);
         break;
       default:
         throw new BadRequestException('Unsupported entity kind');
@@ -167,11 +170,7 @@ export class RelationshipsService {
       throw new BadRequestException('Self relationships are not supported');
     }
   }
-  async list(
-    userId: string,
-    projectId: string,
-    query: RelationshipQueryDto,
-  ): Promise<ApiRelationship[]> {
+  async list(userId: string, projectId: string, query: RelationshipQueryDto) {
     await this.project(userId, projectId);
     if (!!query.entityId !== !!query.entityKind)
       throw new BadRequestException(
@@ -182,17 +181,40 @@ export class RelationshipsService {
         ? { id: query.entityId, kind: query.entityKind }
         : undefined;
     if (entity) await this.endpoint(userId, projectId, entity);
-    return (
-      await this.prisma.relationship.findMany({
-        where: {
-          projectId,
-          project: { author: { userId } },
-          ...(entity ? relevant(entity) : {}),
+    const rows = await this.prisma.relationship.findMany({
+      where: {
+        projectId,
+        ...(query.q
+          ? {
+              AND: [
+                {
+                  OR: [
+                    { label: contains(query.q) },
+                    { description: contains(query.q) },
+                  ],
+                },
+              ],
+            }
+          : {}),
+        typeKey: query.typeKey,
+        project: { author: { userId } },
+        ...(entity ? relevant(entity) : {}),
+      },
+      include,
+      orderBy: sorting<Prisma.RelationshipOrderByWithRelationInput>(
+        query,
+        {
+          label: (order) => ({ label: order }),
+          createdAt: (order) => ({ createdAt: order }),
+          updatedAt: (order) => ({ updatedAt: order }),
         },
-        include,
-        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
-      })
-    ).map(serialize);
+        [{ createdAt: 'desc' }, { id: 'asc' }],
+        'createdAt',
+        'desc',
+      ),
+      ...pagination(query),
+    });
+    return page(rows, query, serialize);
   }
   async read(userId: string, id: string): Promise<ApiRelationship> {
     const record = await this.prisma.relationship.findFirst({
@@ -239,31 +261,52 @@ export class RelationshipsService {
     id: string,
     dto: UpdateRelationshipDto,
   ): Promise<ApiRelationship> {
-    const current = await this.read(userId, id);
-    const direction = dto.direction ?? current.direction;
-    const { source, target } = this.endpoints(
-      dto.source ?? current.source,
-      dto.target ?? current.target,
-      direction,
-    );
-    await Promise.all([
-      this.endpoint(userId, current.projectId, source),
-      this.endpoint(userId, current.projectId, target),
-    ]);
-    return this.persist(async () =>
-      serialize(
-        await this.prisma.relationship.update({
-          where: { id, project: { author: { userId } } },
-          data: {
-            ...endpointFields(source, target),
-            typeKey: dto.typeKey,
-            label: dto.label,
-            direction,
-            description: dto.description,
-          },
-          include,
-        }),
-      ),
+    // A partial PATCH must merge with the latest committed endpoints/direction.
+    // Serializable retries prevent concurrent patches from restoring stale fields.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        return await this.persist(() =>
+          this.prisma.$transaction(
+            async (tx) => {
+              const record = await tx.relationship.findFirst({
+                where: { id, project: { author: { userId } } },
+                include,
+              });
+              if (!record)
+                throw new NotFoundException('Relationship not found');
+              const current = serialize(record);
+              const direction = dto.direction ?? current.direction;
+              const { source, target } = this.endpoints(
+                dto.source ?? current.source,
+                dto.target ?? current.target,
+                direction,
+              );
+              // Interactive transactions use one connection: issue queries in order.
+              await this.endpoint(userId, current.projectId, source, tx);
+              await this.endpoint(userId, current.projectId, target, tx);
+              return serialize(
+                await tx.relationship.update({
+                  where: { id, project: { author: { userId } } },
+                  data: {
+                    ...endpointFields(source, target),
+                    typeKey: dto.typeKey,
+                    label: dto.label,
+                    direction,
+                    description: dto.description,
+                  },
+                  include,
+                }),
+              );
+            },
+            { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+          ),
+        );
+      } catch (error) {
+        if (!isTransactionWriteConflict(error)) throw error;
+      }
+    }
+    throw new ConflictException(
+      'Relationship changed concurrently; retry the update',
     );
   }
   async delete(userId: string, id: string): Promise<void> {

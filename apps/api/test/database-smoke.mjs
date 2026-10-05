@@ -1,6 +1,11 @@
+import './disable-queues.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { NestFactory } from '@nestjs/core';
+import { Test } from '@nestjs/testing';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@rawan/database';
+import pg from 'pg';
+import { readdir, readFile } from 'node:fs/promises';
 import { AppModule } from '../dist/app.module.js';
 import { configureApp } from '../dist/config/configure-app.js';
 import { PrismaService } from '../dist/database/prisma.service.js';
@@ -14,13 +19,42 @@ const password = `smoke-${randomUUID()}`;
 const name = 'Rawan foundation smoke test';
 let app;
 let prisma;
+let sql;
+let createdSchema = false;
+const schema = 'rawan_auth_test_' + randomUUID().replaceAll('-', '');
 
 try {
-  app = await NestFactory.create(AppModule, {
-    logger: false,
-    abortOnError: false,
+  const connectionString = process.env.TEST_DATABASE_URL;
+  sql = new pg.Client({ connectionString, connectionTimeoutMillis: 5000 });
+  await sql.connect();
+  await sql.query('CREATE SCHEMA "' + schema + '"');
+  createdSchema = true;
+  await sql.query('SET search_path TO "' + schema + '"');
+  const migrations = new URL(
+    '../../../packages/database/prisma/migrations/',
+    import.meta.url,
+  );
+  for (const folder of (await readdir(migrations, { withFileTypes: true }))
+    .filter((e) => e.isDirectory())
+    .sort((a, b) => a.name.localeCompare(b.name)))
+    await sql.query(
+      await readFile(
+        new URL(folder.name + '/migration.sql', migrations),
+        'utf8',
+      ),
+    );
+  prisma = new PrismaClient({
+    adapter: new PrismaPg(
+      { connectionString, options: '-c search_path=' + schema },
+      { schema },
+    ),
   });
-  prisma = app.get(PrismaService);
+  await prisma.$connect();
+  const module = await Test.createTestingModule({ imports: [AppModule] })
+    .overrideProvider(PrismaService)
+    .useValue(prisma)
+    .compile();
+  app = module.createNestApplication({ logger: false });
   configureApp(app);
   await app.listen(0, '127.0.0.1');
   const base = `${await app.getUrl()}/api/v1`;
@@ -140,6 +174,21 @@ try {
       console.log('PASS: temporary database accounts cleaned up');
     }
   } finally {
-    if (app) await app.close();
+    try {
+      if (app) await app.close();
+    } finally {
+      try {
+        if (prisma) await prisma.$disconnect();
+      } finally {
+        if (sql) {
+          try {
+            if (createdSchema && /^rawan_auth_test_[a-f0-9]{32}$/.test(schema))
+              await sql.query('DROP SCHEMA "' + schema + '" CASCADE');
+          } finally {
+            await sql.end();
+          }
+        }
+      }
+    }
   }
 }

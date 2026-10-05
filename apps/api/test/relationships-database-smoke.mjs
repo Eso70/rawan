@@ -1,3 +1,4 @@
+import './disable-queues.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
@@ -9,7 +10,6 @@ import pg from 'pg';
 import { AppModule } from '../dist/app.module.js';
 import { PrismaService } from '../dist/database/prisma.service.js';
 import { configureApp } from '../dist/config/configure-app.js';
-import { verifyFrontend } from './relationships-frontend-smoke.mjs';
 
 // Opt-in: apply committed migrations only inside a disposable PostgreSQL schema.
 // Existing tables, accounts, data and migration history are never modified.
@@ -25,9 +25,23 @@ try {
     .overrideProvider(PrismaService)
     .useValue({})
     .compile();
-  const connectionString = configModule
-    .get(ConfigService)
-    .getOrThrow('DATABASE_URL');
+  const config = configModule.get(ConfigService);
+  if (config.get('NODE_ENV') === 'production')
+    throw new Error('Relationship database tests are disabled in production');
+  const connectionString = config.get('TEST_DATABASE_URL');
+  if (!connectionString)
+    throw new Error(
+      'Set TEST_DATABASE_URL explicitly for relationship database tests',
+    );
+  const testUrl = new URL(connectionString);
+  if (
+    !['postgres:', 'postgresql:'].includes(testUrl.protocol) ||
+    !testUrl.hostname ||
+    testUrl.pathname.length < 2
+  )
+    throw new Error(
+      'TEST_DATABASE_URL must be a PostgreSQL URL with a database name',
+    );
   sql = new pg.Client({ connectionString, connectionTimeoutMillis: 5000 });
   await sql.connect();
   await sql.query(`CREATE SCHEMA "${schema}"`);
@@ -152,16 +166,24 @@ try {
       saved.push(row);
     }
   }
-  assert.equal((await call('GET', path, token)).length, 16);
+  assert.equal((await call('GET', path, token)).items.length, 16);
+  assert.equal(
+    (await call('GET', path + '?typeKey=related-to', token)).items.length,
+    16,
+  );
+  assert.equal(
+    (await call('GET', path + '?typeKey=UNKNOWN', token)).items.length,
+    0,
+  );
   for (const entity of entities) {
     const filtered = await call(
       'GET',
       path + '?entityKind=' + entity.kind + '&entityId=' + entity.id,
       token,
     );
-    assert.equal(filtered.length, 4);
+    assert.equal(filtered.items.length, 4);
     assert.ok(
-      filtered.every((row) =>
+      filtered.items.every((row) =>
         [row.source, row.target].some(
           (end) => end.kind === entity.kind && end.id === entity.id,
         ),
@@ -170,6 +192,46 @@ try {
   }
   const first = saved[0];
   const item = '/relationships/' + first.id;
+  const concurrent = await call(
+    'POST',
+    path,
+    token,
+    input(entities[0], entities[2], 'CONCURRENT_PATCH'),
+    201,
+  );
+  await Promise.all([
+    call('PATCH', '/relationships/' + concurrent.id, token, {
+      target: { kind: entities[4].kind, id: entities[4].id },
+    }),
+    call('PATCH', '/relationships/' + concurrent.id, token, {
+      label: 'Concurrent notes',
+    }),
+  ]);
+  const merged = await call('GET', '/relationships/' + concurrent.id, token);
+  assert.equal(merged.target.id, entities[4].id);
+  assert.equal(merged.label, 'Concurrent notes');
+  const duplicateRace = await Promise.all([
+    fetch(base + path, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify(input(entities[0], entities[2], 'DUPLICATE_RACE')),
+    }),
+    fetch(base + path, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify(input(entities[0], entities[2], 'DUPLICATE_RACE')),
+    }),
+  ]);
+  assert.deepEqual(
+    duplicateRace.map((response) => response.status).sort((a, b) => a - b),
+    [201, 409],
+  );
   assert.deepEqual(await call('GET', item, token), first);
   const edit = await call('PATCH', item, token, {
     label: ' knows ',
@@ -247,6 +309,7 @@ try {
   for (const id of [otherEntity.id, foreignEntity.id]) {
     const endpoint = { kind: 'CHARACTER', id };
     await call('POST', path, token, input(endpoint, entities[1]), 404);
+    await call('POST', path, token, input(entities[1], endpoint), 404);
     await call('PATCH', item, token, { target: endpoint }, 404);
     await call(
       'GET',
@@ -340,8 +403,6 @@ try {
   const direct = await prisma.relationship.create({ data });
   await assert.rejects(() => prisma.relationship.create({ data }));
   await prisma.relationship.delete({ where: { id: direct.id } });
-  if (process.env.VERIFY_RELATIONSHIPS_FRONTEND === '1')
-    await verifyFrontend(base, password, project, alice, bob, entities);
   await call('DELETE', item, token, undefined, 204);
   await call('GET', item, token, undefined, 404);
   // Deleting each entity kind removes incoming and outgoing links.

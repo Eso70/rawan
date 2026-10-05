@@ -13,6 +13,9 @@ export class PrismaService
 
     const adapter = new PrismaPg({
       connectionString,
+      max: 10,
+      connectionTimeoutMillis: 5000,
+      statement_timeout: 15000,
     });
 
     super({ adapter });

@@ -1,3 +1,4 @@
+import { DocumentDto } from '../contracts/document-dto.js';
 import { Transform } from 'class-transformer';
 import {
   IsInt,
@@ -10,6 +11,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 
+@DocumentDto()
 export class CreateProjectDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -24,6 +26,7 @@ export class CreateProjectDto {
   description?: string | null;
 }
 
+@DocumentDto()
 export class UpdateProjectDto {
   @ValidateIf((_object, value: unknown) => value !== undefined)
   @Transform(({ value }: { value: unknown }) =>
@@ -39,6 +42,7 @@ export class UpdateProjectDto {
   description?: string | null;
 }
 
+@DocumentDto()
 export class CreateBookDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -59,6 +63,7 @@ export class CreateBookDto {
   position?: number;
 }
 
+@DocumentDto()
 export class UpdateBookDto {
   @ValidateIf((_object, value: unknown) => value !== undefined)
   @Transform(({ value }: { value: unknown }) =>
@@ -80,6 +85,7 @@ export class UpdateBookDto {
   position?: number;
 }
 
+@DocumentDto()
 export class CreateChapterDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -100,6 +106,7 @@ export class CreateChapterDto {
   position?: number;
 }
 
+@DocumentDto()
 export class UpdateChapterDto {
   @ValidateIf((_object, value: unknown) => value !== undefined)
   @Transform(({ value }: { value: unknown }) =>
@@ -121,6 +128,7 @@ export class UpdateChapterDto {
   position?: number;
 }
 
+@DocumentDto()
 export class CreateSceneDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
@@ -146,6 +154,7 @@ export class CreateSceneDto {
   content?: string;
 }
 
+@DocumentDto()
 export class UpdateSceneDto {
   @ValidateIf((_object, value: unknown) => value !== undefined)
   @Transform(({ value }: { value: unknown }) =>

@@ -1,3 +1,11 @@
+import { WorldQueryDto } from '../query/query.dto.js';
+import {
+  contains,
+  page,
+  pagination,
+  requireTag,
+  sorting,
+} from '../query/query.js';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@rawan/database';
 import type { ApiArtifact } from '@rawan/types';
@@ -35,17 +43,44 @@ export class ArtifactService {
       throw error;
     }
   }
-  async list(userId: string, projectId: string): Promise<ApiArtifact[]> {
+  async list(userId: string, projectId: string, query: WorldQueryDto = {}) {
     const project = await this.prisma.project.findFirst({
       where: { id: projectId, author: { userId } },
       select: { id: true },
     });
     if (!project) throw new NotFoundException('Project not found');
+    await requireTag(this.prisma, userId, projectId, query.tagId);
     const records = await this.prisma.artifact.findMany({
-      where: { projectId, project: { author: { userId } } },
-      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      where: {
+        projectId,
+        project: { author: { userId } },
+        ...(query.q
+          ? {
+              OR: [
+                { name: contains(query.q) },
+                { summary: contains(query.q) },
+                { description: contains(query.q) },
+              ],
+            }
+          : {}),
+        ...(query.tagId
+          ? { tagAssignments: { some: { tagId: query.tagId } } }
+          : {}),
+      },
+      orderBy: sorting<Prisma.ArtifactOrderByWithRelationInput>(
+        query,
+        {
+          name: (order) => ({ name: order }),
+          createdAt: (order) => ({ createdAt: order }),
+          updatedAt: (order) => ({ updatedAt: order }),
+        },
+        [{ name: 'asc' }, { id: 'asc' }],
+        'name',
+        'asc',
+      ),
+      ...pagination(query),
     });
-    return records.map(serialize);
+    return page(records, query, serialize);
   }
   async read(userId: string, id: string): Promise<ApiArtifact> {
     const record = await this.prisma.artifact.findFirst({

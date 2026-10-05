@@ -1,3 +1,6 @@
+import { ApiEndpoint } from '../contracts/api-endpoint.js';
+import { ApiCharacterDto } from '../contracts/response.dto.js';
+import { WorldQueryDto } from '../query/query.dto.js';
 import {
   Body,
   Controller,
@@ -7,6 +10,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
@@ -19,13 +23,16 @@ import { CreateCharacterDto, UpdateCharacterDto } from './character.dto.js';
 @UseGuards(JwtAuthGuard)
 export class CharacterController {
   constructor(private readonly service: CharacterService) {}
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiCharacterDto, page: true })
   @Get('projects/:projectId/characters')
   list(
     @CurrentUser() user: AuthenticatedUser,
     @Param('projectId') projectId: string,
+    @Query() query: WorldQueryDto,
   ) {
-    return this.service.list(user.userId, projectId);
+    return this.service.list(user.userId, projectId, query);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiCharacterDto })
   @Post('projects/:projectId/characters')
   create(
     @CurrentUser() user: AuthenticatedUser,
@@ -34,10 +41,12 @@ export class CharacterController {
   ) {
     return this.service.create(user.userId, projectId, dto);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiCharacterDto })
   @Get('characters/:id')
   read(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {
     return this.service.read(user.userId, id);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiCharacterDto })
   @Patch('characters/:id')
   update(
     @CurrentUser() user: AuthenticatedUser,
@@ -46,6 +55,7 @@ export class CharacterController {
   ) {
     return this.service.update(user.userId, id, dto);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding' })
   @Delete('characters/:id')
   @HttpCode(204)
   delete(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {

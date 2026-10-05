@@ -1,132 +1,94 @@
-# Unified world relationships — Part 5
+# Unified worldbuilding relationships
 
-The existing repository already contained authentication, manuscripts and all
-four worldbuilding entity kinds. Unified relationships were absent. This addition
-preserves those systems and the public website. No dependencies were installed or
-upgraded.
+Backend/database/API only. The existing relationship implementation was retained and hardened on 2026-10-05. No packages were installed or upgraded, and the reserved application folders remain empty.
 
-## Architecture and integrity
+## Architecture and database integrity
 
-One project-scoped `Relationship` table connects Character, Place, Faction and
-Artifact in any combination. Each endpoint has a `WorldEntityKind` enum and one
-of four nullable, concrete foreign keys. This avoids a table per pair while
-preserving database referential integrity without replacing existing entity IDs
-or CRUD with a new registry.
+One project-scoped Relationship table connects Character, Place, Faction, and Artifact in all 16 combinations. Strongly typed WorldEntityKind and RelationshipDirection enums describe endpoint kinds and direction. Each endpoint has one of four concrete foreign keys. This preserves existing entity IDs and CRUD APIs without a registry backfill or separate tables for each kind pair.
 
-Each endpoint uses a composite `(projectId, entityId)` foreign key against its
-entity's new unique `(projectId, id)` index. PostgreSQL therefore rejects missing
-and cross-project endpoints, including links between two projects owned by the
-same author. Check constraints require exactly one endpoint reference matching
-its kind and prohibit self-links. Deleting either endpoint or its project
-cascades to the relationship. Source/target and project indexes support lists.
+Composite (projectId, entityId) foreign keys prove that both endpoints belong to the same Project, even when two projects share an author. CHECK constraints require exactly one matching endpoint column on each side, reject self-links, validate type keys/labels/notes, and require canonical symmetric ordering. Project and endpoint deletion cascades remove relationships. No soft deletion is introduced.
 
-The new additive migration is
-`packages/database/prisma/migrations/20261005000000_relationships/migration.sql`.
-The check constraints and expression identity index are maintained in SQL because
-Prisma does not represent them in its schema. Preserve them in future migrations.
-Earlier migrations and existing records are unchanged.
+The existing 20261005000000_relationships migration is unchanged. The new 20261005010000_relationship_type_filter migration adds (projectId, typeKey, createdAt) for exact type filtering and chronological listing. Existing project/date and project/source-or-target indexes support project lists and incoming/outgoing entity queries. PostgreSQL can combine the endpoint indexes for the OR query. No speculative graph indexes were added. Prisma CLI, Client and adapter remain 7.10.0.
 
-`RelationshipDirection` supports `DIRECTIONAL` and `SYMMETRIC`. Directional
-relationships preserve source/target order. Symmetric relationships store one
-canonical pair sorted by `kind:id`, using PostgreSQL's C collation to match the
-application's comparison. No reverse row is inserted. Both endpoints' detail
-pages show the link with its original direction or a two-way arrow.
+## Semantics and identity
 
-Semantic identity is project + normalized type key + direction + typed endpoint
-pair. The unique database index handles concurrent duplicates; the API returns 409. Reversed symmetric pairs are duplicates; reversed directional pairs and
-different type keys remain distinct. Self-links return 400. Labels and notes are
-editable without creating another semantic identity.
+DIRECTIONAL preserves source → target. SYMMETRIC canonicalizes endpoints by ASCII kind:id ordering and stores one row. Reversed symmetric pairs therefore share an identity; reversed directional pairs remain different. IDs accepted by DTOs are ASCII, matching PostgreSQL's C-collated comparison.
 
-Type keys are custom ASCII machine keys, normalized to uppercase with whitespace
-and hyphens converted to underscores, up to 64 characters. Display labels are
-independent Unicode strings up to 100 characters; descriptions allow 10,000
-characters. No relationship vocabulary or localization system is imposed.
+Duplicate identity is project + normalized typeKey + direction + ordered typed endpoints. A database expression unique index enforces it atomically, including concurrent inserts. Different type keys allow multiple meanings between the same two entities. Changing a display label or notes does not create a new meaning. An entity cannot link to itself, but equal IDs in different entity tables are distinct entities.
 
-## API and security
+Type keys are custom strings normalized to uppercase with whitespace/hyphens replaced by underscores, using the pattern [A-Z][A-Z0-9_]{0,63}. There is no enum of relationship meanings. Display labels are independent Unicode strings, trimmed to 1–100 characters. Optional descriptions allow 10,000 characters; null clears them. No localization system is implemented.
 
-All routes use the existing JWT guard under `/api/v1`:
+## REST contract
 
-| Method | Route                                                                  | Purpose                            |
-| ------ | ---------------------------------------------------------------------- | ---------------------------------- |
-| POST   | `/projects/:projectId/relationships`                                   | Create                             |
-| GET    | `/projects/:projectId/relationships`                                   | Project list                       |
-| GET    | `/projects/:projectId/relationships?entityKind=CHARACTER&entityId=:id` | Incoming and outgoing entity links |
-| GET    | `/relationships/:id`                                                   | Detail                             |
-| PATCH  | `/relationships/:id`                                                   | Edit endpoints, semantics or notes |
-| DELETE | `/relationships/:id`                                                   | Delete, returning 204              |
+All routes are under /api/v1 and require bearer authentication.
 
-Create bodies contain `source: {kind, id}`, `target: {kind, id}`, `typeKey`,
-`label`, optional `description` and optional `direction` (default DIRECTIONAL).
-PATCH accepts the same fields optionally; it cannot change project ownership.
-The two entity query parameters must be supplied together.
+| Method | Route                              | Result                   |
+| ------ | ---------------------------------- | ------------------------ |
+| POST   | /projects/:projectId/relationships | Create, 201              |
+| GET    | /projects/:projectId/relationships | List, 200                |
+| GET    | /relationships/:id                 | Detail, 200              |
+| PATCH  | /relationships/:id                 | Partial update, 200      |
+| DELETE | /relationships/:id                 | Delete, 204 with no body |
 
-The API checks project ownership through `Project.author.userId`, resolves each
-endpoint against that project and owner, and scopes reads and mutations to the
-authenticated user. Inaccessible resources return 404. Nested DTO validation
-rejects unsupported kinds, unknown fields, malformed IDs and invalid content.
-Database constraints remain an independent integrity boundary.
+Create example:
 
-Responses expose endpoint `{id, kind, name}` summaries, relationship semantics
-and ISO timestamps. They do not expose Prisma internals or authentication data.
-Shared API types live in `packages/types`: `WorldEntityKind`,
-`WorldEntityReference`, `RelationshipDirection`, `ApiRelationship` and
-`RelationshipInput`.
+```json
+{
+  "source": { "kind": "CHARACTER", "id": "character-id" },
+  "target": { "kind": "PLACE", "id": "place-id" },
+  "typeKey": "born-in",
+  "label": "born in",
+  "direction": "DIRECTIONAL",
+  "description": null
+}
+```
 
-## Author workspace
+Direction defaults to DIRECTIONAL. Responses contain id, projectId, typeKey, label, direction, description, ISO createdAt/updatedAt, and source/target summaries containing id, kind and name. Internal endpoint columns and authentication fields are never exposed.
 
-`/projects/[projectId]/relationships` uses the existing protected author layout.
-Project navigation links to it. `RelationshipsPanel` also appears on Character,
-Place, Faction and Artifact detail pages, with that entity preselected as source.
-Forms select real project entities, custom type/label, direction and notes.
-Lists link to both endpoints and include edit and confirmed-delete forms.
-Empty states explain how to begin. Existing loading, not-found and service-error
-boundaries remain in use. Labels, keyboard controls and visible focus states are
-provided; descriptions are rendered as text rather than HTML.
+GET accepts entityKind + entityId together to retrieve links in which that entity is either source or target. Optional typeKey filters the normalized exact relationship meaning and can be combined with the entity filter. Unsupported/extra/malformed query parameters return 400. An inaccessible or nonexistent filter entity returns 404.
 
-Server actions use the existing centralized API client and HttpOnly session.
-Tokens remain server-side. The client now permits only the narrowly defined
-entity relationship query. Actions verify the route's project context and
-invalidate the project layout after changes so entity and project views refresh.
-Duplicate and self-link feedback is shown without exposing backend diagnostics.
+PATCH permits source, target, typeKey, label, direction and description; omitted fields remain unchanged. Project, owner, ID and timestamps cannot be reassigned. Changing endpoints is supported for compatibility with the existing API, with full same-project/ownership validation and symmetric recanonicalization. Changing only a label must not restore stale endpoints or direction: the entire read/validate/update operation runs in a serializable transaction. Serialization/deadlock conflicts retry at most three times, rereading current state on each attempt; exhaustion returns 409. Transactions issue queries sequentially on their single connection.
 
-## Verification
+Part 9 normalizes lists to `{ items, nextOffset }` pages, defaulting to createdAt descending then ID ascending. Validated `limit`/`offset`, `q`, and allowlisted `sort`/`order` now coexist with type/entity filters. See [query contracts](search-domain.md). Entity filtering avoids requiring clients to fetch every project link.
 
-- Unit tests cover type-key normalization and symmetric/directional identity.
-- Frontend API-client tests cover entity queries, authorization and URL rejection.
-- `pnpm --filter @rawan/api test:relationships:database` applies every committed
-  migration inside a disposable PostgreSQL schema and exercises all 16 kind
-  pairs, CRUD, entity filtering, two-author isolation, same-owner cross-project
-  rejection, invalid DTOs, duplicates, canonical ordering, direct SQL integrity
-  violations, and entity/project deletion cascades.
-- Set `VERIFY_RELATIONSHIPS_FRONTEND=1` for that command after building apps/app
-  to additionally verify real sign-in, relationship create/edit/delete server
-  actions, both detail and project views, all four detail integrations, source
-  preselection, private sessions, duplicate/self rejection and refresh behavior.
-- The database smoke check uses local `DATABASE_URL` and `JWT_SECRET` through
-  the existing configuration; it never resets existing tables. Secrets should
-  remain local. The implementation was tested using an isolated local PostgreSQL
-  instance, without changing an existing development or production database.
+## Ownership and errors
 
-## Scope and limitations
+Collection and item operations resolve Relationship → Project → Author → authenticated User. Endpoints are independently resolved within that project and owner. ADMIN has no ownership bypass. Missing and inaccessible resources both return 404. Every mutation scopes ownership; client-supplied IDs or kinds do not establish access.
 
-Verification completed successfully: Prisma validate/generate, database and
-shared-types builds, root lint/typecheck/build/format checks, 32 API unit tests,
-39 existing API HTTP tests, 12 frontend unit tests, and the real PostgreSQL and
-frontend relationship smoke checks. The existing manuscript database smoke and
-all four worldbuilding frontend/database flows also passed with the new migration.
-The website has no source changes.
+Strict global DTO validation rejects extra fields, nested mass assignment, unsupported kinds, invalid IDs, invalid semantics and oversize content. Self-links and invalid field combinations return 400. Duplicate conflicts and exhausted concurrent-update retries return 409. Missing/vanished foreign-key resources return 404. Missing, invalid, or expired bearer tokens return 401. Standard NestJS exceptions are used without a custom response envelope.
 
-This intentionally uses ordinary lists and selectors. There is no graph UI,
-timeline, canvas or new writing editor. Entity choices and project lists are not
-paginated yet, so a future large-world experience will need search/pagination.
-Adding an entity kind requires two foreign-key columns, enum/constraint updates
-and resolver support, rather than a new table for every combination. A shared
-entity registry can be considered if many kinds eventually warrant it.
+Shared API contracts remain separate from generated Prisma models: WorldEntityKind, WorldEntityReference, RelationshipDirection, ApiRelationship and RelationshipInput. RelationshipInput now reflects the optional defaulted direction. RelationshipFilters was added and is implemented by the validated query DTO.
 
-Deletion is permanent and follows the existing project/entity deletion policy.
-There is no relationship history, date range or inverse-label localization yet.
-Repeated historical events should eventually use a separate event domain.
+## Automated testing and safe database setup
 
-Before running this feature on an existing configured database, apply the new
-migration with the repository's normal `pnpm db:deploy` workflow. No production
-database was modified during implementation.
+```sh
+pnpm test
+pnpm test:e2e
+pnpm --filter @rawan/api test:relationships:database
+```
+
+Unit tests include 32 new relationship-service cases plus existing identity-policy tests. They cover all kind pairs, project/entity/type retrieval, safe serialization, missing/foreign endpoints, self-links, canonicalization, duplicate/error mapping, safe partial updates, serializable retry limits and ownership-aware deletion.
+
+Twenty-one new HTTP tests exercise the compiled production Nest application, actual JWT guards and DTO metadata, and the real relationship service with isolated in-memory persistence. They cover POST/GET/PATCH/DELETE, response contracts, incoming/outgoing/type filtering, all unauthenticated routes, author/admin isolation, missing/foreign/same-owner cross-project endpoints, query validation and mass-assignment rejection. They require no live database; SQL behavior is tested separately.
+
+The PostgreSQL test requires TEST_DATABASE_URL explicitly, read from the process environment or apps/api/.env. Configure a test/development PostgreSQL connection with permission to create schemas; never supply production credentials. The script refuses NODE_ENV=production and missing/invalid test configuration before connecting. It creates a random schema, applies every migration only inside that schema, overrides Nest's Prisma provider with a schema-scoped client, and drops only that schema in finally. Existing public tables, accounts and migration history are untouched.
+
+It proves all 16 kind pairs, normalized type/entity filters, CRUD, two-author and same-owner project isolation, invalid DTOs, direct SQL constraint rejection, directional/symmetric duplicate rules, concurrent duplicate creation, concurrent partial PATCH merging, and Character/Place/Faction/Artifact/Project cascades. Tests intentionally pass a verified local development connection as TEST_DATABASE_URL through a temporary process environment, preserving local configuration files.
+
+## Verification on 2026-10-05
+
+- Prisma format, validation and generation passed with 7.10.0.
+- Database/types/API and root builds passed; root typecheck passed.
+- Root lint and formatting passed.
+- 64 unit tests passed, including the 32 new service cases.
+- 60 HTTP tests passed, including the 21 new relationship cases.
+- Real PostgreSQL relationship tests passed, with disposable-schema cleanup.
+- Missing test configuration was explicitly verified to fail safely.
+- Prisma migrate deploy applied all five migrations to a separate disposable schema; migrate status reported up to date, then that schema was removed.
+- The normal configured database still has the new index migration pending. Apply it intentionally with pnpm db:deploy, then regenerate with pnpm db:generate and restart the API. No normal-schema migrations were applied by this task.
+
+## Remaining backend work
+
+No Swagger/OpenAPI infrastructure exists; none was installed. Machine-readable API documentation is a later hardening task. No relationship history, events, date ranges or inverse-label localization are implemented. Adding another entity kind requires enum, endpoint columns, constraints and resolver updates; revisit a common entity registry only when more kinds justify the migration cost.
+
+The PostgreSQL smoke test currently emits a pg driver deprecation warning for overlapping queries inside the existing Prisma adapter path; checks pass, and no driver/Prisma upgrades were performed to suppress it. Investigate alongside future compatible adapter upgrades.

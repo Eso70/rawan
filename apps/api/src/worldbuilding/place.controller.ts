@@ -1,3 +1,6 @@
+import { ApiEndpoint } from '../contracts/api-endpoint.js';
+import { ApiPlaceDto } from '../contracts/response.dto.js';
+import { WorldQueryDto } from '../query/query.dto.js';
 import {
   Body,
   Controller,
@@ -7,6 +10,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
@@ -19,13 +23,16 @@ import { CreatePlaceDto, UpdatePlaceDto } from './place.dto.js';
 @UseGuards(JwtAuthGuard)
 export class PlaceController {
   constructor(private readonly service: PlaceService) {}
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiPlaceDto, page: true })
   @Get('projects/:projectId/places')
   list(
     @CurrentUser() user: AuthenticatedUser,
     @Param('projectId') projectId: string,
+    @Query() query: WorldQueryDto,
   ) {
-    return this.service.list(user.userId, projectId);
+    return this.service.list(user.userId, projectId, query);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiPlaceDto })
   @Post('projects/:projectId/places')
   create(
     @CurrentUser() user: AuthenticatedUser,
@@ -34,10 +41,12 @@ export class PlaceController {
   ) {
     return this.service.create(user.userId, projectId, dto);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiPlaceDto })
   @Get('places/:id')
   read(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {
     return this.service.read(user.userId, id);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding', model: ApiPlaceDto })
   @Patch('places/:id')
   update(
     @CurrentUser() user: AuthenticatedUser,
@@ -46,6 +55,7 @@ export class PlaceController {
   ) {
     return this.service.update(user.userId, id, dto);
   }
+  @ApiEndpoint({ tag: 'Worldbuilding' })
   @Delete('places/:id')
   @HttpCode(204)
   delete(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {
