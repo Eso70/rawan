@@ -16,6 +16,9 @@ import {
 import { Breadcrumbs, PageHeader, formatDate } from "./workspace";
 import { ProjectNav } from "./project-nav";
 import { WorldForm, WorldDelete } from "./world-forms";
+import { RelationshipsPanel } from "./relationships-panel";
+import { entityCollections } from "@/lib/relationship-paths";
+import type { WorldEntityKind } from "@rawan/types";
 export async function WorldPage({
   projectId,
   collection,
@@ -77,6 +80,15 @@ export async function WorldPage({
           entity={entity}
         />
         <WorldDelete projectId={projectId} kind={kind} entity={entity} />
+        <RelationshipsPanel
+          projectId={projectId}
+          entity={{
+            id: entity.id,
+            kind: Object.entries(entityCollections).find(
+              ([, collection]) => collection === kind,
+            )![0] as WorldEntityKind,
+          }}
+        />
       </>
     );
   }

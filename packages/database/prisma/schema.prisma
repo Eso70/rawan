@@ -45,18 +45,19 @@ model Author {
 }
 
 model Project {
-  id          String      @id @default(cuid())
-  authorId    String
-  title       String
-  description String?
-  author      Author      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  books       Book[]
-  characters  Character[]
-  places      Place[]
-  factions    Faction[]
-  artifacts   Artifact[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id            String         @id @default(cuid())
+  authorId      String
+  title         String
+  description   String?
+  author        Author         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  books         Book[]
+  characters    Character[]
+  places        Place[]
+  factions      Faction[]
+  artifacts     Artifact[]
+  relationships Relationship[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   @@index([authorId])
 }
@@ -104,58 +105,122 @@ model Scene {
 }
 
 model Character {
-  id          String   @id @default(cuid())
-  projectId   String
-  name        String
-  summary     String?
-  description String?
-  role        String?
-  status      String?
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String         @id @default(cuid())
+  projectId           String
+  name                String
+  summary             String?
+  description         String?
+  role                String?
+  status              String?
+  project             Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  sourceRelationships Relationship[] @relation("SourceCharacter")
+  targetRelationships Relationship[] @relation("TargetCharacter")
 
+  @@unique([projectId, id])
   @@index([projectId, name])
 }
 
 model Place {
-  id          String   @id @default(cuid())
-  projectId   String
-  name        String
-  summary     String?
-  description String?
-  type        String?
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String         @id @default(cuid())
+  projectId           String
+  name                String
+  summary             String?
+  description         String?
+  type                String?
+  project             Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  sourceRelationships Relationship[] @relation("SourcePlace")
+  targetRelationships Relationship[] @relation("TargetPlace")
 
+  @@unique([projectId, id])
   @@index([projectId, name])
 }
 
 model Faction {
-  id          String   @id @default(cuid())
-  projectId   String
-  name        String
-  summary     String?
-  description String?
-  type        String?
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String         @id @default(cuid())
+  projectId           String
+  name                String
+  summary             String?
+  description         String?
+  type                String?
+  project             Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  sourceRelationships Relationship[] @relation("SourceFaction")
+  targetRelationships Relationship[] @relation("TargetFaction")
 
+  @@unique([projectId, id])
   @@index([projectId, name])
 }
 
 model Artifact {
-  id          String   @id @default(cuid())
-  projectId   String
-  name        String
-  summary     String?
-  description String?
-  type        String?
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String         @id @default(cuid())
+  projectId           String
+  name                String
+  summary             String?
+  description         String?
+  type                String?
+  project             Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  sourceRelationships Relationship[] @relation("SourceArtifact")
+  targetRelationships Relationship[] @relation("TargetArtifact")
 
+  @@unique([projectId, id])
   @@index([projectId, name])
+}
+
+enum WorldEntityKind {
+  CHARACTER
+  PLACE
+  FACTION
+  ARTIFACT
+}
+
+enum RelationshipDirection {
+  DIRECTIONAL
+  SYMMETRIC
+}
+
+model Relationship {
+  id                String                @id @default(cuid())
+  projectId         String
+  sourceKind        WorldEntityKind
+  targetKind        WorldEntityKind
+  typeKey           String
+  label             String
+  description       String?
+  direction         RelationshipDirection @default(DIRECTIONAL)
+  project           Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourceCharacterId String?
+  sourceCharacter   Character?            @relation("SourceCharacter", fields: [projectId, sourceCharacterId], references: [projectId, id], onDelete: Cascade)
+  sourcePlaceId     String?
+  sourcePlace       Place?                @relation("SourcePlace", fields: [projectId, sourcePlaceId], references: [projectId, id], onDelete: Cascade)
+  sourceFactionId   String?
+  sourceFaction     Faction?              @relation("SourceFaction", fields: [projectId, sourceFactionId], references: [projectId, id], onDelete: Cascade)
+  sourceArtifactId  String?
+  sourceArtifact    Artifact?             @relation("SourceArtifact", fields: [projectId, sourceArtifactId], references: [projectId, id], onDelete: Cascade)
+  targetCharacterId String?
+  targetCharacter   Character?            @relation("TargetCharacter", fields: [projectId, targetCharacterId], references: [projectId, id], onDelete: Cascade)
+  targetPlaceId     String?
+  targetPlace       Place?                @relation("TargetPlace", fields: [projectId, targetPlaceId], references: [projectId, id], onDelete: Cascade)
+  targetFactionId   String?
+  targetFaction     Faction?              @relation("TargetFaction", fields: [projectId, targetFactionId], references: [projectId, id], onDelete: Cascade)
+  targetArtifactId  String?
+  targetArtifact    Artifact?             @relation("TargetArtifact", fields: [projectId, targetArtifactId], references: [projectId, id], onDelete: Cascade)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@index([projectId, createdAt])
+  @@index([projectId, sourceCharacterId])
+  @@index([projectId, sourcePlaceId])
+  @@index([projectId, sourceFactionId])
+  @@index([projectId, sourceArtifactId])
+  @@index([projectId, targetCharacterId])
+  @@index([projectId, targetPlaceId])
+  @@index([projectId, targetFactionId])
+  @@index([projectId, targetArtifactId])
 }

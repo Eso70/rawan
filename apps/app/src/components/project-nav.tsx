@@ -29,6 +29,12 @@ export function ProjectNav({
             {kind}
           </Link>
         ))}
+        <Link
+          href={`/projects/${projectId}/relationships`}
+          aria-current={active === "relationships" ? "page" : undefined}
+        >
+          Relationships
+        </Link>
       </div>
     </nav>
   );

@@ -560,3 +560,31 @@ input::placeholder {
   width: auto;
   margin: 5px 0 0;
 }
+.relationships-section {
+  margin-top: 48px;
+}
+.relationship-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.relationship-card summary {
+  cursor: pointer;
+}
+.relationship-card .create-panel {
+  margin-top: 16px;
+}
+.form-stack select {
+  width: 100%;
+  background: #111b2b;
+  color: var(--foreground);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px;
+  font: inherit;
+}
+.form-stack select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}

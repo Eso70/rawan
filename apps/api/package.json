@@ -24,7 +24,8 @@
     "test:e2e": "pnpm --filter @rawan/api... build && vitest run --config ./vitest.config.e2e.ts",
     "test:database": "pnpm --filter @rawan/api... build && node test/database-smoke.mjs",
     "test:domain:database": "pnpm --filter @rawan/api... build && node test/manuscript-database-smoke.mjs",
-    "test:world:database": "pnpm --filter @rawan/api... build && node test/worldbuilding-database-smoke.mjs"
+    "test:world:database": "pnpm --filter @rawan/api... build && node test/worldbuilding-database-smoke.mjs",
+    "test:relationships:database": "pnpm --filter @rawan/api... build && node test/relationships-database-smoke.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",

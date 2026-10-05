@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module.js';
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { WorldbuildingModule } from './worldbuilding/worldbuilding.module.js';
+import { RelationshipsModule } from './relationships/relationships.module.js';
 import { ManuscriptModule } from './manuscript/manuscript.module.js';
 import { fileURLToPath } from 'node:url';
 import { validateEnvironment } from './config/environment.js';
@@ -21,6 +22,7 @@ import { validateEnvironment } from './config/environment.js';
     AuthModule,
     ManuscriptModule,
     WorldbuildingModule,
+    RelationshipsModule,
   ],
   controllers: [AppController],
 })

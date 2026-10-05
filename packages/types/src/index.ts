@@ -107,3 +107,30 @@ export interface ApiFaction extends ApiWorldEntity {
 export interface ApiArtifact extends ApiWorldEntity {
   type: string | null;
 }
+
+export type WorldEntityKind = "CHARACTER" | "PLACE" | "FACTION" | "ARTIFACT";
+export type RelationshipDirection = "DIRECTIONAL" | "SYMMETRIC";
+export interface WorldEntityReference {
+  id: string;
+  kind: WorldEntityKind;
+}
+export interface ApiRelationship {
+  id: string;
+  projectId: string;
+  source: WorldEntityReference & { name: string };
+  target: WorldEntityReference & { name: string };
+  typeKey: string;
+  label: string;
+  description: string | null;
+  direction: RelationshipDirection;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface RelationshipInput {
+  source: WorldEntityReference;
+  target: WorldEntityReference;
+  typeKey: string;
+  label: string;
+  direction: RelationshipDirection;
+  description?: string | null;
+}

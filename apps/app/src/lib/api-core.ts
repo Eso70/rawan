@@ -42,7 +42,16 @@ export async function requestJson<T>(
   } = {},
   fetcher: typeof fetch = fetch,
 ): Promise<T> {
-  if (!/^\/[a-zA-Z0-9_/-]+$/.test(path) || path.startsWith("//"))
+  const [pathname, query, ...extra] = path.split("?");
+  if (
+    !/^\/[a-zA-Z0-9_/-]+$/.test(pathname) ||
+    path.startsWith("//") ||
+    extra.length ||
+    (query !== undefined &&
+      !/^entityKind=(CHARACTER|PLACE|FACTION|ARTIFACT)&entityId=[a-zA-Z0-9_-]{1,128}$/.test(
+        query,
+      ))
+  )
     throw new ApiError(400);
   let response: Response;
   try {
