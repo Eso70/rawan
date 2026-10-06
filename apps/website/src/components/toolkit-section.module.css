@@ -1,0 +1,255 @@
+.section {
+  position: relative;
+  padding: 100px 0;
+  overflow: clip;
+  background-color: #0b1019;
+  background-image: radial-gradient(circle, #ffffff1c 0.8px, transparent 1px);
+  background-size: 16px 16px;
+}
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(#09090b 0%, transparent 25%, #0d172333 100%);
+}
+.layout {
+  position: relative;
+  max-width: 1075px;
+  margin: 0 auto;
+  padding: 0 34px;
+  display: flex;
+  gap: 34px;
+}
+.sidebar {
+  width: 38%;
+  flex-shrink: 0;
+}
+.sticky {
+  position: sticky;
+  top: 100px;
+}
+.intro {
+  margin-bottom: 38px;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 17px;
+  border: 1px solid #fbbf244d;
+  border-radius: 13px;
+  padding: 4px 8px;
+  color: #fbbf24cc;
+  font-size: 12.6px;
+  line-height: 17px;
+}
+.intro h2 {
+  margin: 0;
+  font-family: "Arizona Flare", "Rawan Lora", Georgia, serif;
+  font-weight: 400;
+  font-size: 50.4px;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.card {
+  width: 280px;
+  max-width: 100%;
+  padding: 0;
+  text-align: left;
+  color: #fff;
+  border: 1px solid #ffffff1a;
+  border-radius: 22px;
+  background: #ffffff0d;
+  backdrop-filter: blur(8px);
+  opacity: 0.4;
+  transition:
+    opacity 0.3s,
+    background 0.3s;
+}
+.card:hover,
+.card:focus-visible {
+  opacity: 0.75;
+}
+.card.active {
+  opacity: 1;
+  background: #ffffff0f;
+}
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px;
+  font-size: 14.7px;
+  line-height: 21px;
+  font-weight: 600;
+}
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #fbbf2420;
+  color: #fbbf24;
+}
+.mapIcon {
+  color: #4ade80;
+  background: #4ade8020;
+}
+.wikiIcon {
+  color: #38bdf8;
+  background: #38bdf820;
+}
+.connectionsIcon {
+  color: #a78bfa;
+  background: #a78bfa20;
+}
+.card:not(.active) .icon {
+  color: #ffffff99;
+  background: #ffffff1a;
+}
+.cardDetails {
+  display: block;
+  overflow: hidden;
+}
+.cardDetails > span {
+  display: block;
+  overflow: hidden;
+  min-height: 0;
+  padding-inline: 13px;
+  font-size: 14.7px;
+  line-height: 1.65;
+  color: #ffffffb3;
+}
+.cardDetails > span {
+  padding-bottom: 13px;
+}
+.previews {
+  width: 62%;
+  min-width: 0;
+}
+.panel {
+  width: calc(100% + 50vw - 34px);
+  max-width: none;
+  margin-bottom: 134px;
+}
+.panel:last-child {
+  margin-bottom: 0;
+}
+.frame {
+  opacity: var(--reveal-opacity, 1);
+  transform: translateX(var(--reveal-offset, 0px));
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 2px solid #ffffff33;
+  border-radius: 25px;
+  overflow: hidden;
+  background: #09090b;
+  box-shadow: 0 20px 80px #0003;
+}
+.frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.playback {
+  position: absolute;
+  right: var(--control-right, 14px);
+  top: 14px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid #ffffff40;
+  color: white;
+  background: #0009;
+}
+.playback:hover {
+  background: #252525;
+}
+.mobileCopy {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+@media (max-width: 1023px) {
+  .section {
+    padding: 67px 0;
+  }
+  .layout {
+    display: block;
+  }
+  .sidebar,
+  .previews {
+    width: 100%;
+  }
+  .sticky {
+    position: static;
+  }
+  .featureList {
+    display: none;
+  }
+  .intro h2 {
+    font-size: 37.8px;
+  }
+  .panel {
+    width: 100%;
+    margin-bottom: 67px;
+  }
+  .mobileCopy {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    margin-bottom: 25px;
+  }
+  .mobileCopy h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    line-height: 1.4;
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .mobileCopy p {
+    font-size: 14.7px;
+    line-height: 1.65;
+    color: #ffffffb3;
+    margin: 0;
+    max-width: 600px;
+  }
+}
+@media (max-width: 767px) {
+  .intro h2 {
+    font-size: 31.5px;
+  }
+  .frame {
+    border-radius: 22px;
+  }
+  .playback {
+    width: 40px;
+    height: 40px;
+    right: 10px;
+    top: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .frame {
+    opacity: 1;
+    transform: none;
+  }
+}

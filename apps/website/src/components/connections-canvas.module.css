@@ -1,0 +1,43 @@
+.graph {
+  background: #000;
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+.canvas:focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: -4px;
+}
+.controls {
+  position: absolute;
+  top: 14px;
+  right: var(--control-right, 14px);
+  display: flex;
+  gap: 6px;
+}
+.controls button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #ffffff40;
+  border-radius: 12px;
+  background: #111d;
+  color: white;
+  font-size: 14px;
+}
+.controls button:hover {
+  background: #333;
+}
+.error {
+  position: absolute;
+  left: 20px;
+  bottom: 12px;
+  font-size: 14px;
+  max-width: 280px;
+}

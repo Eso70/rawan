@@ -1,29 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BrandMark } from "./brand-mark";
 import styles from "./home-hero.module.css";
-
-function Emblem({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="23"
-      height="23"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M12 3.5a8.5 8.5 0 1 1-8.5 8.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path d="m8 4 4-1-1 4-4 1 1-4Z" fill="currentColor" />
-      <circle cx="12" cy="12" r="2.8" fill="currentColor" />
-    </svg>
-  );
-}
 
 export function HomeHero() {
   const video = useRef<HTMLVideoElement>(null);
@@ -67,7 +46,7 @@ export function HomeHero() {
   }
 
   return (
-    <main className={styles.hero}>
+    <section className={styles.hero} aria-label="Welcome to Rawan">
       <div className={styles.backdrop} aria-hidden="true">
         <video
           ref={video}
@@ -94,7 +73,7 @@ export function HomeHero() {
         <nav className={styles.nav} aria-label="Main navigation">
           <div className={styles.navLeft}>
             <a className={styles.brand} href="/" aria-label="Rawan home">
-              <Emblem />
+              <BrandMark className={styles.brandMark} priority />
               <span>rawan</span>
             </a>
             <div className={styles.navLinks}>
@@ -137,7 +116,7 @@ export function HomeHero() {
       </header>
       <section className={styles.content} aria-labelledby="hero-title">
         <div className={styles.badge}>
-          <Emblem />
+          <BrandMark className={styles.badgeMark} />
           <span>Made for storytellers</span>
         </div>
         <h1 id="hero-title">The modern storytelling toolkit</h1>
@@ -205,6 +184,6 @@ export function HomeHero() {
           </svg>
         )}
       </button>
-    </main>
+    </section>
   );
 }
