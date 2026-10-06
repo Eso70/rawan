@@ -43,6 +43,21 @@ export default function PrivacyPage() {
         </ul>
       </section>
       <section>
+        <h2>Onboarding preferences and tutorial writing</h2>
+        <p>
+          Rawan saves your story-type choice, tutorial progress and completion,
+          and the sample card’s name, role, selected illustration and text to
+          your signed-in account in the local database. This lets you resume
+          onboarding and keep your tutorial edits. These are private tutorial
+          examples, rather than a shared world or manuscript project.
+        </p>
+        <p>
+          The introduction includes subtitles and optional narration using your
+          browser’s speech service. Available voices and processing depend on
+          your browser and device. Narration is off until you enable it.
+        </p>
+      </section>
+      <section>
         <h2>3. Browser preferences</h2>
         <p>
           The website remembers the last selected Google method in your

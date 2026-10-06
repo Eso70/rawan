@@ -21,6 +21,7 @@
     "db:validate": "pnpm --filter @rawan/database validate",
     "db:migrate": "pnpm --filter @rawan/database migrate:dev",
     "db:deploy": "pnpm --filter @rawan/database migrate:deploy",
+    "db:reset": "pnpm --filter @rawan/database migrate:reset",
     "db:studio": "pnpm --filter @rawan/database studio"
   },
   "devDependencies": {

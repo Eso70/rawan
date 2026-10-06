@@ -6,14 +6,14 @@ Use an OAuth client of type **Web application**. Register this exact authorized 
 
 `http://localhost:3000/auth/google/callback`
 
-If the Google project restricts access to test users, add the Google account used for testing. Open the website at `http://localhost:3000/login`. Google chooses an account and asks for basic profile access. The first successful authorization creates an AUTHOR and author profile; subsequent authorizations use the same Google subject. Success opens `/account`, which checks the session against `/api/v1/users/me`. This is an account confirmation page; a writing workspace is not implemented here.
+If the Google project restricts access to test users, add the Google account used for testing. Open the website at `http://localhost:3000/login`. Google chooses an account and asks for basic profile access. The first successful authorization creates an AUTHOR and author profile; subsequent authorizations use the same Google subject. Success opens `/account`, which checks the session against `/api/v1/users/me` and sends unfinished onboarding to `/onboarding`, or completed onboarding to the sample `/workspace`.
 
 ## Credentials and processes
 
 - `apps/website/.env.local`: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `AUTH_ORIGIN=http://localhost:3000`, `RAWAN_API_URL=http://127.0.0.1:3002/api/v1`.
 - `apps/api/.env`: `GOOGLE_CLIENT_ID` plus existing database/JWT configuration.
 - Both files are ignored by Git. Templates contain no credentials. Replace the secret shared in chat before use outside local testing.
-- Run `pnpm db:deploy` and `pnpm db:generate` after pulling the migration. The migration adds an optional unique Google subject; it does not delete existing users.
+- Run `pnpm db:deploy` and `pnpm db:generate` after pulling migrations. These add an optional unique Google subject and account-scoped onboarding progress; they do not delete existing users.
 - Run `pnpm --filter @rawan/api dev` and `pnpm dev:website` in separate terminals. PostgreSQL and any configured Redis must be available. Restart the website after changing credentials.
 
 ## Security and limitations

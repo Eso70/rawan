@@ -57,6 +57,8 @@ pnpm db:studio
 
 Use db:deploy to apply committed migrations. Use db:migrate only when deliberately changing the schema and creating a development migration. Client generation does not change the database. Database builds regenerate the ignored Prisma Client before compilation.
 
+To start the development database over, stop the API and worker, then run `pnpm db:reset` from the repository root. Prisma shows the configured database and asks for confirmation. Confirming deletes all data in its configured database schema (including users and onboarding progress), reapplies the committed migrations, and regenerates the client. It uses `DATABASE_URL` from `packages/database/.env` or the process environment; check the target before confirming. Use this only for disposable development data. No seed data is created, and uploaded files or Redis jobs are not removed. Restart the development processes and sign in again afterward.
+
 Oxlint covers the active backend packages, with strict TypeScript checking and shared lint configuration. Prettier is the single formatter. Turbo builds dependencies before checks; unit and HTTP tests build the API as needed and use isolated persistence. CI also runs isolated database, media, queue and fake-AI regressions, dependency audit and the checked-in V1 contract comparison.
 
 Optional PostgreSQL checks:

@@ -19,7 +19,7 @@ describe('V1 OpenAPI contract generated from compiled controllers and DTOs', () 
     document.components!.schemas![name] as SchemaObject;
   it('covers every existing public operation once with stable IDs', () => {
     const inventory = publicRouteInventory();
-    expect(inventory).toHaveLength(114);
+    expect(inventory).toHaveLength(116);
     const operations = Object.values(document.paths).flatMap((path) =>
       Object.entries(path).filter(([key]) =>
         ['get', 'post', 'patch', 'delete'].includes(key),

@@ -2489,6 +2489,56 @@
         "required": ["email", "password"],
         "type": "object"
       },
+      "OnboardingResponseDto": {
+        "additionalProperties": false,
+        "properties": {
+          "completedAt": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "draftImage": {
+            "type": "string"
+          },
+          "draftName": {
+            "type": "string"
+          },
+          "draftRole": {
+            "type": "string"
+          },
+          "draftText": {
+            "type": "string"
+          },
+          "phase": {
+            "enum": ["choice", "intro", "tour"],
+            "type": "string"
+          },
+          "skipped": {
+            "type": "boolean"
+          },
+          "step": {
+            "maximum": 4,
+            "minimum": 0,
+            "type": "number"
+          },
+          "storyType": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "draftImage",
+          "draftRole",
+          "storyType",
+          "phase",
+          "step",
+          "completedAt",
+          "skipped",
+          "draftName",
+          "draftText"
+        ],
+        "type": "object"
+      },
       "RegisterDto": {
         "additionalProperties": false,
         "properties": {
@@ -2763,6 +2813,56 @@
             "description": "Must not contain NUL characters.",
             "maxLength": 200,
             "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateOnboardingDto": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "enum": [true],
+            "type": "boolean"
+          },
+          "draftImage": {
+            "enum": ["mirewalker", "outlook", "harbor"],
+            "type": "string"
+          },
+          "draftName": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "draftRole": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "draftText": {
+            "maxLength": 5000,
+            "type": "string"
+          },
+          "phase": {
+            "enum": ["choice", "intro", "tour"],
+            "type": "string"
+          },
+          "skipped": {
+            "type": "boolean"
+          },
+          "step": {
+            "maximum": 4,
+            "minimum": 0,
+            "type": "number"
+          },
+          "storyType": {
+            "enum": [
+              "ttrpg",
+              "fiction",
+              "worldbuilding",
+              "film",
+              "game",
+              "other"
+            ],
             "type": "string"
           }
         },
@@ -26528,6 +26628,345 @@
           }
         ],
         "summary": "get Me",
+        "tags": ["Users"]
+      }
+    },
+    "/api/v1/users/me/onboarding": {
+      "get": {
+        "description": "Current user onboarding progress only.",
+        "operationId": "Users_getOnboarding",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingResponseDto"
+                }
+              }
+            },
+            "description": "Success.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Not found or inaccessible private resource.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the HTTP request budget resets, when available.",
+                "schema": {
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "get Onboarding",
+        "tags": ["Users"]
+      },
+      "patch": {
+        "description": "Save current user onboarding progress. Completion is one-way.",
+        "operationId": "Users_updateOnboarding",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOnboardingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingResponseDto"
+                }
+              }
+            },
+            "description": "Success.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Not found or inaccessible private resource.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds until the HTTP request budget resets, when available.",
+                "schema": {
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorDto"
+                }
+              }
+            },
+            "description": "Standard safe API error.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Server-generated request correlation ID.",
+                "schema": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "update Onboarding",
         "tags": ["Users"]
       }
     }
