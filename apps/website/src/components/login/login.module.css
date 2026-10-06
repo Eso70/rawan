@@ -1,0 +1,478 @@
+.page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  color: #f6f5f7;
+  font-family: "Rawan Space Grotesk", sans-serif;
+  background:
+    linear-gradient(#00000040, #00000040),
+    radial-gradient(
+      90% 70% at 80% 15%,
+      rgba(177, 141, 212, 0.35),
+      transparent 60%
+    ),
+    radial-gradient(
+      80% 80% at 15% 20%,
+      rgba(64, 140, 160, 0.4),
+      transparent 55%
+    ),
+    radial-gradient(
+      100% 80% at 70% 90%,
+      rgba(217, 74, 51, 0.18),
+      transparent 55%
+    ),
+    linear-gradient(160deg, #1d2c50 0%, #263e63 100%);
+}
+.page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #ffffff1a 1px, transparent 1px);
+  background-size: 15px 15px;
+}
+.page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.canvasHost {
+  position: absolute;
+  inset: 0;
+}
+.scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 13px;
+  color: #fff9;
+}
+.colorShape {
+  position: absolute;
+  width: 620px;
+  height: 125%;
+  top: -13%;
+  left: -380px;
+  background: #f4b23e;
+  border-radius: 43% 57% 62% 38% / 46% 40% 60% 54%;
+  transform: rotate(-18deg);
+  animation: shapeDrift 24s ease-in-out infinite alternate;
+}
+.palette {
+  position: absolute;
+  top: 33.6px;
+  left: 33.6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8.4px;
+  z-index: 2;
+}
+.palette button {
+  position: relative;
+  width: 21px;
+  height: 21px;
+  padding: 0;
+  border: 2px solid #0004;
+  border-radius: 50%;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+}
+.palette button:hover {
+  transform: scale(1.15);
+}
+.copyTip {
+  position: absolute;
+  left: 27px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px 15px;
+  white-space: nowrap;
+  border-radius: 14px;
+  background: #11262be6;
+  border: 1px solid #fff2;
+  color: white;
+  font-size: 12px;
+  animation: appear 0.15s ease;
+}
+.credit,
+.year {
+  position: absolute;
+  left: 33.6px;
+  font-size: 12.6px;
+  color: #fff9;
+  writing-mode: vertical-rl;
+  z-index: 2;
+}
+.credit {
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 180px;
+}
+.credit:hover {
+  color: white;
+}
+.year {
+  bottom: 33.6px;
+}
+.panel {
+  position: relative;
+  z-index: 1;
+  margin-left: 55%;
+  min-height: 100svh;
+  padding: 120px 33.6px 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.logo {
+  position: absolute;
+  top: 33.6px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+}
+.logo img {
+  width: 38px;
+  height: 38px;
+  filter: brightness(0) invert(1);
+  animation: featherFloat 6s ease-in-out infinite;
+}
+.content {
+  width: min(400px, 100%);
+  text-align: center;
+  animation: appear 0.65s ease both;
+  position: relative;
+  top: 33px;
+}
+.content h1 {
+  margin: 0 0 17px;
+  font-family: "Rawan Inter", sans-serif;
+  font-size: 37.8px;
+  font-weight: 500;
+  line-height: 1.33;
+  letter-spacing: -1.2px;
+  white-space: nowrap;
+  min-height: 50.4px;
+}
+.content .signupHeading {
+  white-space: normal;
+  min-height: 100.8px;
+}
+.caret {
+  display: inline-block;
+  font-weight: 400;
+  animation: blink 0.65s steps(1) infinite;
+}
+.providers {
+  display: flex;
+  flex-direction: column;
+  gap: 10.5px;
+}
+.provider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 46.2px;
+  padding: 10px 16px;
+  border: 1px solid #ffffff33;
+  border-radius: 18.6px;
+  background: #ffffff1a;
+  color: inherit;
+  font-size: 14.7px;
+  font-weight: 400;
+  backdrop-filter: blur(8px);
+  transition:
+    background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.provider:hover {
+  background: #ffffff33;
+  border-color: #ffffff4d;
+}
+.provider:active,
+.submit:active {
+  scale: 0.98;
+}
+.lastProvider {
+  background: #ffffff40;
+  border-color: #ffffff4d;
+  font-weight: 500;
+}
+.lastHint {
+  font-size: 12.6px;
+  line-height: 16.8px;
+  color: #fff6;
+  margin: 6px 0 0;
+}
+.signup {
+  margin: 16.8px 0 0;
+  font-size: 14.7px;
+  line-height: 21px;
+  color: #ffffff80;
+}
+.signup button,
+.footer button,
+.forgot,
+.back {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+.signup button {
+  color: #f6f5f7;
+}
+.signup button:hover,
+.forgot:hover,
+.back:hover,
+.footer button:hover {
+  color: white;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer a:hover {
+  color: white;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer {
+  position: absolute;
+  bottom: 16.8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #ffffff80;
+  font-size: 12.6px;
+}
+.language {
+  position: relative;
+}
+.language summary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  cursor: pointer;
+}
+.language summary::-webkit-details-marker {
+  display: none;
+}
+.language[open] summary svg {
+  transform: rotate(180deg);
+}
+.languageMenu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: -36px;
+  width: 120px;
+  border-radius: 14px;
+  background: #09090ef0;
+  backdrop-filter: blur(12px);
+  border: 1px solid #ffffff0d;
+  padding: 6px;
+  animation: appear 0.15s ease;
+}
+.languageMenu button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 6px;
+  border-radius: 8px;
+  color: #fff;
+}
+.languageMenu button:hover {
+  background: #ffffff12;
+  text-decoration: none;
+}
+.languageMenu span {
+  color: #fff6;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16.8px;
+}
+.form input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #ffffff17;
+  border-radius: 18.6px;
+  padding: 12px;
+  background: #ffffff0d;
+  font: inherit;
+  color: white;
+  outline: none;
+}
+.form input:focus {
+  border-color: #ffffff70;
+  background: #ffffff12;
+}
+.form input::placeholder {
+  color: #ffffff70;
+}
+.password {
+  position: relative;
+}
+.password input {
+  padding-right: 44px;
+}
+.password button {
+  position: absolute;
+  right: 12px;
+  top: 0;
+  height: 100%;
+  border: 0;
+  background: none;
+  color: #ffffff70;
+}
+.submit {
+  border: 0;
+  border-radius: 12px;
+  background: #ffffff1a;
+  min-height: 36px;
+  font-size: 14.7px;
+  font-weight: 600;
+  color: inherit;
+  transition:
+    background-color 0.15s ease,
+    scale 0.15s ease;
+}
+.submit:hover {
+  background: #ffffff30;
+}
+.forgot {
+  display: block;
+  margin: 16px auto 0;
+  color: #ffffff90;
+  font-size: 14.7px;
+}
+.form ~ .signup {
+  margin-top: 10px;
+}
+.back {
+  display: block;
+  margin: 22px auto 0;
+  color: #ffffff80;
+  font-size: 14.7px;
+}
+.notice {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #e8e1f0;
+  margin: 16px 0 0;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes shapeDrift {
+  to {
+    transform: translate(-40px, 36%) rotate(-75deg);
+  }
+}
+@keyframes featherFloat {
+  50% {
+    transform: rotate(12deg) translateY(-2px);
+  }
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (min-width: 768px) and (max-width: 1100px) {
+  .panel {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .content h1 {
+    font-size: 30px;
+    white-space: normal;
+  }
+}
+@media (max-width: 767px) {
+  .art {
+    display: none;
+  }
+  .panel {
+    margin: 0;
+    padding: 130px 33.6px 100px;
+  }
+  .logo {
+    top: 25px;
+  }
+  .content {
+    top: 0;
+  }
+  .content h1 {
+    font-size: 28px;
+    letter-spacing: -0.6px;
+    margin-bottom: 31px;
+    min-height: 37.25px;
+  }
+  .content .signupHeading {
+    min-height: 74.5px;
+  }
+  .footer {
+    bottom: 16.8px;
+  }
+}
+@media (max-width: 360px) {
+  .panel {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .content h1 {
+    font-size: 25px;
+  }
+}
+@media (max-height: 600px) {
+  .panel {
+    min-height: 600px;
+  }
+}

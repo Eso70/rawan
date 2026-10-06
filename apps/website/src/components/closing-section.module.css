@@ -178,6 +178,13 @@
   color: inherit;
   background: transparent;
 }
+.footerItem a:hover,
+.social a:hover {
+  color: #fff;
+}
+.footerItem a[aria-current="page"] {
+  color: #ffffffb3;
+}
 .resources summary {
   display: flex;
   align-items: center;

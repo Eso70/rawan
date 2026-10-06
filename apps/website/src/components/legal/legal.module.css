@@ -1,0 +1,95 @@
+.page {
+  min-height: 100svh;
+  font-family: "Rawan Space Grotesk", sans-serif;
+}
+.main {
+  width: min(768px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 128px 0 96px;
+}
+.heading {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.heading h1 {
+  margin: 0 0 16px;
+  font:
+    600 36px/40px "Rawan Inter",
+    sans-serif;
+  color: #fff;
+  letter-spacing: -1px;
+}
+.heading p {
+  margin: 0;
+  color: #fff9;
+  font-size: 14px;
+  line-height: 20px;
+}
+.document {
+  border: 1px solid #fff3;
+  background: #ffffff1a;
+  border-radius: 18px;
+  padding: 32px;
+  backdrop-filter: blur(8px);
+  color: #fffc;
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+.document section + section {
+  margin-top: 24px;
+}
+.document h2 {
+  font:
+    500 16px/24px "Rawan Inter",
+    sans-serif;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.document h3 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #fff;
+  margin: 12px 0 8px;
+}
+.document p {
+  margin: 0;
+}
+.document p + p {
+  margin-top: 8px;
+}
+.document ul {
+  padding-left: 20px;
+  margin: 8px 0 0 8px;
+}
+.document li + li {
+  margin-top: 4px;
+}
+.document ul + p {
+  margin-top: 8px;
+}
+.document a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.document a:hover {
+  color: #93c5fd;
+}
+@media (max-width: 767px) {
+  .main {
+    padding-top: 112px;
+    padding-bottom: 64px;
+  }
+  .document {
+    padding: 24px;
+  }
+}
+@media (max-width: 360px) {
+  .heading h1 {
+    font-size: 30px;
+    line-height: 36px;
+  }
+}

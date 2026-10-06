@@ -20,13 +20,11 @@ import {
   IconPlane,
   IconArrowRight,
   IconCheck,
-  IconBrandTiktok,
-  IconBrandInstagram,
-  IconBrandDiscordFilled,
 } from "@tabler/icons-react";
 import { BrandMark } from "./brand-mark";
 import styles from "./closing-section.module.css";
 import { usePageVisible } from "./use-page-visible";
+import { SiteFooter } from "./site-footer";
 
 const tools = [
   { label: "Cards", icon: IconCardsFilled, color: "#34d399" },
@@ -44,12 +42,6 @@ const tools = [
   { label: "Audio", icon: IconVolume, color: "#fb9c30" },
   { label: "Sprite Viewer", icon: IconPhoto, color: "#a78bfa" },
   { label: "Travel", icon: IconPlane, color: "#60a5fa" },
-];
-const social = [
-  { name: "TikTok", icon: IconBrandTiktok },
-  { name: "YouTube", icon: IconBrandYoutube },
-  { name: "Instagram", icon: IconBrandInstagram },
-  { name: "Discord", icon: IconBrandDiscordFilled },
 ];
 
 export function ClosingSection() {
@@ -170,55 +162,7 @@ export function ClosingSection() {
           </p>
         </motion.div>
       </section>
-      <footer className={styles.footer}>
-        <a href="/" className={styles.brand} aria-label="Rawan home">
-          <BrandMark className={styles.footerMark} />
-          <span>rawan</span>
-        </a>
-        <nav className={styles.footerNav} aria-label="Footer navigation">
-          <details className={styles.resources}>
-            <summary>Resources</summary>
-            <ul>
-              <li>
-                <a href="#toolkit">The toolkit</a>
-              </li>
-              <li>
-                <a href="#community">Creator community</a>
-              </li>
-              <li>
-                <a href="#creators">Build your world</a>
-              </li>
-            </ul>
-          </details>
-          {["What’s new", "Careers", "Terms", "Privacy"].map((label) => (
-            <span className={styles.footerItem} key={label}>
-              <span aria-hidden="true">•</span>
-              <button type="button" disabled title="Coming later">
-                {label}
-              </button>
-            </span>
-          ))}
-          <span className={styles.copyright}>
-            <span aria-hidden="true">•</span>© 2026 rawan
-          </span>
-        </nav>
-        <div className={styles.social} aria-label="Social channels">
-          {social.map((item) => {
-            const SocialIcon = item.icon;
-            return (
-              <button
-                key={item.name}
-                type="button"
-                disabled
-                aria-label={`${item.name} — coming later`}
-                title={`${item.name} — coming later`}
-              >
-                <SocialIcon size={21} stroke={2} aria-hidden="true" />
-              </button>
-            );
-          })}
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

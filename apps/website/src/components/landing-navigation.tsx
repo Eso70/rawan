@@ -51,9 +51,9 @@ export function LandingNavigation() {
           </span>
         </div>
         <div className={styles.navRight}>
-          <button className={styles.login} onClick={onAction}>
+          <a className={styles.login} href="/login">
             Login
-          </button>
+          </a>
           <button className={styles.navCta} onClick={onAction}>
             Start Building
           </button>
