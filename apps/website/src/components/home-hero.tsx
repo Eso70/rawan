@@ -6,38 +6,35 @@ import styles from "./home-hero.module.css";
 
 export function HomeHero() {
   const video = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => {
-      const element = video.current;
-      if (!element) return;
-      if (preference.matches) {
-        element.pause();
-      } else {
-        element.play().catch(() => setPlaying(false));
-      }
-    };
-    sync();
-    preference.addEventListener("change", sync);
-    return () => preference.removeEventListener("change", sync);
-  }, []);
-
-  function togglePlayback() {
     const element = video.current;
     if (!element) return;
-    if (element.paused)
-      element
-        .play()
-        .catch(() =>
-          setNotice(
-            "Your browser paused the background video. You can still explore this page.",
-          ),
-        );
-    else element.pause();
-  }
+    let visible = true;
+    const sync = () => {
+      if (preference.matches || !visible || document.hidden) {
+        element.pause();
+      } else {
+        element.play().catch(() => {});
+      }
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      sync();
+    });
+    observer.observe(element);
+    sync();
+    preference.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      observer.disconnect();
+      preference.removeEventListener("change", sync);
+      document.removeEventListener("visibilitychange", sync);
+      element.pause();
+    };
+  }, []);
 
   function showNextStep() {
     setNotice(
@@ -56,8 +53,6 @@ export function HomeHero() {
           playsInline
           preload="metadata"
           poster="/videos/homepagevid-poster.jpg"
-          onPlay={() => setPlaying(true)}
-          onPause={() => setPlaying(false)}
         >
           <source
             media="(max-width: 767px)"
@@ -69,51 +64,6 @@ export function HomeHero() {
         <div className={styles.shade} />
         <div className={styles.bottomFade} />
       </div>
-      <header className={styles.header}>
-        <nav className={styles.nav} aria-label="Main navigation">
-          <div className={styles.navLeft}>
-            <a className={styles.brand} href="/" aria-label="Rawan home">
-              <BrandMark className={styles.brandMark} priority />
-              <span>rawan</span>
-            </a>
-            <div className={styles.navLinks}>
-              <button disabled title="Coming later">
-                Why Rawan
-              </button>
-              <button disabled title="Coming later">
-                Pricing
-              </button>
-              <button disabled title="Coming later">
-                Download
-              </button>
-            </div>
-            <span className={styles.language}>
-              EN
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 12 12"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="m3 4.5 3 3 3-3"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-          </div>
-          <div className={styles.navRight}>
-            <button className={styles.login} onClick={showNextStep}>
-              Login
-            </button>
-            <button className={styles.navCta} onClick={showNextStep}>
-              Start Building
-            </button>
-          </div>
-        </nav>
-      </header>
       <section className={styles.content} aria-labelledby="hero-title">
         <div className={styles.badge}>
           <BrandMark className={styles.badgeMark} />
@@ -153,37 +103,6 @@ export function HomeHero() {
           />
         </svg>
       </span>
-      <button
-        className={styles.playback}
-        onClick={togglePlayback}
-        aria-label={
-          playing ? "Pause background video" : "Play background video"
-        }
-        title={playing ? "Pause background video" : "Play background video"}
-      >
-        {playing ? (
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <rect x="4" y="3" width="2" height="10" rx="1" />
-            <rect x="10" y="3" width="2" height="10" rx="1" />
-          </svg>
-        ) : (
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M5 3v10l8-5-8-5Z" />
-          </svg>
-        )}
-      </button>
     </section>
   );
 }

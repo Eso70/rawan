@@ -1,17 +1,7 @@
 .section {
   position: relative;
-  padding: 100px 0;
+  padding: 100.8px 0;
   overflow: clip;
-  background-color: #0b1019;
-  background-image: radial-gradient(circle, #ffffff1c 0.8px, transparent 1px);
-  background-size: 16px 16px;
-}
-.section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(#09090b 0%, transparent 25%, #0d172333 100%);
 }
 .layout {
   position: relative;
@@ -27,7 +17,9 @@
 }
 .sticky {
   position: sticky;
-  top: 100px;
+  top: 100.8px;
+  padding: 5px;
+  margin: -5px;
 }
 .intro {
   margin-bottom: 38px;
@@ -112,6 +104,10 @@
   color: #a78bfa;
   background: #a78bfa20;
 }
+.collaborateIcon {
+  color: #f472b6;
+  background: #f472b620;
+}
 .card:not(.active) .icon {
   color: #ffffff99;
   background: #ffffff1a;
@@ -161,19 +157,6 @@
   height: 100%;
   object-fit: contain;
 }
-.playback {
-  position: absolute;
-  right: var(--control-right, 14px);
-  top: 14px;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 1px solid #ffffff40;
-  color: white;
-  background: #0009;
-}
 .playback:hover {
   background: #252525;
 }
@@ -197,6 +180,8 @@
   }
   .sticky {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
   .featureList {
     display: none;
@@ -239,12 +224,6 @@
   }
   .frame {
     border-radius: 22px;
-  }
-  .playback {
-    width: 40px;
-    height: 40px;
-    right: 10px;
-    top: 10px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

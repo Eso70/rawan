@@ -41,96 +41,21 @@
   height: 269px;
   background: linear-gradient(
     to top,
-    #09090b 0%,
-    rgb(9 9 11 / 80%) 40%,
+    #0a0f1a 0%,
+    rgb(10 15 26 / 80%) 40%,
     transparent 100%
   );
 }
-.header {
-  position: absolute;
-  top: 17px;
-  left: 0;
-  right: 0;
-  z-index: 2;
-}
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1613px;
-  margin: 0 auto;
-  padding: 0 34px;
-  gap: 20px;
-  font-family: "Arizona Flare", "Rawan Lora", Georgia, serif;
-  font-size: 12.6px;
-  line-height: 16.8px;
-  font-weight: 500;
-}
-.navLeft,
-.navRight,
-.navLinks {
-  display: flex;
-  align-items: center;
-}
-.navLeft {
-  gap: 17px;
-}
-.navLinks {
-  gap: 17px;
-}
-.navRight {
-  gap: 13px;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-family: "Rawan Inter", Arial, sans-serif;
-  font-weight: 600;
-  font-size: 18px;
-  letter-spacing: -0.6px;
-}
-.brandMark,
 .badgeMark {
   display: block;
   object-fit: contain;
   filter: brightness(0) invert(1);
-  flex-shrink: 0;
-  transform-origin: 25% 85%;
-  animation: featherDrift 6s ease-in-out infinite;
-}
-.brandMark {
-  width: 28px;
-  height: 28px;
-}
-.badgeMark {
   width: 18px;
   height: 18px;
-  animation-delay: 0.6s;
+  flex-shrink: 0;
+  transform-origin: 25% 85%;
+  animation: featherDrift 6s 0.6s ease-in-out infinite;
 }
-.navLinks button,
-.login {
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: rgb(255 255 255 / 80%);
-  font: inherit;
-}
-.login {
-  padding: 8px 12px;
-  border-radius: 12.6px;
-}
-.login:hover {
-  background: #fff1;
-  color: #fff;
-}
-.language {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: #fffc;
-}
-.navCta,
 .primaryCta {
   display: inline-flex;
   justify-content: center;
@@ -146,14 +71,9 @@
     transform 0.15s;
   font: inherit;
 }
-.navCta {
-  padding: 0 13px;
-}
-.navCta:hover,
 .primaryCta:hover {
   background: #f0f0f0;
 }
-.navCta:active,
 .primaryCta:active {
   transform: scale(0.98);
 }
@@ -292,19 +212,6 @@
   transform: translateX(-50%);
   color: #fff6;
 }
-.playback {
-  position: absolute;
-  right: 24px;
-  bottom: 24px;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  background: #0003;
-  border: 1px solid #ffffff26;
-  border-radius: 50%;
-  color: #fffb;
-}
 .playback:hover {
   background: #fff2;
   color: white;
@@ -342,11 +249,6 @@
     transform: translateX(150%);
   }
 }
-@media (max-width: 1023px) {
-  .nav {
-    padding-inline: 17px;
-  }
-}
 @media (max-width: 767px) {
   .content {
     transform: translateY(-34px);
@@ -359,20 +261,8 @@
     font-size: 14.7px;
     line-height: 21px;
   }
-  .navLinks {
-    display: none;
-  }
 }
 @media (max-width: 639px) {
-  .nav {
-    gap: 10px;
-  }
-  .navLeft {
-    gap: 17px;
-  }
-  .login {
-    display: none;
-  }
   .content h1 {
     font-size: 31.5px;
     line-height: 37.8px;
@@ -385,12 +275,6 @@
   .primaryCta {
     min-height: 38px;
   }
-  .playback {
-    right: 17px;
-    bottom: 25px;
-    width: 40px;
-    height: 40px;
-  }
 }
 @media (max-height: 600px) and (min-width: 768px) {
   .content {
@@ -400,7 +284,6 @@
 @media (prefers-reduced-motion: reduce) {
   .content > *,
   .badge::after,
-  .brandMark,
   .badgeMark {
     animation: none;
   }

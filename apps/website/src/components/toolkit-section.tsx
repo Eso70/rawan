@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Lenis from "lenis";
+import { useLandingScroll } from "./landing-scroll";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import styles from "./toolkit-section.module.css";
 import { ConnectionsCanvas } from "./connections-canvas";
@@ -31,6 +31,12 @@ const features = [
     description:
       "Publish a home for your world's stories. Choose the look of your wiki, organize its pages, and share your lore with readers and players.",
   },
+  {
+    id: "collaborate",
+    title: "Collaborate in Real Time",
+    description:
+      "Bring your writing team into one shared world. Develop your stories together, keep ideas connected, and make progress side by side.",
+  },
 ];
 
 function FeatureIcon({ id }: { id: string }) {
@@ -46,7 +52,12 @@ function FeatureIcon({ id }: { id: string }) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      {id === "connections" ? (
+      {id === "collaborate" ? (
+        <>
+          <circle cx="9" cy="7" r="4" />
+          <path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M16 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87" />
+        </>
+      ) : id === "connections" ? (
         <>
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
@@ -71,24 +82,7 @@ function FeatureIcon({ id }: { id: string }) {
 function DemoVideo({ id, title }: { id: string; title: string }) {
   const frame = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
-  const manuallyPaused = useRef(false);
   const [loaded, setLoaded] = useState(false);
-  const [playing, setPlaying] = useState(false);
-
-  useEffect(() => {
-    const updateControl = () => {
-      const element = frame.current;
-      if (!element) return;
-      const rect = element.getBoundingClientRect();
-      element.style.setProperty(
-        "--control-right",
-        `${Math.max(14, rect.right - window.innerWidth + 24)}px`,
-      );
-    };
-    updateControl();
-    window.addEventListener("resize", updateControl);
-    return () => window.removeEventListener("resize", updateControl);
-  }, []);
 
   useEffect(() => {
     const element = frame.current;
@@ -113,8 +107,8 @@ function DemoVideo({ id, title }: { id: string; title: string }) {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let visible = false;
     const sync = () => {
-      if (visible && !preference.matches && !manuallyPaused.current) {
-        element.play().catch(() => setPlaying(false));
+      if (visible && !document.hidden && !preference.matches) {
+        element.play().catch(() => {});
       } else element.pause();
     };
     const observer = new IntersectionObserver(
@@ -126,20 +120,14 @@ function DemoVideo({ id, title }: { id: string; title: string }) {
     );
     observer.observe(element);
     preference.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       observer.disconnect();
       preference.removeEventListener("change", sync);
+      document.removeEventListener("visibilitychange", sync);
       element.pause();
     };
   }, [loaded]);
-
-  function toggle() {
-    const element = video.current;
-    if (!element) return;
-    manuallyPaused.current = !element.paused;
-    if (element.paused) element.play().catch(() => setPlaying(false));
-    else element.pause();
-  }
 
   return (
     <div className={styles.frame} ref={frame}>
@@ -152,8 +140,6 @@ function DemoVideo({ id, title }: { id: string; title: string }) {
         poster={`/videos/toolkit/${id}-poster.jpg`}
         aria-label={`${title} demonstration`}
         aria-hidden={!loaded}
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
       >
         {loaded && (
           <>
@@ -166,35 +152,6 @@ function DemoVideo({ id, title }: { id: string; title: string }) {
           </>
         )}
       </video>
-      <button
-        className={styles.playback}
-        onClick={toggle}
-        disabled={!loaded}
-        aria-label={`${playing ? "Pause" : "Play"} ${title} video`}
-      >
-        {playing ? (
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <rect x="4" y="3" width="2" height="10" />
-            <rect x="10" y="3" width="2" height="10" />
-          </svg>
-        ) : (
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M5 3v10l8-5Z" />
-          </svg>
-        )}
-      </button>
     </div>
   );
 }
@@ -203,36 +160,16 @@ export function ToolkitSection() {
   const panels = useRef<(HTMLElement | null)[]>([]);
   const [active, setActive] = useState(0);
   const reduceMotion = useReducedMotion();
-  const scroller = useRef<Lenis | null>(null);
+  const scroller = useLandingScroll();
   const selectionLocked = useRef(false);
   const selectionTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => {
-      scroller.current?.destroy();
-      scroller.current = null;
-      if (
-        preference.matches ||
-        navigator.maxTouchPoints > 0 ||
-        window.matchMedia("(hover: none) and (pointer: coarse)").matches
-      )
-        return;
-      scroller.current = new Lenis({
-        autoRaf: true,
-        duration: 1.2,
-        easing: (value) => Math.min(1, 1.001 - Math.pow(2, -10 * value)),
-        smoothWheel: true,
-      });
-    };
-    sync();
-    preference.addEventListener("change", sync);
-    return () => {
-      scroller.current?.destroy();
-      preference.removeEventListener("change", sync);
+  useEffect(
+    () => () => {
       if (selectionTimeout.current) clearTimeout(selectionTimeout.current);
-    };
-  }, []);
+    },
+    [],
+  );
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -319,12 +256,16 @@ export function ToolkitSection() {
     if (selectionTimeout.current) clearTimeout(selectionTimeout.current);
     selectionTimeout.current = setTimeout(() => {
       selectionLocked.current = false;
-    }, 1000);
+    }, 1500);
     const rect = panel.getBoundingClientRect();
     const top =
       window.scrollY + rect.top - window.innerHeight / 2 + rect.height / 2;
-    if (scroller.current) {
-      scroller.current.scrollTo(top);
+    if (scroller?.current) {
+      scroller.current.scrollTo(top, {
+        onComplete: () => {
+          selectionLocked.current = false;
+        },
+      });
       return;
     }
     window.scrollTo({
@@ -374,7 +315,7 @@ export function ToolkitSection() {
                 >
                   <span className={styles.cardTitle}>
                     <motion.span
-                      className={`${styles.icon} ${feature.id === "map" ? styles.mapIcon : feature.id === "wiki" ? styles.wikiIcon : feature.id === "connections" ? styles.connectionsIcon : ""}`}
+                      className={`${styles.icon} ${feature.id === "map" ? styles.mapIcon : feature.id === "wiki" ? styles.wikiIcon : feature.id === "connections" ? styles.connectionsIcon : feature.id === "collaborate" ? styles.collaborateIcon : ""}`}
                       animate={{
                         width: active === index ? 28 : 24,
                         height: active === index ? 28 : 24,
@@ -442,7 +383,7 @@ export function ToolkitSection() {
               <div className={styles.mobileCopy}>
                 <h3 id={`title-${feature.id}`}>
                   <span
-                    className={`${styles.icon} ${feature.id === "map" ? styles.mapIcon : feature.id === "wiki" ? styles.wikiIcon : feature.id === "connections" ? styles.connectionsIcon : ""}`}
+                    className={`${styles.icon} ${feature.id === "map" ? styles.mapIcon : feature.id === "wiki" ? styles.wikiIcon : feature.id === "connections" ? styles.connectionsIcon : feature.id === "collaborate" ? styles.collaborateIcon : ""}`}
                   >
                     <FeatureIcon id={feature.id} />
                   </span>

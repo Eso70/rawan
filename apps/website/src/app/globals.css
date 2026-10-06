@@ -12,6 +12,18 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "Rawan Space Grotesk";
+  src: url("/fonts/space-grotesk.ttf") format("truetype");
+  font-weight: 300 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rawan Caveat";
+  src: url("/fonts/caveat.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: swap;
+}
 :root {
   color-scheme: dark;
   background: #09090b;
@@ -20,9 +32,33 @@
 }
 * {
   box-sizing: border-box;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
 body {
   margin: 0;
+}
+.landing-surface {
+  position: relative;
+  background-color: #0a0f1a;
+  background-image:
+    radial-gradient(circle, #ffffff1f 1px, transparent 1px),
+    radial-gradient(ellipse 100% 50% at 50% 50%, #3878a01f, transparent 70%),
+    linear-gradient(
+      #0a0f1a 0%,
+      #0a0f1a 10%,
+      #162535 30%,
+      #1a3045 50%,
+      #162535 70%,
+      #0a0f1a 90%,
+      #0a0f1a 100%
+    );
+  background-size:
+    16px 16px,
+    100% 100%,
+    100% 100%;
 }
 button,
 a {

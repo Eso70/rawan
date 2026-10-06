@@ -1,0 +1,163 @@
+.header {
+  position: fixed;
+  top: 17px;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transition:
+    transform 0.35s ease-out,
+    opacity 0.35s ease-out;
+}
+.hiddenHeader {
+  transform: translateY(-60px);
+  opacity: 0;
+  pointer-events: none;
+}
+.navigationNotice {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(380px, calc(100vw - 34px));
+  padding: 12px 16px;
+  margin: 0;
+  border: 1px solid #fff3;
+  border-radius: 12px;
+  background: #0a0f1aee;
+  color: #fffc;
+  font:
+    12px/1.6 "Rawan Inter",
+    sans-serif;
+  text-align: center;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1613px;
+  margin: 0 auto;
+  padding: 0 34px;
+  gap: 20px;
+  font-family: "Arizona Flare", "Rawan Lora", Georgia, serif;
+  font-size: 12.6px;
+  line-height: 16.8px;
+  font-weight: 500;
+}
+.navLeft,
+.navRight,
+.navLinks {
+  display: flex;
+  align-items: center;
+}
+.navLeft {
+  gap: 17px;
+}
+.navLinks {
+  gap: 17px;
+}
+.navRight {
+  gap: 13px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Rawan Inter", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.6px;
+}
+.brandMark {
+  display: block;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+  transform-origin: 25% 85%;
+  animation: featherDrift 6s ease-in-out infinite;
+}
+.brandMark {
+  width: 28px;
+  height: 28px;
+}
+.navLinks button,
+.login {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: rgb(255 255 255 / 80%);
+  font: inherit;
+}
+.login {
+  padding: 8px 12px;
+  border-radius: 12.6px;
+}
+.login:hover {
+  background: #fff1;
+  color: #fff;
+}
+.language {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #fffc;
+}
+.navCta {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  border-radius: 12.6px;
+  background: #fff;
+  color: #171717;
+  white-space: nowrap;
+  min-height: 34px;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+  font: inherit;
+}
+.navCta {
+  padding: 0 13px;
+}
+.navCta:hover {
+  background: #f0f0f0;
+}
+.navCta:active {
+  transform: scale(0.98);
+}
+@keyframes featherDrift {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  73% {
+    transform: translateY(-1px) rotate(-7deg);
+  }
+  86% {
+    transform: translateY(0) rotate(3deg);
+  }
+}
+@media (max-width: 1023px) {
+  .nav {
+    padding-inline: 17px;
+  }
+}
+@media (max-width: 767px) {
+  .navLinks {
+    display: none;
+  }
+}
+@media (max-width: 639px) {
+  .nav {
+    gap: 10px;
+  }
+  .login {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brandMark {
+    animation: none;
+  }
+}

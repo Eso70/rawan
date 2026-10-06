@@ -1,0 +1,208 @@
+.section {
+  position: relative;
+  background: #000;
+}
+.transitionIn {
+  height: 201.6px;
+  background: linear-gradient(#0a0f1a, #050508 50%, #000);
+  position: relative;
+}
+.transitionIn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, #ffffff26 1px, transparent 1px);
+  background-size: 16px 16px;
+  mask-image: linear-gradient(#000, transparent);
+}
+.stage {
+  position: relative;
+  min-height: 400vh;
+  background: #000;
+}
+.sticky {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 134.4px 0;
+}
+.copy {
+  position: relative;
+  z-index: 2;
+  max-width: 806.4px;
+  padding: 0 33.6px;
+  margin: 0 auto;
+  text-align: center;
+  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
+  font-size: 31.5px;
+  line-height: 37.8px;
+  font-weight: 500;
+}
+.copy p {
+  margin: 0;
+}
+.line {
+  margin-bottom: 25.2px;
+}
+.flexLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8.4px;
+}
+.handwriting {
+  font-family: "Rawan Caveat", cursive;
+  font-size: 38px;
+  line-height: 42px;
+  font-weight: 700;
+  transform: translateY(4.2px);
+}
+.underlined {
+  position: relative;
+  display: inline-block;
+}
+.underlined > svg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4.2px;
+  width: 100%;
+  height: 8.4px;
+  overflow: visible;
+  pointer-events: none;
+}
+.artists {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4.2px;
+}
+.word,
+.palette,
+.planet {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+}
+.palette {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  z-index: 3;
+}
+.planet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6.3px;
+}
+.planet video {
+  width: 25.2px;
+  height: 25.2px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+.planet:hover video,
+.planet:focus-visible video {
+  transform: scale(1.25);
+}
+.swatches {
+  position: absolute;
+  top: calc(100% + 18px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  padding: 10px;
+  gap: 8px;
+  background: #161616;
+  border: 1px solid #ffffff33;
+  border-radius: 30px;
+  z-index: 4;
+}
+.swatches button {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #fff6;
+  border-radius: 50%;
+}
+.paint {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.photo {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+}
+.photo > div {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12.6px;
+  border: 1px solid #fff3;
+  box-shadow: 0 25px 50px #0004;
+}
+.photo img {
+  object-fit: cover;
+}
+.small {
+  width: 218.4px;
+  height: 168px;
+}
+.medium {
+  width: 268.8px;
+  height: 201.6px;
+}
+.large {
+  width: 336px;
+  height: 252px;
+}
+.transitionOut {
+  height: 400px;
+  background: linear-gradient(#000, #050508 30%, #0a0f1a);
+}
+@media (max-width: 767px) {
+  .sticky {
+    padding: 100.8px 0;
+  }
+  .copy {
+    font-size: 25.2px;
+    line-height: 33.6px;
+    padding: 0 24px;
+  }
+  .handwriting {
+    font-size: 32px;
+    line-height: 33.6px;
+  }
+  .planet video {
+    width: 21px;
+    height: 21px;
+  }
+  .small {
+    width: 151.2px;
+    height: 117.6px;
+  }
+  .medium {
+    width: 201.6px;
+    height: 151.2px;
+  }
+  .large {
+    width: 252px;
+    height: 184.8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    min-height: auto;
+  }
+  .sticky {
+    position: relative;
+  }
+}

@@ -102,7 +102,9 @@ export function ConnectionsCanvas({ className }: { className: string }) {
     );
     loadObserver.observe(container);
     const wheel = (event: WheelEvent) => {
+      if (!event.ctrlKey && !event.metaKey) return;
       event.preventDefault();
+      event.stopPropagation();
       const rect = element.getBoundingClientRect();
       zoomBy(Math.exp(-Math.max(-100, Math.min(100, event.deltaY)) * 0.002), {
         x: event.clientX - rect.left,
@@ -127,9 +129,8 @@ export function ConnectionsCanvas({ className }: { className: string }) {
       <canvas
         ref={canvas}
         data-graph-canvas="true"
-        data-lenis-prevent
         role="img"
-        aria-label="World relationships graph. Drag to pan. Use plus and minus to zoom, arrow keys to pan, and zero to reset."
+        aria-label="World relationships graph. Drag to pan. Control or Command plus wheel zooms. Use plus and minus to zoom, arrow keys to pan, and zero to reset."
         tabIndex={0}
         className={styles.canvas}
         onPointerDown={(event) => {

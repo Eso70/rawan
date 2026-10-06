@@ -1,0 +1,448 @@
+.section {
+  position: relative;
+  min-height: 400vh;
+  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
+}
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-x: clip;
+}
+.layout {
+  position: relative;
+  height: 100%;
+  max-width: 1344px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 33.6px;
+  padding: 0 67.2px;
+}
+.headline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 67.2px;
+}
+.headline h2 {
+  position: absolute;
+  max-width: 403.2px;
+  margin: 0;
+  font-size: 37.8px;
+  line-height: 42px;
+  font-weight: 500;
+}
+.visual {
+  position: relative;
+  height: 100%;
+  transform: scale(0.85);
+}
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.spark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.sparkImage {
+  position: relative;
+  width: 302.4px;
+  height: 403.2px;
+  overflow: hidden;
+  border-radius: 16.8px;
+  border: 1px solid #fff3;
+  background: #171717;
+  box-shadow: 0 25px 50px #0004;
+}
+.sparkImage img,
+.portrait img,
+.map > img,
+.marker img {
+  object-fit: cover;
+}
+.detailPosition {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 420px;
+  height: 540px;
+  z-index: 50;
+}
+.detail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #ffffff1a;
+  border-radius: 8.4px;
+  background: #171717;
+  box-shadow: 0 25px 50px #0004;
+}
+.detailHeader {
+  display: flex;
+  gap: 25.2px;
+  padding: 21px;
+}
+.fields {
+  flex: 1;
+  min-width: 0;
+}
+.fields h3 {
+  margin: 0 0 12.6px;
+  font-size: 25.2px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 33.6px;
+}
+.aliases {
+  display: flex;
+  align-items: center;
+  gap: 6.3px;
+  margin-bottom: 12.6px;
+  font-size: 12.6px;
+  color: #ffffffcc;
+}
+.aliases > span {
+  display: flex;
+  align-items: center;
+  gap: 4.2px;
+  flex-shrink: 0;
+}
+.aliases > div {
+  display: flex;
+  align-items: center;
+  gap: 4.2px;
+  flex-wrap: wrap;
+}
+.alias {
+  display: inline-flex;
+  align-items: center;
+  gap: 4.2px;
+  padding: 2.1px 6.3px;
+  background: #ffffff0d;
+  border-radius: 4.2px;
+  color: #fff9;
+}
+.properties {
+  display: grid;
+  gap: 4.2px;
+}
+.properties > div {
+  display: flex;
+  align-items: center;
+  gap: 6.3px;
+  font-size: 12.6px;
+  color: #fff9;
+}
+.properties > div > span:first-of-type {
+  color: #ffffffcc;
+}
+.properties svg,
+.aliases svg {
+  flex-shrink: 0;
+  color: #ffffff80;
+}
+.portrait {
+  position: relative;
+  width: 151.2px;
+  height: 201.6px;
+  max-width: 40%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 8.4px;
+  border: 1px solid #ffffff1a;
+  background: #ffffff0d;
+}
+.detailBody {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 21px 21px;
+}
+.note {
+  overflow: hidden;
+  border: 1px solid #ffffff1a;
+  border-radius: 8.4px;
+  background: #ffffff05;
+  margin-bottom: 12.6px;
+}
+.note h4 {
+  padding: 6.3px 12.6px;
+  margin: 0;
+  border-bottom: 1px solid #ffffff1a;
+  font-size: 14.7px;
+  font-weight: 600;
+  line-height: 21px;
+  color: #ffffffcc;
+}
+.note p {
+  padding: 12.6px;
+  margin: 0;
+  font-size: 14.7px;
+  line-height: 23.8875px;
+  color: #fff9;
+}
+.treePosition {
+  position: absolute;
+  top: 50%;
+  left: -55%;
+  translate: 0 -50%;
+  width: 200px;
+  height: 540px;
+  z-index: 40;
+}
+.tree {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12.6px;
+  border: 1px solid #ffffff1a;
+  background: #0a0a0a;
+}
+.search {
+  display: flex;
+  align-items: center;
+  margin: 8.4px;
+  padding: 4px 8px;
+  height: 25.2px;
+  gap: 6px;
+  border-radius: 6.3px;
+  background: #ffffff0d;
+  color: #fff6;
+  font-size: 10.5px;
+}
+.search kbd {
+  margin-left: auto;
+  color: #ffffff4d;
+  background: #ffffff0d;
+  border-radius: 3px;
+  padding: 1px 3px;
+}
+.treeBody {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 4.2px 0;
+}
+.treeRow,
+.folder {
+  width: 100%;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  gap: 6.3px;
+  padding: 0 8.4px;
+  border: 0;
+  border-radius: 4.2px;
+  background: transparent;
+  color: #ffffffcc;
+  font-size: 12.6px;
+  text-align: left;
+}
+.treeRow svg,
+.folder svg {
+  flex-shrink: 0;
+  color: #fff9;
+}
+.folder span,
+.treeRow span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+.children .treeRow {
+  padding-left: 21px;
+}
+.selected {
+  background: #ffffff1a;
+}
+.treeRow:hover,
+.folder:hover {
+  background: #ffffff0d;
+}
+.worldRow {
+  background: #fff1;
+  color: #aab6c3;
+}
+.newDocument {
+  display: flex;
+  gap: 4px;
+  padding: 8.4px;
+  border-top: 1px solid #ffffff1a;
+  color: #fff9;
+  font-size: 10.5px;
+}
+.mapPosition {
+  position: absolute;
+  top: 50%;
+  left: -18%;
+  translate: 0 -50%;
+  width: 310px;
+  height: 540px;
+  z-index: 35;
+}
+.map {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12.6px;
+  border: 1px solid #ffffff1a;
+  background: #0a0a0a;
+}
+.mapShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #02061766, transparent, #0206174d);
+}
+.markerPosition {
+  position: absolute;
+  translate: -50% -100%;
+}
+.marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  transform-origin: bottom;
+}
+.marker > span {
+  position: relative;
+  display: block;
+  width: 33.6px;
+  height: 33.6px;
+  overflow: hidden;
+  border-radius: 6.3px;
+  border: 2px solid #737373;
+  background: #171717;
+}
+.marker > .activeMarker {
+  border-color: #c3cd8d;
+}
+.marker small {
+  margin-top: 4.2px;
+  white-space: nowrap;
+  font-size: 9.45px;
+  padding: 2.1px 6.3px;
+  border-radius: 3px;
+  background: #171717e6;
+  border: 1px solid #ffffff1a;
+}
+.mapTools {
+  position: absolute;
+  bottom: 12.6px;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  padding: 4.2px 8.4px;
+  gap: 4.2px;
+  border: 1px solid #ffffff1a;
+  background: #171717e6;
+  border-radius: 8.4px;
+}
+.mapTools span {
+  width: 25.2px;
+  height: 25.2px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+}
+.mapTools span:first-child {
+  background: #ffffff1a;
+}
+.mapTools i {
+  display: block;
+  width: 12.6px;
+  height: 12.6px;
+  border-radius: 4px;
+  background: #fff3;
+}
+@media (max-width: 1023px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+  }
+  .headline {
+    flex-shrink: 0;
+    height: 134.4px;
+    padding: 117.6px 25.2px 0;
+    justify-content: center;
+  }
+  .headline h2 {
+    font-size: 25.2px;
+    line-height: 33.6px;
+    text-align: center;
+  }
+  .visual {
+    flex: 1;
+    min-height: 0;
+    overflow: clip;
+    transform: scale(1.1);
+    transform-origin: top center;
+  }
+  .detailPosition {
+    width: 380px;
+  }
+  .treePosition {
+    left: 0;
+    width: 180px;
+  }
+  .mapPosition {
+    left: 12%;
+    width: 260px;
+  }
+  .sparkImage {
+    width: 268.8px;
+    height: 336px;
+  }
+  .portrait {
+    width: 134.4px;
+    height: 179.2px;
+  }
+}
+@media (max-width: 767px) {
+  .detailPosition {
+    width: 320px;
+  }
+  .sparkImage {
+    width: 218.4px;
+    height: 302.4px;
+  }
+  .detailHeader {
+    gap: 16.8px;
+    padding: 16.8px;
+  }
+  .fields h3 {
+    font-size: 21px;
+    line-height: 29.4px;
+  }
+  .portrait {
+    width: 117.6px;
+    height: 156.8px;
+  }
+  .detailBody {
+    padding: 0 16.8px 16.8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section {
+    min-height: 100vh;
+  }
+  .sticky {
+    position: relative;
+  }
+}

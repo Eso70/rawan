@@ -1,0 +1,267 @@
+.closing {
+  position: relative;
+  color: #fff;
+}
+.section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 16.8px;
+}
+.content {
+  position: relative;
+  max-width: 940.8px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.mark {
+  filter: brightness(0) invert(1);
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-bottom: 16.8px;
+  opacity: 0.9;
+  animation: featherSway 6s ease-in-out infinite;
+}
+.content h2 {
+  font-family: "Rawan Lora", Georgia, serif;
+  font-size: 31.5px;
+  line-height: 37.8px;
+  font-weight: 400;
+  margin: 0 0 16.8px;
+}
+.showcase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8.4px;
+  margin-bottom: 21px;
+  min-height: 24px;
+}
+.slot {
+  display: flex;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6.3px;
+  padding: 2.1px 8.4px;
+  border: 1px solid;
+  border-radius: 6.3px;
+  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
+  font-size: 12.6px;
+  line-height: 16.8px;
+  font-weight: 600;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+  transition: background-color 0.2s;
+}
+.chip:hover {
+  background-color: color-mix(
+    in srgb,
+    currentColor 20%,
+    transparent
+  ) !important;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8.4px;
+  padding: 10.5px 16.8px;
+  border: 1px solid #fff3;
+  border-radius: 12.6px;
+  background: #ffffff1a;
+  color: #fff;
+  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
+  font-size: 14.7px;
+  line-height: 21px;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
+}
+.cta:hover {
+  background: #fff3;
+}
+.cta:active {
+  transform: scale(0.98);
+}
+.reassurance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16.8px;
+  list-style: none;
+  padding: 0;
+  margin: 16.8px 0 0;
+  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
+  font-size: 12.6px;
+  line-height: 16.8px;
+  color: #ffffff66;
+}
+.reassurance li {
+  display: flex;
+  align-items: center;
+  gap: 6.3px;
+}
+.reassurance svg {
+  color: #34d399;
+}
+.notice {
+  position: absolute;
+  top: 100%;
+  max-width: 440px;
+  font-size: 12.6px;
+  line-height: 1.6;
+  color: #ffffff99;
+  margin: 14px 0 0;
+}
+.footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  padding: 8.4px 25.2px;
+  gap: 8.4px;
+  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
+  color: #ffffff66;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 25.2px;
+  line-height: 33.6px;
+  font-weight: 500;
+  min-height: 46.2px;
+}
+.footerMark {
+  filter: brightness(0) invert(1);
+  width: 39px;
+  height: 39px;
+  opacity: 0.4;
+  transition:
+    transform 0.5s,
+    opacity 0.5s;
+}
+.brand:hover {
+  color: #fff;
+}
+.brand:hover .footerMark {
+  transform: rotate(15deg);
+  opacity: 1;
+}
+.footerNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: center;
+  gap: 8.4px;
+  font-size: 14.7px;
+  line-height: 21px;
+}
+.footerItem,
+.copyright {
+  display: inline-flex;
+  align-items: center;
+  gap: 8.4px;
+  min-height: 46.2px;
+}
+.footerItem button {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+}
+.resources summary {
+  display: flex;
+  align-items: center;
+  min-height: 46.2px;
+  cursor: pointer;
+  list-style: none;
+}
+.resources summary::-webkit-details-marker {
+  display: none;
+}
+.resources summary:hover,
+.resources a:hover {
+  color: #fff;
+}
+.resources ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 12.6px;
+  text-align: left;
+}
+.resources a {
+  display: flex;
+  align-items: center;
+  min-height: 46.2px;
+  color: #ffffffb3;
+}
+.social {
+  display: flex;
+  gap: 12.6px;
+  min-height: 46.2px;
+  align-items: center;
+  justify-self: end;
+}
+.social button {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+}
+@keyframes featherSway {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+@media (max-width: 959px) {
+  .footer {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footerNav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .social {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+@media (max-width: 767px) {
+  .content h2 {
+    font-size: 25.2px;
+    line-height: 33.6px;
+  }
+}
+@media (max-width: 639px) {
+  .reassurance {
+    flex-direction: column;
+  }
+  .section {
+    padding: 70px 25.2px;
+  }
+  .showcase {
+    max-width: 360px;
+  }
+  .footer {
+    padding-inline: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    animation: none;
+  }
+}
