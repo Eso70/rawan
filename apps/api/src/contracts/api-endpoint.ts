@@ -110,6 +110,10 @@ export function ApiEndpoint(options: {
     }
     if (options.tag === 'Auth') {
       errors.add(400);
+      if (String(key) === 'google') {
+        errors.add(409);
+        errors.add(503);
+      }
       if (String(key) === 'register') errors.add(409);
       else errors.add(401);
     } else if (!options.public) {

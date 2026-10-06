@@ -63,7 +63,8 @@ export function httpSecurity(
     const ip = req.ip ?? req.socket.remoteAddress ?? 'unknown';
     let retry = budget.consume(`all:${ip}`, 300);
     const category =
-      req.method === 'POST' && path === '/api/v1/auth/login'
+      req.method === 'POST' &&
+      ['/api/v1/auth/login', '/api/v1/auth/google'].includes(path)
         ? (['login', 20] as const)
         : req.method === 'POST' && path === '/api/v1/auth/register'
           ? (['register', 10] as const)

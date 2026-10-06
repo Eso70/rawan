@@ -33,10 +33,10 @@ export default function TermsPage() {
         </p>
         <ul>
           <li>
-            Social sign-in and email registration are not connected in this
-            preview.
+            Google sign-in is enabled for localhost testing and creates a local
+            author account on your first successful sign-in.
           </li>
-          <li>Submitting the preview form does not establish an account.</li>
+          <li>Other website sign-in methods remain unavailable.</li>
           <li>
             Future workspace access will have its own published eligibility and
             account requirements.

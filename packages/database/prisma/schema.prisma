@@ -20,6 +20,7 @@ model User {
   email    String   @unique
   name     String
   password String?
+  googleSubject String? @unique
   role     UserRole @default(AUTHOR)
 
   author        Author?

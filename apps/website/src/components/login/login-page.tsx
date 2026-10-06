@@ -1,15 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import {
-  IconBrandGoogle,
-  IconBrandDiscord,
-  IconBrandApple,
-  IconMail,
-  IconEye,
-  IconEyeOff,
-} from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { IconBrandGoogle } from "@tabler/icons-react";
 import { BrandMark } from "../brand-mark";
 import { LoginScene } from "./login-scene";
 import { LoginHeading } from "./login-heading";
@@ -18,14 +11,7 @@ import { DISCORD_INVITE } from "../site-links";
 import styles from "./login.module.css";
 
 const colors = ["#f3e6d0", "#f4b23e", "#d94a33", "#b18bd4", "#2c4a68"];
-const providers = [
-  { name: "Google", Icon: IconBrandGoogle },
-  { name: "Discord", Icon: IconBrandDiscord },
-  { name: "Apple", Icon: IconBrandApple },
-  { name: "Email", Icon: IconMail },
-];
-
-export function LoginPage() {
+export function LoginPage({ error = "" }: { error?: string }) {
   const [desktop, setDesktop] = useState(false);
   const [copied, setCopied] = useState("");
   const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
@@ -33,11 +19,9 @@ export function LoginPage() {
   );
   const [lastProvider, setLastProvider] = useState("");
   const reduced = useReducedMotion();
-  const [emailMode, setEmailMode] = useState(false);
   const [signup, setSignup] = useState(false);
-  const [recovery, setRecovery] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [notice, setNotice] = useState("");
+  const [pending, setPending] = useState(false);
+  const [notice, setNotice] = useState(error);
   useEffect(() => {
     const media = matchMedia("(min-width: 768px)");
     const update = () => setDesktop(media.matches);
@@ -62,18 +46,6 @@ export function LoginPage() {
     } catch {
       setNotice(`Color: ${swatch}`);
     }
-  };
-  const unavailable = (name: string) =>
-    setNotice(`${name} is not available yet.`);
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setNotice(
-      recovery
-        ? "Password recovery is not connected yet. No email was sent."
-        : signup
-          ? "Account registration is not connected yet."
-          : "Email sign-in will be connected to your Rawan account in the next step.",
-    );
   };
   return (
     <main className={styles.page}>
@@ -119,175 +91,33 @@ export function LoginPage() {
           transition={{ duration: reduced ? 0 : 0.3 }}
         >
           <LoginHeading key={signup ? "signup" : "login"} signup={signup} />
-          <AnimatePresence mode="wait" initial={false}>
-            {!emailMode ? (
-              <motion.div
-                key="providers"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: reduced ? 0 : 0.18 }}
-              >
-                <div className={styles.providers}>
-                  {[...providers]
-                    .sort(
-                      (a, b) =>
-                        Number(b.name === lastProvider) -
-                        Number(a.name === lastProvider),
-                    )
-                    .map(({ name, Icon }) => (
-                      <div key={name}>
-                        <button
-                          className={`${styles.provider} ${name === lastProvider ? styles.lastProvider : ""}`}
-                          onClick={() => {
-                            setNotice("");
-                            if (name === "Email") {
-                              setEmailMode(true);
-                              setRecovery(false);
-                              setShowPassword(false);
-                              setLastProvider(name);
-                              try {
-                                localStorage.setItem(
-                                  "rawan-login-method",
-                                  name,
-                                );
-                              } catch {
-                                /* Optional preference only. */
-                              }
-                            } else unavailable(`${name} sign-in`);
-                          }}
-                        >
-                          <Icon size={17} stroke={1.7} aria-hidden="true" />
-                          Continue with {name}
-                        </button>
-                        {name === lastProvider && (
-                          <p className={styles.lastHint}>
-                            Last selected method: {name}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                </div>
-                <p className={styles.signup}>
-                  {signup ? "Already have an account?" : "New to Rawan?"}{" "}
-                  <button
-                    onClick={() => {
-                      setSignup(!signup);
-                      setNotice("");
-                    }}
-                  >
-                    {signup ? "Log in" : "Sign up"}
-                  </button>
-                </p>
-              </motion.div>
-            ) : (
-              <motion.div
-                key={recovery ? "recovery" : signup ? "signup" : "email"}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: reduced ? 0 : 0.18 }}
-              >
-                <form className={styles.form} onSubmit={submit}>
-                  <label className={styles.srOnly} htmlFor="login-email">
-                    Email
-                  </label>
-                  <input
-                    id="login-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    autoComplete="email"
-                    maxLength={254}
-                    required
-                  />
-                  {!recovery && (
-                    <div className={styles.password}>
-                      <label className={styles.srOnly} htmlFor="login-password">
-                        Password
-                      </label>
-                      <input
-                        id="login-password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
-                        autoComplete={
-                          signup ? "new-password" : "current-password"
-                        }
-                        maxLength={128}
-                        required
-                      />
-                      <button
-                        type="button"
-                        aria-label={
-                          showPassword ? "Hide password" : "Show password"
-                        }
-                        aria-pressed={showPassword}
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <IconEyeOff size={16} />
-                        ) : (
-                          <IconEye size={16} />
-                        )}
-                      </button>
-                    </div>
-                  )}
-                  <button className={styles.submit} type="submit">
-                    {recovery
-                      ? "Send Reset Email"
-                      : signup
-                        ? "Create Account"
-                        : "Sign In"}
-                  </button>
-                </form>
-                {!signup && !recovery && (
-                  <button
-                    className={styles.forgot}
-                    onClick={() => {
-                      setRecovery(true);
-                      setNotice("");
-                    }}
-                  >
-                    Forgot your password?
-                  </button>
-                )}
-                {recovery ? (
-                  <button
-                    className={styles.forgot}
-                    onClick={() => {
-                      setRecovery(false);
-                      setNotice("");
-                    }}
-                  >
-                    Back to sign in
-                  </button>
-                ) : (
-                  <p className={styles.signup}>
-                    {signup
-                      ? "Already have an account?"
-                      : "Don’t have an account?"}{" "}
-                    <button
-                      onClick={() => {
-                        setSignup(!signup);
-                        setNotice("");
-                      }}
-                    >
-                      {signup ? "Log in" : "Sign up"}
-                    </button>
-                  </p>
-                )}
-                <button
-                  className={styles.back}
-                  onClick={() => {
-                    setEmailMode(false);
-                    setRecovery(false);
-                    setNotice("");
-                  }}
-                >
-                  Back
-                </button>
-              </motion.div>
+          <div className={styles.providers}>
+            <button
+              className={styles.provider}
+              disabled={pending}
+              onClick={() => {
+                setPending(true);
+                try {
+                  localStorage.setItem("rawan-login-method", "Google");
+                } catch {
+                  /* Optional preference only. */
+                }
+                window.location.assign("/auth/google");
+              }}
+            >
+              <IconBrandGoogle size={17} aria-hidden="true" />
+              {pending ? "Opening Google…" : "Continue with Google"}
+            </button>
+            {lastProvider === "Google" && (
+              <p className={styles.lastHint}>Last selected method: Google</p>
             )}
-          </AnimatePresence>
+          </div>
+          <p className={styles.signup}>
+            {signup ? "Already have an account?" : "New to Rawan?"}{" "}
+            <button onClick={() => setSignup(!signup)}>
+              {signup ? "Log in" : "Sign up"}
+            </button>
+          </p>
           {notice && (
             <p className={styles.notice} role="status">
               {notice}

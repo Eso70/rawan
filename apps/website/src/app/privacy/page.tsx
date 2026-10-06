@@ -26,28 +26,35 @@ export default function PrivacyPage() {
       <section>
         <h2>2. What happens on the login page</h2>
         <p>
-          The current login and registration forms are interface demonstrations.
-          Their submission handler displays a message instead of sending email
-          addresses or passwords to an authentication service.
+          Local testing supports Google sign-in. Google asks permission to share
+          your basic profile and verified email with Rawan. After verification,
+          Rawan stores your Google account identifier, email and name in the
+          local database and creates an author profile on your first sign-in.
         </p>
         <ul>
+          <li>Your Google password is entered on Google, never on Rawan.</li>
           <li>
-            Google, Discord and Apple buttons do not start an account
-            connection.
+            Discord, Apple and email sign-in are not enabled on this website.
           </li>
-          <li>The recovery view does not send a reset email.</li>
           <li>
-            A successful-looking form submission should not be treated as proof
-            that an account exists.
+            Google access and refresh tokens are not stored. The account page
+            checks your Rawan session with the backend.
           </li>
         </ul>
       </section>
       <section>
         <h2>3. Browser preferences</h2>
         <p>
-          The website remembers the last selected Email method in your browser’s
-          local storage under <strong>rawan-login-method</strong>. This stores a
-          method name, not an email address, password or sign-in token.
+          The website remembers the last selected Google method in your
+          browser’s local storage under <strong>rawan-login-method</strong>.
+          This stores a method name, not an email address, password or sign-in
+          token.
+        </p>
+        <p>
+          A temporary HTTP-only cookie protects the Google sign-in request for
+          ten minutes. A separate HTTP-only cookie holds your Rawan session for
+          up to seven days. Signing out removes those cookies. These cookies use
+          SameSite protection; HTTP is used only for this localhost setup.
         </p>
         <p>
           You can remove that preference using your browser’s controls for site
@@ -91,9 +98,8 @@ export default function PrivacyPage() {
           communicates with that destination and its own privacy rules apply.
         </p>
         <p>
-          A link does not send the contents of Rawan’s preview form to the
-          destination. Avoid placing private material into public community
-          posts.
+          Help does not send account credentials to Discord. Avoid placing
+          private material into public community posts.
         </p>
       </section>
       <section>

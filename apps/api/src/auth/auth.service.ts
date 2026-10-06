@@ -95,7 +95,7 @@ export class AuthService {
     return this.createToken(user);
   }
 
-  private async createToken(
+  async createToken(
     user: Parameters<typeof toApiUser>[0],
   ): Promise<AuthResponse> {
     const payload: JwtPayload = {
