@@ -1,0 +1,384 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: 100px 17px 84px;
+  background: #09090b;
+}
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #0005 0%,
+    #0001 28%,
+    #0001 55%,
+    #0004 100%
+  );
+}
+.bottomFade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 269px;
+  background: linear-gradient(
+    to top,
+    #09090b 0%,
+    rgb(9 9 11 / 80%) 40%,
+    transparent 100%
+  );
+}
+.header {
+  position: absolute;
+  top: 17px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1613px;
+  margin: 0 auto;
+  padding: 0 34px;
+  gap: 20px;
+  font-family: "Arizona Flare", "Rawan Lora", Georgia, serif;
+  font-size: 12.6px;
+  line-height: 16.8px;
+  font-weight: 500;
+}
+.navLeft,
+.navRight,
+.navLinks {
+  display: flex;
+  align-items: center;
+}
+.navLeft {
+  gap: 17px;
+}
+.navLinks {
+  gap: 17px;
+}
+.navRight {
+  gap: 13px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Rawan Inter", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.6px;
+}
+.brand svg {
+  transition: transform 0.5s ease;
+}
+.brand:hover svg {
+  transform: rotate(180deg);
+}
+.navLinks button,
+.login {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: rgb(255 255 255 / 80%);
+  font: inherit;
+}
+.login {
+  padding: 8px 12px;
+  border-radius: 12.6px;
+}
+.login:hover {
+  background: #fff1;
+  color: #fff;
+}
+.language {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #fffc;
+}
+.navCta,
+.primaryCta {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  border-radius: 12.6px;
+  background: #fff;
+  color: #171717;
+  white-space: nowrap;
+  min-height: 34px;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+  font: inherit;
+}
+.navCta {
+  padding: 0 13px;
+}
+.navCta:hover,
+.primaryCta:hover {
+  background: #f0f0f0;
+}
+.navCta:active,
+.primaryCta:active {
+  transform: scale(0.98);
+}
+.content {
+  position: relative;
+  width: 100%;
+  max-width: 941px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translateY(-134px);
+  font-family: "Arizona Flare", "Rawan Lora", Georgia, serif;
+  text-shadow:
+    0 2px 12px #0005,
+    0 0 24px #0003;
+}
+.badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 7px;
+  min-height: 29px;
+  border-radius: 99px;
+  border: 1px solid #fff3;
+  background: #ffffff1a;
+  backdrop-filter: blur(12px);
+  color: #ffffffe6;
+  font-size: 12.6px;
+  line-height: 17px;
+  font-weight: 500;
+  margin-bottom: 17px;
+  overflow: hidden;
+  animation: enter 0.48s 0.1s both;
+}
+.badge > svg {
+  width: 18px;
+  height: 18px;
+}
+.badge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    #ffffff40 50%,
+    transparent 70%
+  );
+  transform: translateX(-150%);
+  animation: shimmer 7s 2s infinite;
+  pointer-events: none;
+}
+.content h1 {
+  margin: 0 0 13px;
+  font-weight: 400;
+  font-size: 50.4px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: white;
+  animation: enter 0.48s 0.2s both;
+}
+.description {
+  max-width: 605px;
+  margin: 0 auto 25px;
+  font-family: "Arizona Sans", "Rawan Inter", Arial, sans-serif;
+  font-size: 16.8px;
+  line-height: 25.2px;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  color: #ffffffb3;
+  animation: enter 0.48s 0.4s both;
+}
+.action {
+  animation: enter 0.48s 0.6s both;
+}
+.primaryCta {
+  gap: 12px;
+  padding: 0 17px;
+  font-size: 14.7px;
+  line-height: 21px;
+  text-shadow: none;
+}
+.primaryCta strong {
+  font-weight: 600;
+}
+.primaryCta > span {
+  color: #0009;
+  font-weight: 400;
+}
+.community {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 25px;
+  font-size: 12.6px;
+  line-height: 17px;
+  color: #fff9;
+  animation: enter 0.48s 0.8s both;
+}
+.avatars {
+  display: flex;
+  padding-right: 8px;
+}
+.avatars > span {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  margin-right: -8px;
+  border: 1px solid #0008;
+  border-radius: 50%;
+  font-size: 8px;
+  font-family: "Rawan Inter", sans-serif;
+  text-shadow: none;
+  color: #f3e0cf;
+  background: radial-gradient(at 30% 25%, #b89375, #3c2622 80%);
+}
+.avatars > span:nth-child(2) {
+  background: radial-gradient(at 30% 25%, #798780, #293a35 80%);
+}
+.avatars > span:nth-child(3) {
+  background: radial-gradient(at 30% 25%, #a4887c, #3b3140 80%);
+}
+.notice {
+  position: absolute;
+  top: calc(100% + 18px);
+  max-width: 380px;
+  font:
+    12px/1.6 "Rawan Inter",
+    sans-serif;
+  color: #fffc;
+  margin: 0;
+}
+.scrollCue {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff6;
+}
+.playback {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: #0003;
+  border: 1px solid #ffffff26;
+  border-radius: 50%;
+  color: #fffb;
+}
+.playback:hover {
+  background: #fff2;
+  color: white;
+}
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 20px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes shimmer {
+  0%,
+  65% {
+    transform: translateX(-150%);
+  }
+  85%,
+  100% {
+    transform: translateX(150%);
+  }
+}
+@media (max-width: 1023px) {
+  .nav {
+    padding-inline: 17px;
+  }
+}
+@media (max-width: 767px) {
+  .content {
+    transform: translateY(-34px);
+  }
+  .content h1 {
+    font-size: 37.8px;
+    line-height: 42px;
+  }
+  .description {
+    font-size: 14.7px;
+    line-height: 21px;
+  }
+  .navLinks {
+    display: none;
+  }
+}
+@media (max-width: 639px) {
+  .nav {
+    gap: 10px;
+  }
+  .navLeft {
+    gap: 17px;
+  }
+  .login {
+    display: none;
+  }
+  .content h1 {
+    font-size: 31.5px;
+    line-height: 37.8px;
+  }
+  .description {
+    font-size: 12.6px;
+    line-height: 18px;
+    font-weight: 500;
+  }
+  .primaryCta {
+    min-height: 38px;
+  }
+  .playback {
+    right: 17px;
+    bottom: 25px;
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (max-height: 600px) and (min-width: 768px) {
+  .content {
+    transform: translateY(-24px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .content > *,
+  .badge::after {
+    animation: none;
+  }
+}

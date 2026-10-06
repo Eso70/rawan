@@ -1,6 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "@rawan/website#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "src/generated/prisma/**"]

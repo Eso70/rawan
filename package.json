@@ -9,6 +9,7 @@
   "scripts": {
     "api:openapi": "pnpm --filter @rawan/api openapi",
     "dev": "turbo dev",
+    "dev:website": "pnpm --filter @rawan/website dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",

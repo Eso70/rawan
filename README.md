@@ -4,7 +4,10 @@ Rawan is an author-focused creative writing and worldbuilding platform. Backend 
 
 ## Structure
 
+The root landing-page hero can be previewed separately with `pnpm dev:website` at [http://127.0.0.1:3000](http://127.0.0.1:3000). See [website setup](apps/website/README.md). Its video is local and it does not require database services.
+
 - apps/api: NestJS HTTP API.
+- apps/website: home-page hero.
 - apps/worker: BullMQ consumer for media cleanup and optional AI generations.
 - packages/backend: shared queue infrastructure, configuration, and storage.
 - packages/database: PostgreSQL schema, migrations, and Prisma Client exports.

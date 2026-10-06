@@ -17,6 +17,8 @@ service-account*.json
 credentials.json
 
 # Framework, build, test, and cache output
+.next/
+/apps/website/media-source/
 out/
 .turbo/
 dist/
