@@ -6,7 +6,7 @@ Use an OAuth client of type **Web application**. Register this exact authorized 
 
 `http://localhost:3000/auth/google/callback`
 
-If the Google project restricts access to test users, add the Google account used for testing. Open the website at `http://localhost:3000/login`. Google chooses an account and asks for basic profile access. The first successful authorization creates an AUTHOR and author profile; subsequent authorizations use the same Google subject. Success opens `/account`, which checks the session against `/api/v1/users/me` and sends unfinished onboarding to `/onboarding`, or completed onboarding to the sample `/workspace`.
+If the Google project restricts access to test users, add the Google account used for testing. Open the website at `http://localhost:3000/login`. Google chooses an account and asks for basic profile access. The first successful authorization creates an AUTHOR and author profile; subsequent authorizations use the same Google subject. Successful sign-in or sign-up opens `/workspace`, which validates the session and routes accounts without an experience preference to a short optional questionnaire. Author opens `/workspace/author`; Reader and Just exploring open `/workspace/reader`; Both starts in Author and can switch dashboards. Returning accounts go straight to their saved dashboard. `/account` also redirects through this gate. Dashboard bodies are intentionally empty; book reading and creation interfaces are not implemented here.
 
 ## Credentials and processes
 

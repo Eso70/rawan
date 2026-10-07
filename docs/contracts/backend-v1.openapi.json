@@ -2509,6 +2509,21 @@
           "draftText": {
             "type": "string"
           },
+          "experience": {
+            "enum": ["author", "reader", "both", "explore"],
+            "nullable": true,
+            "type": "string"
+          },
+          "goal": {
+            "nullable": true,
+            "type": "string"
+          },
+          "interests": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "phase": {
             "enum": ["choice", "intro", "tour"],
             "type": "string"
@@ -2527,6 +2542,9 @@
           }
         },
         "required": [
+          "experience",
+          "interests",
+          "goal",
           "draftImage",
           "draftRole",
           "storyType",
@@ -2841,6 +2859,30 @@
           "draftText": {
             "maxLength": 5000,
             "type": "string"
+          },
+          "experience": {
+            "enum": ["author", "reader", "both", "explore"],
+            "type": "string"
+          },
+          "goal": {
+            "enum": [
+              "novel",
+              "short-story",
+              "world",
+              "game",
+              "stories",
+              "authors",
+              "worlds",
+              "unsure"
+            ],
+            "type": "string"
+          },
+          "interests": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "type": "array"
           },
           "phase": {
             "enum": ["choice", "intro", "tour"],

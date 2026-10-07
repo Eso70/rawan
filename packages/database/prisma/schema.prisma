@@ -35,6 +35,9 @@ model UserOnboarding {
   userId String @id
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   storyType String?
+  experience String?
+  interests String[] @default([])
+  goal String?
   phase String @default("choice")
   step Int @default(0)
   completedAt DateTime?

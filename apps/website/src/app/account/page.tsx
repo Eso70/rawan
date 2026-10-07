@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
-import { requireSession, onboardingFor } from "../../lib/session";
+import { requireSession } from "../../lib/session";
 export const metadata = {
   title: "Your account — Rawan",
   robots: { index: false },
 };
 export default async function Page() {
-  const session = await requireSession();
-  const state = await onboardingFor(session);
-  redirect(state.completedAt ? "/workspace" : "/onboarding");
+  await requireSession();
+  redirect("/workspace");
 }

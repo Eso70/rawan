@@ -15,13 +15,13 @@ export async function PATCH(request: NextRequest) {
   const reader = request.body?.getReader();
   const chunks: Uint8Array[] = [];
   let size = 0;
-  if (reader) {
-    try {
+  try {
+    if (reader)
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         size += value.byteLength;
-        if (size > 12000) {
+        if (size > 4000) {
           await reader.cancel();
           return NextResponse.json(
             { message: "Request too large" },
@@ -30,15 +30,26 @@ export async function PATCH(request: NextRequest) {
         }
         chunks.push(value);
       }
-    } catch {
-      return NextResponse.json({ message: "Invalid request" }, { status: 400 });
-    } finally {
-      reader.releaseLock();
-    }
+  } catch {
+    return NextResponse.json({ message: "Invalid request" }, { status: 400 });
+  } finally {
+    reader?.releaseLock();
   }
-  const body = Buffer.concat(chunks).toString("utf8");
+  let body: Record<string, unknown>;
   try {
-    JSON.parse(body);
+    body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    if (
+      !body ||
+      typeof body !== "object" ||
+      Array.isArray(body) ||
+      Object.keys(body).some(
+        (key) =>
+          !["experience", "interests", "goal", "complete", "skipped"].includes(
+            key,
+          ),
+      )
+    )
+      throw new Error();
   } catch {
     return NextResponse.json({ message: "Invalid request" }, { status: 400 });
   }
@@ -49,21 +60,22 @@ export async function PATCH(request: NextRequest) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body,
+      body: JSON.stringify(body),
       cache: "no-store",
       signal: AbortSignal.timeout(10000),
     });
     if (!response.ok)
       return NextResponse.json(
-        { message: "Progress could not be saved. Please try again." },
+        { message: "Could not save preferences" },
         { status: response.status },
       );
-    return NextResponse.json(await response.json(), {
-      headers: { "Cache-Control": "no-store" },
-    });
+    return NextResponse.json(
+      { saved: true },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch {
     return NextResponse.json(
-      { message: "Progress could not be saved. Please try again." },
+      { message: "Could not save preferences" },
       { status: 503 },
     );
   }

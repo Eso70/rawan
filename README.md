@@ -1,13 +1,15 @@
 # Rawan backend
 
-Rawan is an author-focused creative writing and worldbuilding platform. Backend V1 includes authentication, owned projects/manuscripts/worldbuilding, relationships, timelines, plots, notes/tags, search, private media, background cleanup and proposal-only AI infrastructure. AI is disabled by default; its only adapter is an explicit development/test simulator.
+Rawan is intended to serve creators and readers across writing, literature, books, comics, fiction and nonfiction, research, libraries, publishing, discovery and reading. Its current backend V1 supports private creative work: authentication, owned projects/manuscripts/worldbuilding, relationships, timelines, plots, notes/tags, search, private media, background cleanup and proposal-only AI infrastructure. AI is disabled by default; its only adapter is an explicit development/test simulator.
+
+Public publishing, reader libraries, reading progress and comics-specific structures require future backend work. Author/reader experience preferences do not provide those capabilities or change authorization roles. See the [product scope and backend capability audit](docs/product-scope-and-backend-capabilities.md) for existing functionality, frontend possibilities, future backend requirements and long-term directions.
 
 ## Structure
 
 The root landing page can be previewed separately with `pnpm dev:website` at [http://127.0.0.1:3000](http://127.0.0.1:3000). See [website setup](apps/website/README.md). The hero and toolkit videos are local and do not require database services.
 
 - apps/api: NestJS HTTP API.
-- apps/website: home-page hero and toolkit section.
+- apps/website: landing page, Google sign-in, account preferences and author/reader dashboard shells.
 - apps/worker: BullMQ consumer for media cleanup and optional AI generations.
 - packages/backend: shared queue infrastructure, configuration, and storage.
 - packages/database: PostgreSQL schema, migrations, and Prisma Client exports.

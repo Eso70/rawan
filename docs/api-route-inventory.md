@@ -10,6 +10,7 @@ All routes use the existing application prefix. Request/query DTOs are the valid
 | Health        | GET /api/v1/health                                                                   | Public      | -                        | -                     | 200: ApiHealth                 |
 | Auth          | POST /api/v1/auth/register                                                           | Public      | RegisterDto              | -                     | 201: AuthResponse              |
 | Auth          | POST /api/v1/auth/login                                                              | Public      | LoginDto                 | -                     | 200: AuthResponse              |
+| Auth          | POST /api/v1/auth/google                                                             | Public      | GoogleLoginDto           | -                     | 200: AuthResponse              |
 | Jobs          | GET /api/v1/health/queues                                                            | Public      | -                        | -                     | 200: ApiQueueReadiness         |
 | Projects      | GET /api/v1/projects                                                                 | JWT + owner | -                        | ProjectQueryDto       | 200: page ApiProject           |
 | Projects      | GET /api/v1/projects/:projectId                                                      | JWT + owner | -                        | -                     | 200: ApiProject                |
@@ -96,6 +97,8 @@ All routes use the existing application prefix. Request/query DTOs are the valid
 | Timelines     | DELETE /api/v1/timelines/:id                                                         | JWT + owner | -                        | -                     | 204: empty                     |
 | Users         | GET /api/v1/users                                                                    | JWT + ADMIN | -                        | PaginationQueryDto    | 200: array ApiUser             |
 | Users         | GET /api/v1/users/me                                                                 | JWT + owner | -                        | -                     | 200: ApiUser                   |
+| Users         | GET /api/v1/users/me/onboarding                                                      | JWT + self  | -                        | -                     | 200: OnboardingResponseDto     |
+| Users         | PATCH /api/v1/users/me/onboarding                                                    | JWT + self  | UpdateOnboardingDto      | -                     | 200: OnboardingResponseDto     |
 | Users         | GET /api/v1/users/:id                                                                | JWT + ADMIN | -                        | -                     | 200: ApiUser                   |
 | Worldbuilding | GET /api/v1/projects/:projectId/artifacts                                            | JWT + owner | -                        | WorldQueryDto         | 200: page ApiArtifact          |
 | Worldbuilding | POST /api/v1/projects/:projectId/artifacts                                           | JWT + owner | CreateArtifactDto        | -                     | 201: ApiArtifact               |

@@ -80,6 +80,9 @@ try {
   assert.equal(
     (
       await request('PATCH', token, {
+        experience: 'reader',
+        interests: ['fantasy', 'fiction'],
+        goal: 'stories',
         storyType: 'fiction',
         phase: 'tour',
         step: 3,
@@ -97,7 +100,21 @@ try {
     (await (await request('GET', secondToken)).json()).draftText,
     '',
   );
+  const savedPreferences = await (await request('GET', token)).json();
+  assert.equal(savedPreferences.experience, 'reader');
+  assert.deepEqual(savedPreferences.interests, ['fantasy', 'fiction']);
+  assert.equal(savedPreferences.goal, 'stories');
+  assert.equal(
+    (await (await request('GET', secondToken)).json()).experience,
+    null,
+  );
+  assert.equal(
+    (await prisma.user.findUnique({ where: { id: first.id } })).role,
+    'AUTHOR',
+  );
   for (const body of [
+    { experience: 'ADMIN' },
+    { interests: ['unrecognized'] },
     { step: 5 },
     { phase: null },
     { complete: false },

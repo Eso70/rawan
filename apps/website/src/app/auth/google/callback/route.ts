@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       !Number.isFinite(session.expiresIn)
     )
       return failure("google");
-    const response = NextResponse.redirect(`${origin}/account`);
+    const response = NextResponse.redirect(`${origin}/workspace`);
     response.cookies.set(FLOW_COOKIE, "", { ...cookieOptions, maxAge: 0 });
     response.cookies.set(SESSION_COOKIE, session.accessToken, {
       ...cookieOptions,

@@ -1,6 +1,6 @@
 # Rawan backend v1 API
 
-The HTTP contract is `/api/v1`. This reference, the [complete route inventory](api-route-inventory.md), and the generated OpenAPI document describe the backend for future client development. Both frontend directories remain empty. No client SDK is generated.
+The HTTP contract is `/api/v1`. This reference, the [complete route inventory](api-route-inventory.md), and the generated OpenAPI document describe the backend for client development. The website includes a landing page, Google sign-in, account preferences and empty author/reader dashboard shells. No client SDK is generated. The [product scope and backend capability audit](product-scope-and-backend-capabilities.md) distinguishes implemented private creative features from future reader and publishing capabilities.
 
 ## Documentation and generation
 
@@ -16,6 +16,8 @@ Register with `POST /api/v1/auth/register` (201), then use the returned access t
 
 `GET /users/me` resolves the current user. `GET /users` and `GET /users/:id` require ADMIN. ADMIN does not bypass private author/project ownership. Missing/invalid/expired credentials return 401; an authenticated user denied an explicit role operation receives 403. Missing and inaccessible private resources both return 404. References used in relationships, timeline entities, plot links, tags, media attachments and AI context must belong to the same owned project. Ownership is enforced on mutations and polling as well as reads.
 
+Google login is `POST /auth/google` (200) with a validated Google ID token and nonce; see [local Google authentication](google-local-auth.md). `GET` and `PATCH /users/me/onboarding` read/save current-user progress and experience preferences. Author/reader/both/explore preferences are separate from the `ADMIN`/`AUTHOR` security roles and do not grant access to published books or a reader library. See [account experience](account-experience.md).
+
 ## Success and request conventions
 
 Responses are direct JSON resources, arrays, or `{ "items": [], "nextOffset": null }` pages. There is no generic `data` wrapper. Ordinary creates return 201; reads/updates return 200; deletes return 204 with no body. AI creation returns 202 and a durable generation summary. Do not parse a 204 response as JSON.
@@ -30,18 +32,18 @@ Lists of scenes, events, plots, plot points and notes use summary schemas that o
 
 All paths below are relative to `/api/v1`; the inventory lists every operation and its request/query/response type.
 
-| Domain        | Collection parent / individual resources                                                                                                                      |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Manuscript    | `/projects`, `/projects/:projectId/books`, `/books/:bookId/chapters`, `/chapters/:chapterId/scenes`; `/books/:id`, `/chapters/:id`, `/scenes/:id`             |
-| Worldbuilding | `/projects/:projectId/characters`, `places`, `factions`, `artifacts`; individual resource by ID                                                               |
-| Relationships | `/projects/:projectId/relationships`; `/relationships/:id`                                                                                                    |
-| Timeline      | `/projects/:projectId/timelines`, `/timelines/:timelineId/eras`, `/timelines/:timelineId/events`; individual timeline/era/event and event entity associations |
-| Plot          | `/projects/:projectId/plots`, `/plots/:plotId/points`; individual plot/point, reorder and scene/event/entity associations                                     |
-| Organization  | Project notes/tags, individual notes/tags, tag assignments and resource tag lookup                                                                            |
-| Search        | `/projects/:projectId/search`                                                                                                                                 |
-| Media         | Project upload/list, `/media/:id`, `/media/:id/content`, media attachments and project resource attachment lookup                                             |
-| AI            | `/projects/:projectId/ai/generations`, `/ai/generations/:id`                                                                                                  |
-| Operations    | `/health`, `/health/queues`; no public maintenance enqueue/status endpoint                                                                                    |
+| Domain        | Collection parent / individual resources                                                                                                                                                       |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Manuscript    | `/projects`; books under `/projects/:projectId/books`, chapters under that book path, scenes under that chapter path; individual resources append their ID to the fully nested collection path |
+| Worldbuilding | `/projects/:projectId/characters`, `places`, `factions`, `artifacts`; individual resource by ID                                                                                                |
+| Relationships | `/projects/:projectId/relationships`; `/relationships/:id`                                                                                                                                     |
+| Timeline      | `/projects/:projectId/timelines`, `/timelines/:timelineId/eras`, `/timelines/:timelineId/events`; individual timeline/era/event and event entity associations                                  |
+| Plot          | `/projects/:projectId/plots`, `/plots/:plotId/points`; individual plot/point, reorder and scene/event/entity associations                                                                      |
+| Organization  | Project notes/tags, individual notes/tags, tag assignments and resource tag lookup                                                                                                             |
+| Search        | `/projects/:projectId/search`                                                                                                                                                                  |
+| Media         | Project upload/list, `/media/:id`, `/media/:id/content`, media attachments and project resource attachment lookup                                                                              |
+| AI            | `/projects/:projectId/ai/generations`, `/ai/generations/:id`                                                                                                                                   |
+| Operations    | `/health`, `/health/queues`; no public maintenance enqueue/status endpoint                                                                                                                     |
 
 ## Paging, ordering and filters
 

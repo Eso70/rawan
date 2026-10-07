@@ -6,6 +6,9 @@ import {
 } from './onboarding.dto.js';
 
 const select = {
+  experience: true,
+  interests: true,
+  goal: true,
   storyType: true,
   phase: true,
   step: true,
@@ -17,6 +20,9 @@ const select = {
   draftRole: true,
 } as const;
 const defaults = {
+  experience: null,
+  interests: [],
+  goal: null,
   storyType: null,
   phase: 'choice',
   step: 0,

@@ -9,9 +9,61 @@ import {
   MaxLength,
   Min,
   MinLength,
+  IsArray,
+  ArrayMaxSize,
+  ArrayUnique,
 } from 'class-validator';
 
 export class UpdateOnboardingDto {
+  @ApiPropertyOptional({ enum: ['author', 'reader', 'both', 'explore'] })
+  @ValidateIf((o: UpdateOnboardingDto) => o.experience !== undefined)
+  @IsIn(['author', 'reader', 'both', 'explore'])
+  experience?: string;
+
+  @ApiPropertyOptional({ type: [String], maxItems: 8 })
+  @ValidateIf((o: UpdateOnboardingDto) => o.interests !== undefined)
+  @IsArray()
+  @ArrayMaxSize(8)
+  @ArrayUnique()
+  @IsIn(
+    [
+      'fiction',
+      'fantasy',
+      'science-fiction',
+      'romance',
+      'mystery',
+      'history',
+      'worldbuilding',
+      'other',
+    ],
+    { each: true },
+  )
+  interests?: string[];
+
+  @ApiPropertyOptional({
+    enum: [
+      'novel',
+      'short-story',
+      'world',
+      'game',
+      'stories',
+      'authors',
+      'worlds',
+      'unsure',
+    ],
+  })
+  @ValidateIf((o: UpdateOnboardingDto) => o.goal !== undefined)
+  @IsIn([
+    'novel',
+    'short-story',
+    'world',
+    'game',
+    'stories',
+    'authors',
+    'worlds',
+    'unsure',
+  ])
+  goal?: string;
   @ApiPropertyOptional({ enum: ['mirewalker', 'outlook', 'harbor'] })
   @ValidateIf((o: UpdateOnboardingDto) => o.draftImage !== undefined)
   @IsIn(['mirewalker', 'outlook', 'harbor'])
@@ -58,6 +110,14 @@ export class UpdateOnboardingDto {
   draftText?: string;
 }
 export class OnboardingResponseDto {
+  @ApiProperty({
+    type: 'string',
+    nullable: true,
+    enum: ['author', 'reader', 'both', 'explore'],
+  })
+  experience!: string | null;
+  @ApiProperty({ type: [String] }) interests!: string[];
+  @ApiProperty({ type: 'string', nullable: true }) goal!: string | null;
   @ApiProperty() draftImage!: string;
   @ApiProperty() draftRole!: string;
   @ApiProperty({ type: 'string', nullable: true }) storyType!: string | null;

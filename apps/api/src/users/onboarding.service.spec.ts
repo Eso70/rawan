@@ -6,6 +6,9 @@ import { UpdateOnboardingDto } from './onboarding.dto.js';
 
 describe('Account onboarding', () => {
   const state = {
+    experience: 'reader',
+    interests: ['fantasy'],
+    goal: 'stories',
     storyType: 'fiction',
     phase: 'tour',
     step: 2,
@@ -67,6 +70,12 @@ describe('Account onboarding', () => {
     expect(upsert.mock.calls[1][0].update).not.toHaveProperty('completedAt');
   });
   it.each([
+    { experience: 'ADMIN' },
+    { experience: null },
+    { interests: ['unknown'] },
+    { interests: ['fantasy', 'fantasy'] },
+    { interests: null },
+    { goal: 'unknown' },
     { complete: false },
     { complete: null },
     { phase: null },
@@ -83,5 +92,23 @@ describe('Account onboarding', () => {
       forbidNonWhitelisted: true,
     });
     expect(errors.length).toBeGreaterThan(0);
+  });
+  it('stores reader preferences without modifying authorization roles', async () => {
+    await service.update('current-user', {
+      experience: 'reader',
+      interests: ['fantasy'],
+      goal: 'stories',
+    });
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { userId: 'current-user' },
+        update: {
+          experience: 'reader',
+          interests: ['fantasy'],
+          goal: 'stories',
+        },
+      }),
+    );
+    expect(upsert.mock.calls[0][0].update).not.toHaveProperty('role');
   });
 });
