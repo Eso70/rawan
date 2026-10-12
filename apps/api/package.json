@@ -23,8 +23,11 @@
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "pnpm --filter @rawan/api... build && vitest run --config ./vitest.config.e2e.ts",
     "test:database": "pnpm --filter @rawan/api... build && node test/database-smoke.mjs",
+    "test:email:database": "pnpm --filter @rawan/api... build && node test/email-signup-database-smoke.mjs",
     "test:onboarding:database": "pnpm --filter @rawan/api... build && node test/onboarding-database-smoke.mjs",
     "test:domain:database": "pnpm --filter @rawan/api... build && node test/manuscript-database-smoke.mjs",
+    "test:works:database": "pnpm --filter @rawan/api... build && node test/works-database-smoke.mjs",
+    "test:platform:database": "pnpm --filter @rawan/api... build && pnpm --filter @rawan/worker build && node test/platform-database-smoke.mjs",
     "test:world:database": "pnpm --filter @rawan/api... build && node test/worldbuilding-database-smoke.mjs",
     "test:relationships:database": "pnpm --filter @rawan/api... build && node test/relationships-database-smoke.mjs",
     "test:timeline:database": "pnpm --filter @rawan/api... build && node test/timeline-database-smoke.mjs",
@@ -36,7 +39,7 @@
     "jobs:cleanup": "pnpm --filter @rawan/api... build && node dist/jobs/jobs.cli.js",
     "test:jobs:integration": "pnpm --filter @rawan/api... build && pnpm --filter @rawan/worker build && node test/jobs-integration.mjs",
     "test:ai:integration": "pnpm --filter @rawan/api... build && pnpm --filter @rawan/worker build && node test/ai-integration.mjs",
-    "test:database:all": "pnpm --filter @rawan/api... build && node test/database-regression.mjs"
+    "test:database:all": "pnpm --filter @rawan/api... build && pnpm --filter @rawan/worker build && node test/database-regression.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -57,6 +60,7 @@
     "google-auth-library": "^11.1.0",
     "helmet": "^8.3.0",
     "multer": "2.4.0",
+    "nodemailer": "^10.1.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.23.1",
@@ -70,6 +74,7 @@
     "@types/express": "^5.0.0",
     "@types/multer": "^2.3.0",
     "@types/node": "^24.0.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.23.1",
     "@types/supertest": "^7.0.0",

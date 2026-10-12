@@ -1,3 +1,4 @@
+import { createAccountFixture } from './account-fixture.mjs';
 import { createOpenApiDocument } from '../dist/contracts/openapi.js';
 import { assertActualResponse } from './assert-contract.mjs';
 import assert from 'node:assert/strict';
@@ -29,7 +30,7 @@ import { AiService } from '../dist/ai/ai.service.js';
 import { configureApp } from '../dist/config/configure-app.js';
 import pg from 'pg';
 try {
-  process.loadEnvFile(new URL('../.env', import.meta.url));
+  process.loadEnvFile(new URL('../.env.local', import.meta.url));
 } catch (error) {
   if (error.code !== 'ENOENT') throw error;
 }
@@ -171,17 +172,11 @@ try {
     return result;
   }
   async function author(label) {
-    return request(
-      'POST',
-      '/auth/register',
-      {
+    return createAccountFixture(app, {
         name: label,
         email: label + '@example.invalid',
         password: 'AI-test-only-password-long',
-      },
-      null,
-      201,
-    );
+      });
   }
   const a = await author('author-a'),
     b = await author('author-b'),

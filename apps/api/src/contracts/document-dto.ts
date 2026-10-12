@@ -1,4 +1,8 @@
-import { ApiProperty, type ApiPropertyOptions } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  type ApiPropertyOptions,
+  type SchemaObject,
+} from '@nestjs/swagger';
 import { getMetadataStorage } from 'class-validator';
 /** Swagger properties derive from the same flattened validators used at runtime, including composed helpers. */
 export function DocumentDto(
@@ -14,8 +18,46 @@ export function DocumentDto(
     for (const name of new Set(metadata.map((m) => m.propertyName))) {
       const fields = metadata.filter((m) => m.propertyName === name);
       const options: ApiPropertyOptions = { required: true, type: String };
+      const isArray = fields.some((field) => field.name === 'isArray');
+      const itemOptions: SchemaObject = { type: 'string' };
       for (const field of fields) {
         const args = (field.constraints ?? []) as unknown[];
+        if (isArray && field.each) {
+          switch (field.name) {
+            case 'isString':
+              itemOptions.type = 'string';
+              break;
+            case 'isInt':
+              itemOptions.type = 'integer';
+              break;
+            case 'isNumber':
+              itemOptions.type = 'number';
+              break;
+            case 'isBoolean':
+              itemOptions.type = 'boolean';
+              break;
+            case 'isIn':
+              itemOptions.enum = args[0] as string[];
+              break;
+            case 'isLength':
+              itemOptions.minLength = args[0] as number;
+              itemOptions.maxLength = args[1] as number;
+              break;
+            case 'minLength':
+              itemOptions.minLength = args[0] as number;
+              break;
+            case 'maxLength':
+              itemOptions.maxLength = args[0] as number;
+              break;
+            case 'matches':
+              itemOptions.pattern = (args[0] as RegExp).source;
+              break;
+            case 'isUrl':
+              itemOptions.format = 'uri';
+              break;
+          }
+          continue;
+        }
         if (
           field.type === 'conditionalValidation' &&
           typeof args[0] === 'function'
@@ -29,6 +71,12 @@ export function DocumentDto(
           if (!condition({ [name]: null }, null)) options.nullable = true;
         }
         switch (field.name) {
+          case 'isBoolean':
+            options.type = 'boolean';
+            break;
+          case 'isNumber':
+            options.type = 'number';
+            break;
           case 'isInt':
             options.type = 'integer';
             break;
@@ -83,6 +131,10 @@ export function DocumentDto(
               options.description = 'Must not contain NUL characters.';
             break;
         }
+      }
+      if (isArray) {
+        options.type = 'array';
+        options.items = itemOptions;
       }
       if (name === 'password') {
         options.format = 'password';

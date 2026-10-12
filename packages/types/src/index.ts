@@ -85,6 +85,23 @@ export interface ApiBook {
   updatedAt: string;
 }
 
+/** Private work identity; not a published catalogue record. */
+export interface ApiWork {
+  id: string;
+  title: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ApiWorkSource {
+  id: string;
+  workId: string;
+  projectId: string;
+  bookId: string;
+  createdAt: string;
+}
+
 export interface ApiChapter {
   id: string;
   bookId: string;

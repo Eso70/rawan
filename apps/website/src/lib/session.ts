@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { authConfig, SESSION_COOKIE } from "./google-auth";
+import { appConfig, SESSION_COOKIE } from "./google-auth";
 export async function requireSession() {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) redirect("/login");
-  const { api } = authConfig();
+  const { api } = appConfig();
   let response: Response;
   try {
     response = await fetch(`${api}/users/me`, {

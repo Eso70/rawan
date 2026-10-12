@@ -16,37 +16,75 @@ enum UserRole {
 }
 
 model User {
-  id       String   @id @default(cuid())
-  email    String   @unique
-  name     String
-  password String?
-  googleSubject String? @unique
-  role     UserRole @default(AUTHOR)
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String
+  password        String?
+  googleSubject   String?   @unique
+  emailVerifiedAt DateTime?
+  role            UserRole  @default(AUTHOR)
 
-  author        Author?
-  onboarding    UserOnboarding?
-  aiGenerations AiGeneration[]
+  author            Author?
+  onboarding        UserOnboarding?
+  aiGenerations     AiGeneration[]
+  works             Work[]
+  creatorIdentities CreatorIdentity[]
+  workSeries        WorkSeries[]
+  libraryEntries    LibraryEntry[]
+  collections       LibraryCollection[]
+  readingStates     ReadingState[]
+  bookmarks         ReaderBookmark[]
+  annotations       ReaderAnnotation[]
+  preferences       UserPreference[]
+  savedViews        SavedView[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model EmailSignupVerification {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  name                String
+  passwordHash        String?
+  codeHash            String?
+  expiresAt           DateTime
+  attempts            Int       @default(0)
+  sendCount           Int       @default(0)
+  sendWindowStartedAt DateTime
+  lastSentAt          DateTime
+  deliveredAt         DateTime?
+  deliveryToken       String?
+  deliveryUntil       DateTime?
+  consumedAt          DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([updatedAt])
+  @@index([expiresAt])
+}
+
+model EmailDeliveryBudget {
+  day       DateTime @id @db.Date
+  sendCount Int      @default(0)
+}
+
 model UserOnboarding {
-  userId String @id
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  storyType String?
-  experience String?
-  interests String[] @default([])
-  goal String?
-  phase String @default("choice")
-  step Int @default(0)
+  userId      String    @id
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyType   String?
+  experience  String?
+  interests   String[]  @default([])
+  goal        String?
+  phase       String    @default("choice")
+  step        Int       @default(0)
   completedAt DateTime?
-  skipped Boolean @default(false)
-  draftName String @default("The Mirewalker")
-  draftText String @default("")
-  draftImage String @default("mirewalker")
-  draftRole String @default("Wanderer")
-  updatedAt DateTime @updatedAt
+  skipped     Boolean   @default(false)
+  draftName   String    @default("The Mirewalker")
+  draftText   String    @default("")
+  draftImage  String    @default("mirewalker")
+  draftRole   String    @default("Wanderer")
+  updatedAt   DateTime  @updatedAt
 }
 
 model Author {
@@ -87,6 +125,10 @@ model Project {
   mediaAttachments MediaAttachment[]
   media            Media[]
   aiGenerations    AiGeneration[]
+  researchSources  ResearchSource[]
+  maps             ProjectMap[]
+  canvases         ProjectCanvas[]
+  savedViews       SavedView[]
 
   @@index([authorId, createdAt(sort: Desc), id])
 }
@@ -104,9 +146,709 @@ model Book {
 
   plotPointScenes PlotPointScene[]
   tagAssignments  TagAssignment[]
+  workSources     WorkSource[]
 
   @@unique([projectId, id])
   @@index([projectId, position])
+}
+
+// Private creative identity. This does not publish any source content.
+model Work {
+  nextReleaseVersion Int             @default(1)
+  id                 String          @id @default(cuid())
+  ownerUserId        String
+  title              String
+  description        String?
+  owner              User            @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  sources            WorkSource[]
+  metadata           WorkMetadata?
+  credits            WorkCredit[]
+  editions           WorkEdition[]
+  memberships        SeriesMember[]
+  outgoingRelations  RelatedWork[]   @relation("RelatedFrom")
+  incomingRelations  RelatedWork[]   @relation("RelatedTo")
+  releases           WorkRelease[]
+  libraryEntries     LibraryEntry[]
+  readingStates      ReadingState[]
+  documents          WorkDocument[]
+  assets             WorkAsset[]
+  comics             ComicDocument[]
+  exportJobs         ExportJob[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([ownerUserId, createdAt(sort: Desc), id])
+}
+
+// Explicit association to an existing private manuscript; no content copy.
+model WorkSource {
+  id        String   @id @default(cuid())
+  workId    String
+  projectId String
+  bookId    String
+  work      Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [projectId, bookId], references: [projectId, id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([workId, bookId])
+  @@index([projectId, bookId])
+  @@index([workId, createdAt, id])
+}
+
+enum WorkMedium {
+  PROSE
+  GRAPHIC
+}
+
+enum ReleaseStatus {
+  DRAFT
+  PUBLISHED
+  WITHDRAWN
+}
+
+enum CreditRole {
+  AUTHOR
+  ILLUSTRATOR
+  TRANSLATOR
+  EDITOR
+  CONTRIBUTOR
+}
+
+model WorkMetadata {
+  workId       String     @id
+  subtitle     String?
+  synopsis     String     @default("")
+  language     String     @default("en")
+  medium       WorkMedium @default(PROSE)
+  form         String?
+  genres       String[]   @default([])
+  topics       String[]   @default([])
+  warnings     String[]   @default([])
+  coverAssetId String?
+  updatedAt    DateTime   @updatedAt
+  work         Work       @relation(fields: [workId], references: [id], onDelete: Cascade)
+}
+
+// Public personas never expose the private account relation.
+model CreatorIdentity {
+  id             String          @id @default(cuid())
+  ownerUserId    String
+  handle         String          @unique
+  displayName    String
+  biography      String          @default("")
+  links          String[]        @default([])
+  public         Boolean         @default(false)
+  avatarAssetId  String?
+  owner          User            @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  credits        WorkCredit[]
+  releaseCredits ReleaseCredit[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([ownerUserId, id])
+}
+
+model WorkCredit {
+  id          String           @id @default(cuid())
+  workId      String
+  creatorId   String?
+  displayName String
+  role        CreditRole
+  position    Int              @default(0)
+  work        Work             @relation(fields: [workId], references: [id], onDelete: Cascade)
+  creator     CreatorIdentity? @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+
+  @@index([workId, position, id])
+}
+
+model WorkEdition {
+  id              String  @id @default(cuid())
+  workId          String
+  label           String
+  language        String
+  format          String  @default("WEB")
+  publisher       String?
+  publicationDate String?
+  isbn13          String?
+  doi             String?
+  work            Work    @relation(fields: [workId], references: [id], onDelete: Cascade)
+
+  @@index([workId, id])
+}
+
+model WorkSeries {
+  id          String         @id @default(cuid())
+  ownerUserId String
+  title       String
+  description String         @default("")
+  anthology   Boolean        @default(false)
+  public      Boolean        @default(false)
+  owner       User           @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  members     SeriesMember[]
+
+  @@index([ownerUserId, id])
+}
+
+model SeriesMember {
+  id       String     @id @default(cuid())
+  seriesId String
+  workId   String
+  position Int        @default(0)
+  label    String?
+  series   WorkSeries @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  work     Work       @relation(fields: [workId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, workId])
+  @@index([seriesId, position, id])
+}
+
+model RelatedWork {
+  id           String @id @default(cuid())
+  workId       String
+  targetWorkId String
+  kind         String
+  work         Work   @relation("RelatedFrom", fields: [workId], references: [id], onDelete: Cascade)
+  target       Work   @relation("RelatedTo", fields: [targetWorkId], references: [id], onDelete: Cascade)
+
+  @@unique([workId, targetWorkId, kind])
+}
+
+// All reader content is copied here; private source deletion cannot remove it.
+model WorkRelease {
+  id               String               @id @default(cuid())
+  workId           String
+  version          Int
+  status           ReleaseStatus        @default(DRAFT)
+  title            String
+  subtitle         String?
+  synopsis         String
+  language         String
+  medium           WorkMedium
+  form             String?
+  genres           String[]
+  topics           String[]
+  warnings         String[]
+  edition          Json?
+  work             Work                 @relation(fields: [workId], references: [id], onDelete: Cascade)
+  credits          ReleaseCredit[]
+  sections         ReleaseSection[]
+  readingStates    ReadingState[]
+  bookmarks        ReaderBookmark[]
+  annotations      ReaderAnnotation[]
+  supplements      ReleaseSupplement[]
+  assets           ReleaseAsset[]
+  graphicPages     ReleaseGraphicPage[]
+  relatedWorks     ReleaseRelatedWork[]
+  coverAssetId     String?
+  graphicLayout    String?
+  readingDirection String?
+  createdAt        DateTime             @default(now())
+  publishedAt      DateTime?
+  withdrawnAt      DateTime?
+
+  @@unique([workId, version])
+  @@index([status, publishedAt(sort: Desc), id])
+}
+
+model ReleaseRelatedWork {
+  id           String      @id @default(cuid())
+  releaseId    String
+  targetWorkId String
+  kind         String
+  release      WorkRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@unique([releaseId, targetWorkId, kind])
+}
+
+model ReleaseCredit {
+  id          String           @id @default(cuid())
+  releaseId   String
+  creatorId   String?
+  displayName String
+  role        CreditRole
+  position    Int
+  release     WorkRelease      @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  creator     CreatorIdentity? @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+
+  @@index([releaseId, position, id])
+}
+
+model ReleaseSection {
+  groupTitle String?
+  id         String         @id @default(cuid())
+  releaseId  String
+  logicalKey String
+  title      String
+  position   Int
+  release    WorkRelease    @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  blocks     ReleaseBlock[]
+
+  @@unique([releaseId, logicalKey])
+  @@index([releaseId, position, id])
+}
+
+model ReleaseBlock {
+  id             String         @id @default(cuid())
+  sectionId      String
+  logicalKey     String
+  kind           String         @default("PARAGRAPH")
+  text           String
+  footnoteLabel  String?
+  referenceLabel String?
+  position       Int
+  section        ReleaseSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@unique([sectionId, logicalKey])
+  @@index([sectionId, position, id])
+}
+
+enum ReadingStatus {
+  WANT_TO_READ
+  READING
+  FINISHED
+  PAUSED
+  DID_NOT_FINISH
+}
+
+model LibraryEntry {
+  id          String             @id @default(cuid())
+  userId      String
+  workId      String?
+  title       String
+  byline      String
+  status      ReadingStatus      @default(WANT_TO_READ)
+  favorite    Boolean            @default(false)
+  addedAt     DateTime           @default(now())
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work        Work?              @relation(fields: [workId], references: [id], onDelete: SetNull)
+  memberships CollectionMember[]
+
+  @@unique([userId, workId])
+  @@index([userId, addedAt(sort: Desc), id])
+}
+
+model LibraryCollection {
+  id           String             @id @default(cuid())
+  userId       String
+  title        String
+  description  String             @default("")
+  curatorLabel String
+  public       Boolean            @default(false)
+  editorial    Boolean            @default(false)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  members      CollectionMember[]
+
+  @@index([userId, id])
+  @@index([public, editorial, id])
+}
+
+model CollectionMember {
+  id           String            @id @default(cuid())
+  collectionId String
+  entryId      String
+  position     Int               @default(0)
+  collection   LibraryCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  entry        LibraryEntry      @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, entryId])
+  @@index([collectionId, position, id])
+}
+
+model ReadingState {
+  id            String       @id @default(cuid())
+  userId        String
+  workId        String?
+  releaseId     String?
+  sectionId     String
+  blockId       String
+  offset        Int
+  locatorKind   String       @default("PROSE")
+  graphicOffset Float?
+  progression   Float
+  furthest      Float
+  revision      Int          @default(0)
+  updatedAt     DateTime     @updatedAt
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  work          Work?        @relation(fields: [workId], references: [id], onDelete: SetNull)
+  release       WorkRelease? @relation(fields: [releaseId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, workId])
+  @@index([userId, updatedAt(sort: Desc), id])
+}
+
+model ReaderBookmark {
+  id        String      @id @default(cuid())
+  userId    String
+  releaseId String
+  sectionId String
+  blockId   String
+  offset    Int
+  label     String
+  createdAt DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  release   WorkRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([userId, releaseId, createdAt, id])
+}
+
+model ReaderAnnotation {
+  id          String      @id @default(cuid())
+  userId      String
+  releaseId   String
+  sectionId   String
+  blockId     String
+  startOffset Int
+  endOffset   Int
+  quote       String
+  note        String
+  color       String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  release     WorkRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([userId, releaseId, createdAt, id])
+}
+
+// Explicit owner-selected projections; never a public read of private entities.
+model ReleaseSupplement {
+  id        String      @id @default(cuid())
+  releaseId String
+  kind      String
+  title     String
+  text      String
+  position  Int
+  data      Json?
+  release   WorkRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([releaseId, position, id])
+}
+
+model WorkAsset {
+  id            String         @id @default(uuid())
+  workId        String
+  status        AiStatus       @default(QUEUED)
+  originalReady Boolean        @default(false)
+  attempts      Int            @default(0)
+  leaseToken    String?
+  leaseUntil    DateTime?
+  errorCode     String?
+  createdAt     DateTime       @default(now())
+  work          Work           @relation(fields: [workId], references: [id], onDelete: Cascade)
+  blobs         ArtifactBlob[]
+  releaseAssets ReleaseAsset[]
+  comicPages    ComicPage[]
+
+  @@index([workId, createdAt, id])
+  @@index([status, leaseUntil, createdAt])
+}
+
+// Durable file registry survives parent deletion so cleanup can always retry.
+model ArtifactBlob {
+  id         String     @id @default(uuid())
+  assetId    String?
+  exportId   String?
+  role       String
+  ready      Boolean    @default(false)
+  width      Int?
+  height     Int?
+  mimeType   String
+  sizeBytes  Int
+  storageKey String     @unique
+  createdAt  DateTime   @default(now())
+  asset      WorkAsset? @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  export     ExportJob? @relation(fields: [exportId], references: [id], onDelete: SetNull)
+
+  @@index([assetId, ready, role])
+  @@index([exportId, ready])
+  @@index([assetId, exportId, createdAt])
+}
+
+model ReleaseAsset {
+  id        String      @id @default(cuid())
+  releaseId String
+  assetId   String
+  release   WorkRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  asset     WorkAsset   @relation(fields: [assetId], references: [id], onDelete: NoAction)
+
+  @@unique([releaseId, assetId])
+}
+
+model ComicDocument {
+  id        String      @id @default(cuid())
+  workId    String
+  title     String
+  layout    String
+  direction String
+  revision  Int         @default(0)
+  work      Work        @relation(fields: [workId], references: [id], onDelete: Cascade)
+  pages     ComicPage[]
+
+  @@index([workId, id])
+}
+
+model ComicPage {
+  id          String            @id @default(cuid())
+  comicId     String
+  assetId     String
+  position    Int
+  altText     String
+  transcript  String
+  spreadGroup String?
+  revision    Int               @default(0)
+  comic       ComicDocument     @relation(fields: [comicId], references: [id], onDelete: Cascade)
+  asset       WorkAsset         @relation(fields: [assetId], references: [id], onDelete: NoAction)
+  panels      ComicPanel[]
+  scripts     ComicScript[]
+  appearances ComicAppearance[]
+
+  @@index([comicId, position, id])
+}
+
+model ComicPanel {
+  id       String    @id @default(cuid())
+  pageId   String
+  position Int
+  x        Float
+  y        Float
+  width    Float
+  height   Float
+  altText  String
+  page     ComicPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId, position, id])
+}
+
+model ComicScript {
+  id          String    @id @default(cuid())
+  pageId      String
+  position    Int
+  kind        String
+  text        String
+  speakerName String?
+  page        ComicPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId, position, id])
+}
+
+model ComicAppearance {
+  id        String    @id @default(cuid())
+  pageId    String
+  projectId String
+  kind      String
+  entityId  String
+  page      ComicPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, kind, entityId])
+}
+
+model ReleaseGraphicPage {
+  id          String      @id @default(cuid())
+  releaseId   String
+  logicalKey  String
+  assetId     String
+  position    Int
+  altText     String
+  transcript  String
+  spreadGroup String?
+  panels      Json
+  release     WorkRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@unique([releaseId, logicalKey])
+  @@index([releaseId, position, id])
+}
+
+model ExportJob {
+  id              String         @id @default(uuid())
+  workId          String
+  format          String
+  sourceReleaseId String
+  snapshot        Json
+  status          AiStatus       @default(QUEUED)
+  attempts        Int            @default(0)
+  leaseToken      String?
+  leaseUntil      DateTime?
+  errorCode       String?
+  createdAt       DateTime       @default(now())
+  completedAt     DateTime?
+  work            Work           @relation(fields: [workId], references: [id], onDelete: Cascade)
+  blobs           ArtifactBlob[]
+
+  @@index([workId, createdAt(sort: Desc), id])
+  @@index([status, leaseUntil, createdAt])
+}
+
+model WorkDocument {
+  id       String            @id @default(cuid())
+  workId   String
+  title    String
+  revision Int               @default(0)
+  work     Work              @relation(fields: [workId], references: [id], onDelete: Cascade)
+  sections DocumentSection[]
+
+  @@index([workId, id])
+}
+
+model DocumentSection {
+  id         String          @id @default(cuid())
+  documentId String
+  title      String
+  position   Int
+  document   WorkDocument    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  blocks     DocumentBlock[]
+
+  @@index([documentId, position, id])
+}
+
+model DocumentBlock {
+  id             String             @id @default(cuid())
+  sectionId      String
+  kind           String
+  text           String
+  position       Int
+  footnoteLabel  String?
+  referenceLabel String?
+  section        DocumentSection    @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  citations      ResearchCitation[]
+
+  @@index([sectionId, position, id])
+}
+
+model ResearchSource {
+  mediaId         String?
+  media           Media?             @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+  id              String             @id @default(cuid())
+  projectId       String
+  title           String
+  kind            String
+  authors         String[]
+  url             String?
+  publisher       String?
+  publicationDate String?
+  identifier      String?
+  provenance      String
+  project         Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  citations       ResearchCitation[]
+
+  @@index([projectId, id])
+  @@index([mediaId])
+}
+
+model ResearchCitation {
+  id              String         @id @default(cuid())
+  sourceId        String
+  documentBlockId String
+  locator         String
+  quotation       String
+  source          ResearchSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  block           DocumentBlock  @relation(fields: [documentBlockId], references: [id], onDelete: Cascade)
+
+  @@index([sourceId, id])
+  @@index([documentBlockId, id])
+}
+
+model UserPreference {
+  id        String @id @default(cuid())
+  userId    String
+  scope     String
+  contextId String @default("global")
+  values    Json
+  revision  Int    @default(0)
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, scope, contextId])
+}
+
+model SavedView {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  title     String
+  resource  String
+  query     Json
+  modules   String[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([userId, projectId, id])
+}
+
+model ProjectMap {
+  id           String      @id @default(cuid())
+  projectId    String
+  title        String
+  imageMediaId String?
+  revision     Int         @default(0)
+  project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  pins         MapPin[]
+  regions      MapRegion[]
+
+  @@index([projectId, id])
+}
+
+model MapPin {
+  id         String     @id @default(cuid())
+  mapId      String
+  label      String
+  x          Float
+  y          Float
+  entityKind String?
+  entityId   String?
+  map        ProjectMap @relation(fields: [mapId], references: [id], onDelete: Cascade)
+
+  @@index([mapId, id])
+}
+
+model MapRegion {
+  id     String     @id @default(cuid())
+  mapId  String
+  label  String
+  points Json
+  color  String
+  map    ProjectMap @relation(fields: [mapId], references: [id], onDelete: Cascade)
+
+  @@index([mapId, id])
+}
+
+model ProjectCanvas {
+  id        String       @id @default(cuid())
+  projectId String
+  title     String
+  revision  Int          @default(0)
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  nodes     CanvasNode[]
+
+  @@index([projectId, id])
+}
+
+model CanvasNode {
+  id          String        @id @default(cuid())
+  canvasId    String
+  kind        String
+  text        String
+  referenceId String?
+  x           Float
+  y           Float
+  width       Float
+  height      Float
+  canvas      ProjectCanvas @relation(fields: [canvasId], references: [id], onDelete: Cascade)
+  outgoing    CanvasEdge[]  @relation("CanvasFrom")
+  incoming    CanvasEdge[]  @relation("CanvasTo")
+
+  @@unique([canvasId, id])
+  @@index([canvasId, id])
+}
+
+model CanvasEdge {
+  id       String     @id @default(cuid())
+  canvasId String
+  sourceId String
+  targetId String
+  label    String
+  source   CanvasNode @relation("CanvasFrom", fields: [canvasId, sourceId], references: [canvasId, id], onDelete: Cascade)
+  target   CanvasNode @relation("CanvasTo", fields: [canvasId, targetId], references: [canvasId, id], onDelete: Cascade)
+
+  @@index([canvasId, id])
 }
 
 model Chapter {
@@ -556,6 +1298,7 @@ model Media {
   updatedAt        DateTime          @updatedAt
   project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   attachments      MediaAttachment[]
+  researchSources  ResearchSource[]
 
   @@unique([projectId, id])
   @@index([projectId, createdAt(sort: Desc), id])

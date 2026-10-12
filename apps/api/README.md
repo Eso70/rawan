@@ -21,7 +21,7 @@ pnpm --filter @rawan/api... build
 pnpm --filter @rawan/api dev
 ```
 
-Copy `apps/api/.env.example` to `apps/api/.env` and supply your local database credentials and a random JWT secret. Existing local `.env` files are preserved. Development/test loads the API .env regardless of the working directory; process environment values take precedence. Production uses process environment only. See [native local setup](../../docs/local-development.md).
+Copy `apps/api/.env.example` to `apps/api/.env.local` and supply your local database credentials and a random JWT secret. Existing local `.env.local` files are preserved. Development loads the API .env.local regardless of the working directory; process environment values take precedence. Production and HTTP unit tests use process environment only. Database integration helpers explicitly load local configuration before validating test-only connection opt-ins. See [native local setup](../../docs/local-development.md).
 
 | Variable       | Requirement                                                                                         |
 | -------------- | --------------------------------------------------------------------------------------------------- |

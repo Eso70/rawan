@@ -6,13 +6,18 @@ import {
   encodeFlow,
   FLOW_COOKIE,
 } from "../../../lib/google-auth";
+import { isPopupId, POPUP_RESULT_COOKIE } from "../../../lib/google-popup";
 
 export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("popupId");
+  const popupId = isPopupId(id) ? id : undefined;
   try {
     const { client, secret, origin } = authConfig();
     if (request.nextUrl.origin !== origin)
-      return NextResponse.redirect(`${origin}/auth/google`);
+      return NextResponse.redirect(
+        `${origin}/auth/google${popupId ? `?popupId=${popupId}` : ""}`,
+      );
     const { codeVerifier, codeChallenge } =
       await client.generateCodeVerifierAsync();
     const state = randomBytes(32).toString("base64url");
@@ -30,12 +35,23 @@ export async function GET(request: NextRequest) {
     response.cookies.set(
       FLOW_COOKIE,
       encodeFlow(
-        { state, nonce, verifier: codeVerifier, expires: Date.now() + 600000 },
+        {
+          state,
+          nonce,
+          verifier: codeVerifier,
+          expires: Date.now() + 600000,
+          ...(popupId ? { popupId } : {}),
+        },
         secret,
       ),
       { ...cookieOptions, maxAge: 600 },
     );
     response.headers.set("Cache-Control", "no-store");
+    response.headers.set("Referrer-Policy", "no-referrer");
+    response.cookies.set(POPUP_RESULT_COOKIE, "", {
+      ...cookieOptions,
+      maxAge: 0,
+    });
     return response;
   } catch {
     return NextResponse.redirect(

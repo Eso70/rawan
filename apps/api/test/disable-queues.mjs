@@ -4,7 +4,7 @@ if (process.env.NODE_ENV === 'production')
   throw Error('Database tests are disabled in production');
 // Load explicit opt-in only; never infer TEST_DATABASE_URL from DATABASE_URL.
 try {
-  process.loadEnvFile(new URL('../.env', import.meta.url));
+  process.loadEnvFile(new URL('../.env.local', import.meta.url));
 } catch (error) {
   if (error.code !== 'ENOENT') throw error;
 }
@@ -28,6 +28,8 @@ process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL = testDatabase;
 process.env.REDIS_URL = '';
 process.env.MEDIA_CLEANUP_SCHEDULE_ENABLED = 'false';
+process.env.HTTP_RATE_LIMIT_ENABLED = 'false';
+process.env.OPENAPI_ENABLED = 'false';
 process.env.AI_PROVIDER = 'disabled';
 process.env.AI_MODEL = 'fake-v1';
 delete process.env.AI_API_KEY;

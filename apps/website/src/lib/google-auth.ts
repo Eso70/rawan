@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { OAuth2Client } from "google-auth-library";
+import { isPopupId } from "./google-popup.ts";
 
 export const SESSION_COOKIE = "rawan_session";
 export const FLOW_COOKIE = "rawan_google_flow";
@@ -10,18 +11,22 @@ export const cookieOptions = {
   secure: false,
 };
 
-export function authConfig() {
+export function appConfig() {
   const origin = process.env.AUTH_ORIGIN;
   const api = process.env.RAWAN_API_URL;
+  if (
+    origin !== "http://localhost:3000" ||
+    api !== "http://127.0.0.1:3002/api/v1"
+  )
+    throw new Error("Local authentication is not configured");
+  return { origin, api };
+}
+export function authConfig() {
+  const { origin, api } = appConfig();
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const secret = process.env.GOOGLE_CLIENT_SECRET;
   // This integration is deliberately limited to the user's local environment.
-  if (
-    origin !== "http://localhost:3000" ||
-    api !== "http://127.0.0.1:3002/api/v1" ||
-    !clientId ||
-    !secret
-  )
+  if (!clientId || !secret)
     throw new Error("Local Google authentication is not configured");
   return {
     origin,
@@ -35,7 +40,13 @@ export function authConfig() {
   };
 }
 
-type Flow = { state: string; nonce: string; verifier: string; expires: number };
+export type Flow = {
+  state: string;
+  nonce: string;
+  verifier: string;
+  expires: number;
+  popupId?: string;
+};
 export function encodeFlow(flow: Flow, secret: string) {
   const payload = Buffer.from(JSON.stringify(flow)).toString("base64url");
   return `${payload}.${createHmac("sha256", secret).update(payload).digest("base64url")}`;
@@ -61,6 +72,7 @@ export function decodeFlow(
       !flow.verifier
     )
       return null;
+    if (flow.popupId !== undefined && !isPopupId(flow.popupId)) return null;
     return flow;
   } catch {
     return null;

@@ -5,6 +5,8 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 import { GoogleAuthService } from './google-auth.service.js';
+import { EmailSignupService } from './email-signup.service.js';
+import { EmailMailer } from '../mail/email-mailer.js';
 import { JwtStrategy } from './strategies/jwt.provider.js';
 import { ACCESS_TOKEN_TTL_SECONDS } from './auth.types.js';
 
@@ -25,7 +27,13 @@ import { ACCESS_TOKEN_TTL_SECONDS } from './auth.types.js';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleAuthService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    GoogleAuthService,
+    EmailSignupService,
+    EmailMailer,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

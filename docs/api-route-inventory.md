@@ -2,13 +2,26 @@
 
 All routes use the existing application prefix. Request/query DTOs are the validation source of truth. Private resources use ownership-scoped 404; nested references cannot cross projects. Delete responses have no body. There is no Author CRUD or public generic job polling API.
 
+Private Work sources can reference manuscripts in different projects owned by the same authenticated account; this is an explicit source-association contract, not a relaxation of existing project-scoped entity references.
+
+| Domain | Method / path                            | Access      | Body DTO         | Query DTO          | Successful response     |
+| ------ | ---------------------------------------- | ----------- | ---------------- | ------------------ | ----------------------- |
+| Works  | GET /api/v1/works                        | JWT + owner | -                | ProjectQueryDto    | 200: page ApiWork       |
+| Works  | POST /api/v1/works                       | JWT + owner | CreateWorkDto    | -                  | 201: ApiWork            |
+| Works  | GET /api/v1/works/:workId                | JWT + owner | -                | -                  | 200: ApiWork            |
+| Works  | PATCH /api/v1/works/:workId              | JWT + owner | UpdateWorkDto    | -                  | 200: ApiWork            |
+| Works  | DELETE /api/v1/works/:workId             | JWT + owner | -                | -                  | 204: empty              |
+| Works  | GET /api/v1/works/:workId/sources        | JWT + owner | -                | PaginationQueryDto | 200: page ApiWorkSource |
+| Works  | POST /api/v1/works/:workId/sources       | JWT + owner | AddWorkSourceDto | -                  | 201: ApiWorkSource      |
+| Works  | DELETE /api/v1/works/:workId/sources/:id | JWT + owner | -                | -                  | 204: empty              |
+
 | Domain        | Method / path                                                                        | Access      | Body DTO                 | Query DTO             | Successful response            |
 | ------------- | ------------------------------------------------------------------------------------ | ----------- | ------------------------ | --------------------- | ------------------------------ |
 | AI            | POST /api/v1/projects/:projectId/ai/generations                                      | JWT + owner | CreateAiDto              | -                     | 202: AiGenerationSummary       |
 | AI            | GET /api/v1/projects/:projectId/ai/generations                                       | JWT + owner | -                        | AiListDto             | 200: page AiGenerationSummary  |
 | AI            | GET /api/v1/ai/generations/:id                                                       | JWT + owner | -                        | -                     | 200: AiGenerationDetail        |
 | Health        | GET /api/v1/health                                                                   | Public      | -                        | -                     | 200: ApiHealth                 |
-| Auth          | POST /api/v1/auth/register                                                           | Public      | RegisterDto              | -                     | 201: AuthResponse              |
+| Auth          | POST /api/v1/auth/register                                                           | Public      | RegisterDto              | -                     | 410: ApiError (retired)        |
 | Auth          | POST /api/v1/auth/login                                                              | Public      | LoginDto                 | -                     | 200: AuthResponse              |
 | Auth          | POST /api/v1/auth/google                                                             | Public      | GoogleLoginDto           | -                     | 200: AuthResponse              |
 | Jobs          | GET /api/v1/health/queues                                                            | Public      | -                        | -                     | 200: ApiQueueReadiness         |
@@ -120,3 +133,161 @@ All routes use the existing application prefix. Request/query DTOs are the valid
 | Worldbuilding | GET /api/v1/places/:id                                                               | JWT + owner | -                        | -                     | 200: ApiPlace                  |
 | Worldbuilding | PATCH /api/v1/places/:id                                                             | JWT + owner | UpdatePlaceDto           | -                     | 200: ApiPlace                  |
 | Worldbuilding | DELETE /api/v1/places/:id                                                            | JWT + owner | -                        | -                     | 204: empty                     |
+
+## Horizon 2 backend additions
+
+Only `Catalog` routes are anonymous and require eligible published content or explicitly public profiles/collections. All other additions require JWT and scoped account ownership. Reading state and preferences are account-private. Full request/query/response schemas are in the reviewed OpenAPI contract.
+
+| Domain      | Method / path                                                                  | Access                           | Successful response |
+| ----------- | ------------------------------------------------------------------------------ | -------------------------------- | ------------------- |
+| Catalog     | GET /api/v1/catalog                                                            | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/collections                                                | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/collections/{id}/members                                   | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/creators/{handle}                                          | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/creators/{handle}/avatar/{role}                            | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/creators/{handle}/works                                    | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}                                              | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}/assets                                       | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}/credits                                      | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}/graphic-pages                                | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}/related                                      | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}/search                                       | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}/sections                                     | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{id}/supplements                                  | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{releaseId}/assets/{assetId}                      | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{releaseId}/assets/{assetId}/{role}               | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/releases/{releaseId}/sections/{id}/blocks                  | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/series/{id}                                                | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/works/{id}                                                 | Public + publication eligibility | 200                 |
+| Catalog     | GET /api/v1/catalog/works/{id}/releases                                        | Public + publication eligibility | 200                 |
+| Publication | GET /api/v1/creator-identities                                                 | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/creator-identities                                                | JWT + scoped account             | 201                 |
+| Publication | DELETE /api/v1/creator-identities/{id}                                         | JWT + scoped account             | 204                 |
+| Publication | PATCH /api/v1/creator-identities/{id}                                          | JWT + scoped account             | 200                 |
+| Creation    | GET /api/v1/preferences                                                        | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/preferences                                                       | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/preferences/{id}                                                | JWT + scoped account             | 204                 |
+| Creation    | GET /api/v1/preferences/{scope}/{contextId}/effective                          | JWT + scoped account             | 200                 |
+| Creation    | GET /api/v1/projects/{projectId}/canvases                                      | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/projects/{projectId}/canvases                                     | JWT + scoped account             | 201                 |
+| Creation    | POST /api/v1/projects/{projectId}/canvases/{canvasId}/edges                    | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/canvases/{canvasId}/edges/{id}             | JWT + scoped account             | 204                 |
+| Creation    | POST /api/v1/projects/{projectId}/canvases/{canvasId}/nodes                    | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/canvases/{canvasId}/nodes/{id}             | JWT + scoped account             | 204                 |
+| Creation    | PATCH /api/v1/projects/{projectId}/canvases/{canvasId}/nodes/{id}              | JWT + scoped account             | 200                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/canvases/{id}                              | JWT + scoped account             | 204                 |
+| Creation    | GET /api/v1/projects/{projectId}/canvases/{id}                                 | JWT + scoped account             | 200                 |
+| Creation    | PATCH /api/v1/projects/{projectId}/canvases/{id}                               | JWT + scoped account             | 200                 |
+| Creation    | GET /api/v1/projects/{projectId}/maps                                          | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/projects/{projectId}/maps                                         | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/maps/{id}                                  | JWT + scoped account             | 204                 |
+| Creation    | GET /api/v1/projects/{projectId}/maps/{id}                                     | JWT + scoped account             | 200                 |
+| Creation    | PATCH /api/v1/projects/{projectId}/maps/{id}                                   | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/projects/{projectId}/maps/{mapId}/pins                            | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/maps/{mapId}/pins/{id}                     | JWT + scoped account             | 204                 |
+| Creation    | PATCH /api/v1/projects/{projectId}/maps/{mapId}/pins/{id}                      | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/projects/{projectId}/maps/{mapId}/regions                         | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/maps/{mapId}/regions/{id}                  | JWT + scoped account             | 204                 |
+| Creation    | PATCH /api/v1/projects/{projectId}/maps/{mapId}/regions/{id}                   | JWT + scoped account             | 200                 |
+| Creation    | GET /api/v1/projects/{projectId}/research-sources                              | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/projects/{projectId}/research-sources                             | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/research-sources/{id}                      | JWT + scoped account             | 204                 |
+| Creation    | PATCH /api/v1/projects/{projectId}/research-sources/{id}                       | JWT + scoped account             | 200                 |
+| Creation    | GET /api/v1/projects/{projectId}/research-sources/{sourceId}/citations         | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/projects/{projectId}/research-sources/{sourceId}/citations        | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/research-sources/{sourceId}/citations/{id} | JWT + scoped account             | 204                 |
+| Creation    | GET /api/v1/projects/{projectId}/saved-views                                   | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/projects/{projectId}/saved-views                                  | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/projects/{projectId}/saved-views/{id}                           | JWT + scoped account             | 204                 |
+| Creation    | PATCH /api/v1/projects/{projectId}/saved-views/{id}                            | JWT + scoped account             | 200                 |
+| Reader      | POST /api/v1/reader/annotations                                                | JWT + scoped account             | 201                 |
+| Reader      | DELETE /api/v1/reader/annotations/{id}                                         | JWT + scoped account             | 204                 |
+| Reader      | PATCH /api/v1/reader/annotations/{id}                                          | JWT + scoped account             | 200                 |
+| Reader      | POST /api/v1/reader/bookmarks                                                  | JWT + scoped account             | 201                 |
+| Reader      | DELETE /api/v1/reader/bookmarks/{id}                                           | JWT + scoped account             | 204                 |
+| Reader      | GET /api/v1/reader/collections                                                 | JWT + scoped account             | 200                 |
+| Reader      | POST /api/v1/reader/collections                                                | JWT + scoped account             | 201                 |
+| Reader      | DELETE /api/v1/reader/collections/{collectionId}/members/{id}                  | JWT + scoped account             | 204                 |
+| Reader      | DELETE /api/v1/reader/collections/{id}                                         | JWT + scoped account             | 204                 |
+| Reader      | PATCH /api/v1/reader/collections/{id}                                          | JWT + scoped account             | 200                 |
+| Reader      | GET /api/v1/reader/collections/{id}/members                                    | JWT + scoped account             | 200                 |
+| Reader      | POST /api/v1/reader/collections/{id}/members                                   | JWT + scoped account             | 201                 |
+| Reader      | POST /api/v1/reader/graphic-bookmarks                                          | JWT + scoped account             | 201                 |
+| Reader      | POST /api/v1/reader/graphic-progress                                           | JWT + scoped account             | 201                 |
+| Reader      | GET /api/v1/reader/history                                                     | JWT + scoped account             | 200                 |
+| Reader      | DELETE /api/v1/reader/history/{id}                                             | JWT + scoped account             | 204                 |
+| Reader      | GET /api/v1/reader/library                                                     | JWT + scoped account             | 200                 |
+| Reader      | POST /api/v1/reader/library                                                    | JWT + scoped account             | 201                 |
+| Reader      | DELETE /api/v1/reader/library/{id}                                             | JWT + scoped account             | 204                 |
+| Reader      | PATCH /api/v1/reader/library/{id}                                              | JWT + scoped account             | 200                 |
+| Reader      | POST /api/v1/reader/progress                                                   | JWT + scoped account             | 201                 |
+| Reader      | GET /api/v1/reader/progress/{workId}                                           | JWT + scoped account             | 200                 |
+| Reader      | GET /api/v1/reader/progress/{workId}/resume/{releaseId}                        | JWT + scoped account             | 200                 |
+| Reader      | GET /api/v1/reader/releases/{releaseId}/annotations                            | JWT + scoped account             | 200                 |
+| Reader      | GET /api/v1/reader/releases/{releaseId}/bookmarks                              | JWT + scoped account             | 200                 |
+| Publication | GET /api/v1/work-series                                                        | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/work-series                                                       | JWT + scoped account             | 201                 |
+| Publication | DELETE /api/v1/work-series/{id}                                                | JWT + scoped account             | 204                 |
+| Publication | PATCH /api/v1/work-series/{id}                                                 | JWT + scoped account             | 200                 |
+| Publication | GET /api/v1/work-series/{id}/members                                           | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/work-series/{id}/members                                          | JWT + scoped account             | 201                 |
+| Publication | DELETE /api/v1/work-series/{seriesId}/members/{id}                             | JWT + scoped account             | 204                 |
+| Graphics    | GET /api/v1/works/{workId}/assets                                              | JWT + scoped account             | 200                 |
+| Graphics    | POST /api/v1/works/{workId}/assets                                             | JWT + scoped account             | 201                 |
+| Graphics    | DELETE /api/v1/works/{workId}/assets/{id}                                      | JWT + scoped account             | 204                 |
+| Graphics    | GET /api/v1/works/{workId}/assets/{id}                                         | JWT + scoped account             | 200                 |
+| Graphics    | GET /api/v1/works/{workId}/assets/{id}/files/{role}                            | JWT + scoped account             | 200                 |
+| Graphics    | GET /api/v1/works/{workId}/comics                                              | JWT + scoped account             | 200                 |
+| Graphics    | POST /api/v1/works/{workId}/comics                                             | JWT + scoped account             | 201                 |
+| Graphics    | GET /api/v1/works/{workId}/comics/{comicId}/pages                              | JWT + scoped account             | 200                 |
+| Graphics    | POST /api/v1/works/{workId}/comics/{comicId}/pages                             | JWT + scoped account             | 201                 |
+| Graphics    | DELETE /api/v1/works/{workId}/comics/{comicId}/pages/{id}                      | JWT + scoped account             | 204                 |
+| Graphics    | GET /api/v1/works/{workId}/comics/{comicId}/pages/{id}                         | JWT + scoped account             | 200                 |
+| Graphics    | PATCH /api/v1/works/{workId}/comics/{comicId}/pages/{id}                       | JWT + scoped account             | 200                 |
+| Graphics    | PATCH /api/v1/works/{workId}/comics/{comicId}/pages/{id}/panels                | JWT + scoped account             | 200                 |
+| Graphics    | POST /api/v1/works/{workId}/comics/{comicId}/pages/{pageId}/appearances        | JWT + scoped account             | 201                 |
+| Graphics    | DELETE /api/v1/works/{workId}/comics/{comicId}/pages/{pageId}/appearances/{id} | JWT + scoped account             | 204                 |
+| Graphics    | POST /api/v1/works/{workId}/comics/{comicId}/pages/{pageId}/scripts            | JWT + scoped account             | 201                 |
+| Graphics    | DELETE /api/v1/works/{workId}/comics/{comicId}/pages/{pageId}/scripts/{id}     | JWT + scoped account             | 204                 |
+| Graphics    | DELETE /api/v1/works/{workId}/comics/{id}                                      | JWT + scoped account             | 204                 |
+| Graphics    | PATCH /api/v1/works/{workId}/comics/{id}                                       | JWT + scoped account             | 200                 |
+| Publication | GET /api/v1/works/{workId}/credits                                             | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/works/{workId}/credits                                            | JWT + scoped account             | 201                 |
+| Publication | DELETE /api/v1/works/{workId}/credits/{id}                                     | JWT + scoped account             | 204                 |
+| Creation    | GET /api/v1/works/{workId}/documents                                           | JWT + scoped account             | 200                 |
+| Creation    | POST /api/v1/works/{workId}/documents                                          | JWT + scoped account             | 201                 |
+| Creation    | DELETE /api/v1/works/{workId}/documents/{id}                                   | JWT + scoped account             | 204                 |
+| Creation    | GET /api/v1/works/{workId}/documents/{id}                                      | JWT + scoped account             | 200                 |
+| Creation    | PATCH /api/v1/works/{workId}/documents/{id}                                    | JWT + scoped account             | 200                 |
+| Publication | GET /api/v1/works/{workId}/editions                                            | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/works/{workId}/editions                                           | JWT + scoped account             | 201                 |
+| Publication | DELETE /api/v1/works/{workId}/editions/{id}                                    | JWT + scoped account             | 204                 |
+| Graphics    | GET /api/v1/works/{workId}/exports                                             | JWT + scoped account             | 200                 |
+| Graphics    | POST /api/v1/works/{workId}/exports                                            | JWT + scoped account             | 201                 |
+| Graphics    | DELETE /api/v1/works/{workId}/exports/{id}                                     | JWT + scoped account             | 204                 |
+| Graphics    | GET /api/v1/works/{workId}/exports/{id}                                        | JWT + scoped account             | 200                 |
+| Graphics    | GET /api/v1/works/{workId}/exports/{id}/file                                   | JWT + scoped account             | 200                 |
+| Graphics    | POST /api/v1/works/{workId}/graphic-releases                                   | JWT + scoped account             | 201                 |
+| Publication | GET /api/v1/works/{workId}/metadata                                            | JWT + scoped account             | 200                 |
+| Publication | PATCH /api/v1/works/{workId}/metadata                                          | JWT + scoped account             | 200                 |
+| Publication | GET /api/v1/works/{workId}/related                                             | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/works/{workId}/related                                            | JWT + scoped account             | 201                 |
+| Publication | DELETE /api/v1/works/{workId}/related/{id}                                     | JWT + scoped account             | 204                 |
+| Publication | GET /api/v1/works/{workId}/releases                                            | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/works/{workId}/releases                                           | JWT + scoped account             | 201                 |
+| Publication | DELETE /api/v1/works/{workId}/releases/{id}                                    | JWT + scoped account             | 204                 |
+| Publication | GET /api/v1/works/{workId}/releases/{id}                                       | JWT + scoped account             | 200                 |
+| Graphics    | GET /api/v1/works/{workId}/releases/{id}/graphic-pages                         | JWT + scoped account             | 200                 |
+| Publication | GET /api/v1/works/{workId}/releases/{id}/preview                               | JWT + scoped account             | 200                 |
+| Publication | POST /api/v1/works/{workId}/releases/{id}/publish                              | JWT + scoped account             | 201                 |
+| Publication | POST /api/v1/works/{workId}/releases/{id}/withdraw                             | JWT + scoped account             | 201                 |
+
+## Verified email authentication
+
+Three additional public Auth operations bring the inventory to 268; direct registration remains listed as deprecated/410.
+
+| Controller     | Method/path                    | Access | Request                | Response                   |
+| -------------- | ------------------------------ | ------ | ---------------------- | -------------------------- |
+| AuthController | POST /api/v1/auth/email/signup | Public | EmailSignupDto         | 202 EmailChallengeResponse |
+| AuthController | POST /api/v1/auth/email/resend | Public | EmailVerificationIdDto | 202 EmailChallengeResponse |
+| AuthController | POST /api/v1/auth/email/verify | Public | EmailVerificationDto   | 200 AuthResponseDto        |

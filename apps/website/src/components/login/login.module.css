@@ -346,16 +346,59 @@
   position: relative;
 }
 .password input {
-  padding-right: 44px;
+  padding-inline-end: 54px;
 }
-.password button {
+.passwordToggle {
   position: absolute;
-  right: 12px;
-  top: 0;
-  height: 100%;
+  inset-inline-end: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 12px;
   border: 0;
   background: none;
-  color: #ffffff70;
+  color: #ffffffa0;
+  cursor: pointer;
+}
+.passwordToggle:hover {
+  color: white;
+  background: #ffffff0d;
+}
+.passwordToggle:focus-visible {
+  outline: 2px solid #d3c2f5;
+  outline-offset: -2px;
+}
+.passwordToggle:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+.form input[aria-invalid="true"] {
+  border-color: #eaa0ac;
+}
+.passwordFeedback {
+  color: #e8e1f0;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: start;
+}
+.passwordMeter {
+  height: 3px;
+  margin-bottom: 6px;
+  background: #ffffff18;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.passwordMeter span {
+  display: block;
+  height: 100%;
+  background: #eaa0ac;
+}
+.passwordMeter span[data-valid="true"] {
+  background: #81dcb0;
 }
 .submit {
   border: 0;
@@ -392,6 +435,53 @@
   line-height: 1.5;
   color: #e8e1f0;
   margin: 16px 0 0;
+}
+.verificationTitle {
+  margin: 0 0 14px;
+  font-size: 23px;
+  text-align: center;
+  font-weight: 600;
+}
+.verificationSubtitle {
+  margin: 0 0 28px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #ffffff90;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.verificationSubtitle strong {
+  font-weight: 500;
+}
+.codeInput {
+  text-align: center;
+  letter-spacing: 0.3em;
+}
+.codeInput::placeholder {
+  letter-spacing: normal;
+}
+.resend {
+  display: block;
+  margin: 22px auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #ffffff90;
+  font-size: 14px;
+}
+.verificationHelp {
+  margin: 16px 0 0;
+  color: #ffffff70;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+.form button:disabled,
+.resend:disabled,
+.provider:disabled,
+.back:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 .srOnly {
   position: absolute;

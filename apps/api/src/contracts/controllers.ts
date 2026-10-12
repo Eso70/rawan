@@ -3,6 +3,14 @@ import { AppController } from '../app.controller.js';
 import { AuthController } from '../auth/auth.controller.js';
 import { JobsController } from '../jobs/jobs.controller.js';
 import { ManuscriptController } from '../manuscript/manuscript.controller.js';
+import { WorksController } from '../works/works.controller.js';
+import { PublicationController } from '../publication/publication.controller.js';
+import { CatalogController } from '../publication/catalog.controller.js';
+import { ReaderController } from '../reader/reader.controller.js';
+import { ReaderCatalogController } from '../reader/reader-catalog.controller.js';
+import { CreationController } from '../creation/creation.controller.js';
+import { GraphicsController } from '../graphics/graphics.controller.js';
+import { GraphicsCatalogController } from '../graphics/graphics-catalog.controller.js';
 import { MediaController } from '../media/media.controller.js';
 import { NotesController } from '../organization/notes.controller.js';
 import { TagsController } from '../organization/tags.controller.js';
@@ -24,6 +32,14 @@ export const PUBLIC_CONTROLLERS = [
   AuthController,
   JobsController,
   ManuscriptController,
+  WorksController,
+  PublicationController,
+  CatalogController,
+  ReaderController,
+  ReaderCatalogController,
+  CreationController,
+  GraphicsController,
+  GraphicsCatalogController,
   MediaController,
   NotesController,
   TagsController,

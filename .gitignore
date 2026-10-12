@@ -15,6 +15,7 @@ node_modules/
 service-account*.json
 *-service-account.json
 credentials.json
+client_secret*.json
 
 # Framework, build, test, and cache output
 .next/

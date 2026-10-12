@@ -9,6 +9,7 @@ import {
   validationException,
 } from '../contracts/errors.js';
 import { IdentifierPipe } from '../contracts/identifier.pipe.js';
+import { SafeTextPipe } from '../contracts/safe-text.pipe.js';
 
 export const API_PREFIX = 'api/v1';
 
@@ -53,6 +54,7 @@ export function configureApp(app: INestApplication): void {
   });
   app.useGlobalPipes(
     new IdentifierPipe(),
+    new SafeTextPipe(),
     new ValidationPipe({
       transform: true,
       whitelist: true,

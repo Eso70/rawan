@@ -5,21 +5,46 @@ import { aiGenerationProcessor } from "./ai-generation.js";
 const config = validateAiConfig({ AI_PROVIDER: "fake", NODE_ENV: "test" });
 function unclaimed(
   row: { status: string; attempts: number; leaseUntil: Date | null } | null,
+  external = false,
 ) {
   const updateMany = vi.fn().mockResolvedValue({ count: 0 });
   const db = {
     $queryRaw: vi.fn().mockResolvedValue([]),
     aiGeneration: { findUnique: vi.fn().mockResolvedValue(row), updateMany },
   } as unknown as PrismaClient;
-  const provider = new FakeAiProvider();
+  const provider = external
+    ? { id: "openai", generate: vi.fn() }
+    : new FakeAiProvider();
   const generate = vi.spyOn(provider, "generate");
   return {
-    run: aiGenerationProcessor(db, provider, config),
+    run: aiGenerationProcessor(
+      db,
+      provider,
+      external
+        ? { ...config, provider: "openai", model: "configured-model" }
+        : config,
+    ),
     generate,
     updateMany,
   };
 }
 describe("AI worker execution boundaries", () => {
+  it("does not resubmit an expired external execution that may already have been billed", async () => {
+    const { run, generate, updateMany } = unclaimed(
+      { status: "RUNNING", attempts: 1, leaseUntil: new Date(0) },
+      true,
+    );
+    await expect(run("external-crash")).rejects.toThrow();
+    expect(generate).not.toHaveBeenCalled();
+    expect(updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "FAILED",
+          errorCode: "ATTEMPTS_EXHAUSTED",
+        }),
+      }),
+    );
+  });
   it.each(["COMPLETED", "FAILED"])(
     "does not invoke provider for terminal %s",
     async (status) => {

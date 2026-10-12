@@ -1,3 +1,4 @@
+import { createAccountFixture } from './account-fixture.mjs';
 import { createOpenApiDocument } from '../dist/contracts/openapi.js';
 import { assertActualResponse } from './assert-contract.mjs';
 import './disable-queues.mjs';
@@ -142,20 +143,8 @@ try {
     return result;
   }
   const password = 'media-test-password-long';
-  const alice = await call(
-    'POST',
-    '/auth/register',
-    null,
-    { email: 'alice@example.invalid', name: 'Alice', password },
-    201,
-  );
-  const bob = await call(
-    'POST',
-    '/auth/register',
-    null,
-    { email: 'bob@example.invalid', name: 'Bob', password },
-    201,
-  );
+  const alice = await createAccountFixture(app, { email: 'alice@example.invalid', name: 'Alice', password });
+  const bob = await createAccountFixture(app, { email: 'bob@example.invalid', name: 'Bob', password });
   const token = alice.accessToken;
   const project = await call(
     'POST',

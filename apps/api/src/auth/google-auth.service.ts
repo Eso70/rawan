@@ -65,6 +65,7 @@ export class GoogleAuthService {
             email,
             name,
             googleSubject: identity.sub,
+            emailVerifiedAt: new Date(),
             role: 'AUTHOR',
             author: { create: { displayName: name } },
           },

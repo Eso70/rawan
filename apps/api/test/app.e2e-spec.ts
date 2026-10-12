@@ -142,39 +142,21 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
     await request(app.getHttpServer()).get('/health').expect(404);
   });
 
-  it('registers a normalized AUTHOR and profile, returns a working token without hashes', async () => {
+  it('retires direct registration without writing an account or issuing a token', async () => {
     const response = await request(app.getHttpServer())
       .post('/api/v1/auth/register')
       .send({
-        email: ' New@Example.com ',
+        email: 'new@gmail.com',
         password: 'a long password',
-        name: ' New Author ',
+        name: 'New Author',
       })
-      .expect(201);
-    expect(response.body).toMatchObject({
-      tokenType: 'Bearer',
-      expiresIn: 604800,
-      user: { email: 'new@example.com', name: 'New Author', role: 'AUTHOR' },
-    });
-    expect(response.body.user).not.toHaveProperty('password');
-    expect(profiles.get(response.body.user.id)).toEqual({
-      displayName: 'New Author',
-    });
-    expect(prisma.$transaction).toHaveBeenCalledOnce();
-    expect(
-      await argon2.verify(
-        users.get(response.body.user.id)!.password!,
-        'a long password',
-      ),
-    ).toBe(true);
-    const me = await request(app.getHttpServer())
-      .get('/api/v1/users/me')
-      .set('Authorization', `Bearer ${response.body.accessToken}`)
-      .expect(200);
-    expect(me.body).toEqual(response.body.user);
+      .expect(410);
+    expect(response.body.code).toBe('GONE');
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+    expect(users.has('registered-author')).toBe(false);
   });
 
-  it('rejects an existing email regardless of case with 409', async () => {
+  it('also rejects legacy direct registration for existing accounts', async () => {
     await request(app.getHttpServer())
       .post('/api/v1/auth/register')
       .send({
@@ -182,7 +164,7 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
         password: 'a long password',
         name: 'Duplicate',
       })
-      .expect(409);
+      .expect(410);
     expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 
@@ -416,7 +398,7 @@ describe('backend foundation over HTTP (real Nest/JWT/validation, isolated persi
         name: 'Test',
         password: 'valid-password-long',
       })
-      .expect(409);
-    expect(conflict.body.code).toBe('CONFLICT');
+      .expect(410);
+    expect(conflict.body.code).toBe('GONE');
   });
 });

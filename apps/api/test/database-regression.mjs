@@ -3,7 +3,10 @@ import './disable-queues.mjs';
 import { spawnSync } from 'node:child_process';
 const suites = [
   'database',
+  'email-signup-database',
   'manuscript-database',
+  'works-database',
+  'platform-database',
   'worldbuilding-database',
   'relationships-database',
   'timeline-database',

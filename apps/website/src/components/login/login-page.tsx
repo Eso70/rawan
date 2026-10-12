@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { IconBrandGoogle } from "@tabler/icons-react";
+import { IconBrandGoogle, IconMail } from "@tabler/icons-react";
 import { BrandMark } from "../brand-mark";
 import { LoginScene } from "./login-scene";
 import { LoginHeading } from "./login-heading";
 import { LoginLanguage } from "./login-language";
 import { DISCORD_INVITE } from "../site-links";
+import { useGooglePopup } from "./use-google-popup";
+import { EmailSignin } from "./email-signin";
 import styles from "./login.module.css";
 
 const colors = ["#f3e6d0", "#f4b23e", "#d94a33", "#b18bd4", "#2c4a68"];
@@ -17,20 +19,16 @@ export function LoginPage({ error = "" }: { error?: string }) {
   const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
-  const [lastProvider, setLastProvider] = useState("");
   const reduced = useReducedMotion();
   const [signup, setSignup] = useState(false);
-  const [pending, setPending] = useState(false);
+  const [emailMode, setEmailMode] = useState(false);
+  const [emailChallenge, setEmailChallenge] = useState(false);
   const [notice, setNotice] = useState(error);
+  const { pending, start, cancel } = useGooglePopup(setNotice);
   useEffect(() => {
     const media = matchMedia("(min-width: 768px)");
     const update = () => setDesktop(media.matches);
     update();
-    try {
-      setLastProvider(localStorage.getItem("rawan-login-method") ?? "");
-    } catch {
-      /* Storage may be unavailable in private browser contexts. */
-    }
     media.addEventListener("change", update);
     return () => {
       media.removeEventListener("change", update);
@@ -90,34 +88,62 @@ export function LoginPage({ error = "" }: { error?: string }) {
           className={styles.content}
           transition={{ duration: reduced ? 0 : 0.3 }}
         >
-          <LoginHeading key={signup ? "signup" : "login"} signup={signup} />
-          <div className={styles.providers}>
-            <button
-              className={styles.provider}
-              disabled={pending}
-              onClick={() => {
-                setPending(true);
-                try {
-                  localStorage.setItem("rawan-login-method", "Google");
-                } catch {
-                  /* Optional preference only. */
-                }
-                window.location.assign("/auth/google");
+          {!emailChallenge && (
+            <LoginHeading key={signup ? "signup" : "login"} signup={signup} />
+          )}
+          {emailMode ? (
+            <EmailSignin
+              signup={signup}
+              onSwitch={() => setSignup(!signup)}
+              onBack={() => {
+                setEmailMode(false);
+                setEmailChallenge(false);
               }}
-            >
-              <IconBrandGoogle size={17} aria-hidden="true" />
-              {pending ? "Opening Google…" : "Continue with Google"}
-            </button>
-            {lastProvider === "Google" && (
-              <p className={styles.lastHint}>Last selected method: Google</p>
-            )}
-          </div>
-          <p className={styles.signup}>
-            {signup ? "Already have an account?" : "New to Rawan?"}{" "}
-            <button onClick={() => setSignup(!signup)}>
-              {signup ? "Log in" : "Sign up"}
-            </button>
-          </p>
+              onChallengeChange={setEmailChallenge}
+            />
+          ) : (
+            <>
+              <div className={styles.providers}>
+                <button
+                  className={styles.provider}
+                  disabled={pending}
+                  onClick={() => {
+                    try {
+                      localStorage.setItem("rawan-login-method", "Google");
+                    } catch {
+                      /* Optional preference only. */
+                    }
+                    start();
+                  }}
+                >
+                  <IconBrandGoogle size={17} aria-hidden="true" />
+                  Continue with Google
+                </button>
+                <button
+                  className={styles.provider}
+                  disabled={pending}
+                  onClick={() => {
+                    setNotice("");
+                    setEmailMode(true);
+                  }}
+                >
+                  <IconMail size={17} aria-hidden="true" />
+                  Continue with Email
+                </button>
+              </div>
+              {pending && (
+                <p className={styles.signup}>
+                  <button onClick={cancel}>Cancel sign-in</button>
+                </p>
+              )}
+              <p className={styles.signup}>
+                {signup ? "Already have an account?" : "New to Rawan?"}{" "}
+                <button onClick={() => setSignup(!signup)}>
+                  {signup ? "Log in" : "Sign up"}
+                </button>
+              </p>
+            </>
+          )}
           {notice && (
             <p className={styles.notice} role="status">
               {notice}

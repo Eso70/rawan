@@ -57,6 +57,7 @@ describe('Google authentication', () => {
           email: 'author@example.com',
           name: 'Author',
           googleSubject: identity.sub,
+          emailVerifiedAt: expect.any(Date),
           role: 'AUTHOR',
           author: { create: { displayName: 'Author' } },
         },

@@ -21,9 +21,9 @@ npm install --global pnpm@11.8.0
 pnpm install --frozen-lockfile
 ```
 
-Copy apps/api/.env.example to apps/api/.env and packages/database/.env.example to packages/database/.env only when missing. Set the same development DATABASE_URL in both. Generate JWT_SECRET with `node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"`. Put it only in the ignored local environment file. Set REDIS_URL to the local compatible Redis. Keep AI_PROVIDER=disabled for ordinary development. Set CORS_ORIGINS to your eventual frontend's exact origin when known. Do not guess/install a frontend during backend setup.
+Copy apps/api/.env.example to apps/api/.env.local and packages/database/.env.example to packages/database/.env.local only when missing. Set the same development DATABASE_URL in both. Generate JWT_SECRET with `node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"`. Put it only in the ignored local environment file. Set REDIS_URL to the local compatible Redis. Keep AI_PROVIDER=disabled for ordinary development. Set CORS_ORIGINS to your eventual frontend's exact origin when known. Do not guess/install a frontend during backend setup.
 
-The worker needs no separate environment file if it shares API settings. apps/worker/.env.example is an optional override template: copying it creates independent overrides, so keep its queue/storage/AI values aligned with API. Explicit process values take precedence. Development worker loads worker then API local files without overwriting earlier values; production loads process environment only. Relative media paths resolve from apps/api for both processes.
+The local setup uses `apps/api/.env.local`, `packages/database/.env.local`, `apps/worker/.env.local` and `apps/website/.env.local`. Real values stay in these ignored files; `.env.example` files contain safe templates and are never loaded as credentials. The worker can also inherit API settings when its local file is absent. Keep database/queue/storage/AI values aligned. Explicit process values take precedence. Development worker loads worker then API local files without overwriting earlier values; production API/worker/Prisma CLI use process environment only. Relative media paths resolve from apps/api for both processes. Next.js loads the website's `.env.local` using its own environment rules.
 
 ## Generate, migrate, build and run
 
@@ -37,7 +37,7 @@ pnpm dev
 
 db:generate creates ignored client code without altering database state; db:deploy applies committed migrations, including on a fresh database. db:migrate is only for deliberately creating a new migration. The eleven historical migrations remain intact. Client generation is also part of database builds. No generated Prisma output should be committed.
 
-For a clean development database, stop the API and worker and run `pnpm db:reset` from the repository root. It runs Prisma's interactive reset, reapplies all committed migrations and then regenerates the client. Verify the database/schema shown in the confirmation prompt: this deletes its users, projects, onboarding progress and other database records. The target comes from the database package's `.env` or an overriding process `DATABASE_URL`, so keep it aligned with the API. It does not seed users, remove uploaded files or clear Redis jobs. Restart the API/worker and sign in again after resetting. Never use this command against data you need to retain.
+For a clean development database, stop the API and worker and run `pnpm db:reset` from the repository root. It runs Prisma's interactive reset, reapplies all committed migrations and then regenerates the client. Verify the database/schema shown in the confirmation prompt: this deletes its users, projects, onboarding progress and other database records. The target comes from the database package's `.env.local` or an overriding process `DATABASE_URL`, so keep it aligned with the API. It does not seed users, remove uploaded files or clear Redis jobs. Restart the API/worker and sign in again after resetting. Never use this command against data you need to retain.
 
 pnpm dev starts API, worker and shared watchers after dependency builds. Alternatively, after pnpm build use separate terminals with `pnpm --filter @rawan/api dev` and `pnpm --filter @rawan/worker dev`. Built process commands are `pnpm --filter @rawan/api start:prod` (the script name alone does not set NODE_ENV) and `pnpm --filter @rawan/worker start`. API is http://localhost:3002/api/v1; liveness `/health`, queue readiness `/health/queues`, development docs http://localhost:3002/api/docs. Readiness cannot guarantee a worker is consuming. Stop development processes normally with Ctrl+C.
 
@@ -48,7 +48,7 @@ Redis is required for the worker. An API-only development session can set REDIS_
 | Name                           | Used by / classification               | Default or rule                                                                     |
 | ------------------------------ | -------------------------------------- | ----------------------------------------------------------------------------------- |
 | NODE_ENV                       | API/worker, optional                   | development; development/test/production only                                       |
-| DATABASE_URL                   | API/worker/Prisma CLI, required        | PostgreSQL URL; CLI loads packages/database/.env                                    |
+| DATABASE_URL                   | API/worker/Prisma CLI, required        | PostgreSQL URL; CLI loads packages/database/.env.local                              |
 | JWT_SECRET                     | API, required                          | Random local secret, at least 32 non-padding characters; stronger production checks |
 | PORT                           | API, optional                          | 3002, integer 1–65535                                                               |
 | CORS_ORIGINS                   | API, optional locally                  | Exact comma-separated origins, empty means no browser origin allowed                |
@@ -63,11 +63,12 @@ Redis is required for the worker. An API-only development session can set REDIS_
 | MEDIA_CLEANUP_INTERVAL_MS      | API/worker, optional                   | 60000; range 10000–3600000                                                          |
 | MEDIA_CLEANUP_SCHEDULE_ENABLED | API, optional                          | true; tests disable queue side effects                                              |
 | WORKER_CONCURRENCY             | Worker, optional                       | 2; range 1–10                                                                       |
-| AI_PROVIDER                    | API/worker, optional                   | disabled; fake explicitly development/test only                                     |
-| AI_MODEL                       | API/worker, optional                   | fake-v1; no real model implemented                                                  |
+| AI_PROVIDER                    | API/worker, optional                   | disabled; fake development/test only; openai requires explicit configuration        |
+| AI_MODEL                       | API/worker, optional                   | fake-v1 for disabled/fake; explicit real model for openai                           |
 | AI_REQUEST_TIMEOUT_MS          | API/worker, optional                   | 15000; range 1000–60000                                                             |
 | AI_WORKER_CONCURRENCY          | API/worker, optional                   | 1; range 1–4                                                                        |
-| AI_API_KEY                     | Validation guard, unsupported          | Nonempty rejected; no adapter/key fallback                                          |
+| AI_API_KEY                     | API/worker, optional real provider     | Server-only key required for openai; nonempty rejected for disabled/fake            |
+| AI_EXTERNAL_PROCESSING_ENABLED | API/worker, optional                   | false; explicit true required for openai                                            |
 | TEST_DATABASE_URL              | Database/integration tests only        | Explicit loopback PostgreSQL test URL; no DATABASE_URL fallback                     |
 | TEST_REDIS_URL                 | Queue/AI integrations only             | Explicit loopback Redis; random namespaces                                          |
 

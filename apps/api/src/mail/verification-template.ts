@@ -1,0 +1,12 @@
+export function verificationEmail(code: string, origin: string) {
+  if (!/^\d{8}$/.test(code)) throw Error('Invalid verification code');
+  const url = new URL(origin);
+  if (url.origin !== origin || !['http:', 'https:'].includes(url.protocol))
+    throw Error('Invalid email origin');
+  const safeOrigin = origin.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
+  return {
+    subject: 'Confirm your email — Rawan',
+    text: `Welcome to Rawan\n\nEnter this code to confirm your email: ${code}\n\nThis code expires in 10 minutes. If you did not create an account, you can ignore this email.\n\nHelp: https://discord.gg/B5A5JX79k\nTerms: ${origin}/terms\nPrivacy: ${origin}/privacy`,
+    html: `<!doctype html><html><body style="margin:0;background:#0b0f17;color:#ffffff;font-family:Arial,sans-serif"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f17;background-image:radial-gradient(#34404d 1px,transparent 1px);background-size:16px 16px"><tr><td align="center" style="padding:48px 20px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px"><tr><td align="center" style="padding-bottom:32px"><img src="cid:rawan-logo" alt="Rawan" width="48" height="48" style="display:block;object-fit:contain"></td></tr><tr><td align="center"><h1 style="margin:0 0 12px;font-size:25px;line-height:1.3;color:#ffffff">Welcome to Rawan</h1><p style="margin:0;color:#b6c0ce;font-size:14px">Enter this code to confirm your email</p></td></tr><tr><td style="padding:32px 0"><table role="presentation" width="100%" style="border:1px solid #39424d;border-radius:20px;background:#19212b"><tr><td align="center" style="padding:26px 16px;font-size:30px;font-weight:bold;letter-spacing:8px;color:#ffffff">${code}</td></tr></table></td></tr><tr><td align="center" style="font-size:13px;line-height:1.6;color:#8d9eb2">This code expires in 10 minutes. If you did not create an account, you can safely ignore this email.</td></tr><tr><td align="center" style="padding-top:64px;font-size:12px;color:#a6b5c6"><a href="https://discord.gg/B5A5JX79k" style="color:#a6b5c6">Help</a> &nbsp; | &nbsp; <a href="${safeOrigin}/terms" style="color:#a6b5c6">Terms</a> &nbsp; | &nbsp; <a href="${safeOrigin}/privacy" style="color:#a6b5c6">Privacy</a><p style="color:#71849b">© ${new Date().getFullYear()} Rawan. All rights reserved.</p></td></tr></table></td></tr></table></body></html>`,
+  };
+}

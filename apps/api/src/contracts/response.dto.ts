@@ -1006,6 +1006,7 @@ export class ApiErrorDto implements Public.ApiError {
       'PAYLOAD_TOO_LARGE',
       'UNSUPPORTED_MEDIA_TYPE',
       'RATE_LIMITED',
+      'GONE',
       'SERVICE_UNAVAILABLE',
       'INTERNAL_ERROR',
     ],

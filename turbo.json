@@ -16,6 +16,12 @@
       "passThroughEnv": [
         "DATABASE_URL",
         "JWT_SECRET",
+        "GOOGLE_CLIENT_ID",
+        "EMAIL_SIGNUP_ENABLED",
+        "EMAIL_FROM",
+        "GMAIL_APP_PASSWORD",
+        "EMAIL_CODE_SECRET",
+        "EMAIL_APP_ORIGIN",
         "NODE_ENV",
         "PORT",
         "CORS_ORIGINS",
@@ -34,6 +40,7 @@
         "AI_REQUEST_TIMEOUT_MS",
         "AI_WORKER_CONCURRENCY",
         "AI_API_KEY",
+        "AI_EXTERNAL_PROCESSING_ENABLED",
         "OPENAPI_ENABLED"
       ]
     },

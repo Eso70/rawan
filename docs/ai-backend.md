@@ -1,6 +1,6 @@
 # Part 12 — AI backend architecture and verification
 
-Rawan remains backend-first. Both frontend folders contain only `.gitkeep`. This implementation adds the generation pipeline, not a chat interface or autonomous editor. AI returns proposals; author content is never updated by the processor.
+This document describes the backend generation pipeline. AI returns proposals; author content is never updated by the processor. The expanded implementation leaves the frontend unchanged.
 
 ## 1. Plan executed
 
@@ -26,14 +26,14 @@ SUMMARIZE and REWRITE require supplied text or selected content. The architectur
 
 Shared validated settings:
 
-| Setting               | Default  | Supported values                     |
-| --------------------- | -------- | ------------------------------------ |
-| AI_PROVIDER           | disabled | disabled, fake                       |
-| AI_MODEL              | fake-v1  | fake-v1 only for the initial adapter |
-| AI_REQUEST_TIMEOUT_MS | 15000    | integer 1000–60000                   |
-| AI_WORKER_CONCURRENCY | 1        | integer 1–4                          |
+| Setting               | Default  | Supported values                                     |
+| --------------------- | -------- | ---------------------------------------------------- |
+| AI_PROVIDER           | disabled | disabled, fake, openai                               |
+| AI_MODEL              | fake-v1  | fake-v1 for disabled/fake; explicit model for OpenAI |
+| AI_REQUEST_TIMEOUT_MS | 15000    | integer 1000–60000                                   |
+| AI_WORKER_CONCURRENCY | 1        | integer 1–4                                          |
 
-Fake is explicit development/test opt-in and prohibited in production. AI_API_KEY is intentionally rejected until a real adapter exists. Neither API nor worker config accepts arbitrary providers/models. Normal clients cannot override these settings. Existing non-AI functionality operates with AI disabled.
+Fake is explicit development/test opt-in and prohibited in production. The optional real OpenAI adapter requires an explicit AI_MODEL, server-only AI_API_KEY and AI_EXTERNAL_PROCESSING_ENABLED=true in API/worker configuration. Disabled/fake configurations reject credentials. Clients cannot choose provider origins or configure server secrets. See [ADR 0006](adr/0006-optional-production-text-ai.md). Normal clients cannot override these settings. Existing non-AI functionality operates with AI disabled.
 
 To exercise the simulator locally, set `AI_PROVIDER=fake` in the API environment (worker inherits it during development) and keep `AI_MODEL=fake-v1`. Supply the existing database and Redis settings, apply migrations, then run `pnpm dev`. If the worker has its own environment, match provider/model/queue prefix there. The API returns 503 for creation when AI is disabled or no Redis URL is configured; existing owned history remains readable.
 
@@ -86,7 +86,7 @@ New forward migration: `20261005070000_ai`. No historical migration changed. New
 - Nullable inputTokens/outputTokens/errorCode; attempts and execution lease token/deadline.
 - createdAt/updatedAt/startedAt/completedAt timestamps.
 
-Indexes support project/date listing, user/date quotas and pending status/lease recovery. SQL checks enforce input lengths/context array cardinality, nonnegative token usage and attempts 0–3. Prisma generate/build succeeded, the local database has all 11 migrations, and schema diff against the configured database is empty. On another checkout/database run `pnpm db:deploy` followed by `pnpm db:generate`; generation alone does not apply migrations.
+Indexes support project/date listing, user/date quotas and pending status/lease recovery. SQL checks enforce input lengths/context array cardinality, nonnegative token usage and attempts 0–3. Current migration and validation results are recorded in the [expanded backend ledger](backend-horizon-2-implementation.md). On another checkout/database run `pnpm db:deploy` followed by `pnpm db:generate`; generation alone does not apply migrations.
 
 ## 10. Usage and cost
 

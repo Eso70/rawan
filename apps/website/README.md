@@ -1,10 +1,10 @@
 # Rawan home page
 
-This website currently contains the root home-page hero, the five-feature toolkit section, and the Community reel carousel. `apps/app` and `packages/ui` remain empty. No backend or database connection is involved.
+This website contains the landing page, Google popup sign-in, email/password sign-in, email code verification and authenticated workspace routes. Email signup stays on `/login` through code verification; both methods then open an empty `/workspace`. Use `http://localhost:3000/login` for authentication; the loopback-IP login URL redirects there to keep popup windows on the same origin. Email sending is disabled until the Gmail app password is configured; see [email setup](../../docs/email-auth.md). The onboarding page and author dashboard route have been removed; the reader dashboard shell remains separately accessible. `apps/app` and `packages/ui` remain empty. Landing content uses local assets; authentication connects to the API.
 
 From the repository root, run `pnpm dev:website`, then open <http://127.0.0.1:3000>. For a production preview, run `pnpm --filter @rawan/website build` followed by `pnpm --filter @rawan/website start`.
 
-The hero uses a full-screen muted looping background, centered headline and description, translucent badge, compact navigation, a white call to action and staggered entrance. Reduced-motion preferences pause the background; playback runs automatically without visible controls. Navigation for later pages is disabled. Login and building buttons currently explain that the writing workspace comes next; they do not authenticate or register users.
+The hero uses a full-screen muted looping background, centered headline and description, translucent badge, compact navigation, a white call to action and staggered entrance. Reduced-motion preferences pause the background; playback runs automatically without visible controls. Login and building buttons open the Google sign-in page.
 
 ## Video assets
 

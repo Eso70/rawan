@@ -1,6 +1,6 @@
 # Rawan backend v1 API
 
-The HTTP contract is `/api/v1`. This reference, the [complete route inventory](api-route-inventory.md), and the generated OpenAPI document describe the backend for client development. The website includes a landing page, Google sign-in, account preferences and empty author/reader dashboard shells. No client SDK is generated. The [product scope and backend capability audit](product-scope-and-backend-capabilities.md) distinguishes implemented private creative features from future reader and publishing capabilities.
+The HTTP contract is `/api/v1`. This reference, the [complete route inventory](api-route-inventory.md), and the generated OpenAPI document describe the backend for client development. No frontend implementation or client SDK accompanies this backend change. The [current expanded backend guide](backend-horizon-2.md) describes implemented publication, reader, library, identity, creation, graphics and processing capabilities; Horizon 3 remains deferred.
 
 ## Documentation and generation
 
@@ -12,7 +12,7 @@ Documentation uses Nest's supported [Swagger decorators and generator](https://d
 
 ## Authentication and ownership
 
-Register with `POST /api/v1/auth/register` (201), then use the returned access token as `Authorization: Bearer <token>`. Login is `POST /api/v1/auth/login` (200). Emails are trimmed and lowercased; registration passwords are 12–128 characters, while login accepts 1–128 to preserve older passwords. Registration cannot assign a role. Tokens identify a user; current database role and account existence are checked on requests. There is no refresh-token, logout, or public Author CRUD endpoint.
+Email registration uses `POST /api/v1/auth/email/signup` (202) followed by `POST /api/v1/auth/email/verify` (200); resend uses `POST /api/v1/auth/email/resend` (202). Only a delivered, valid code creates the account and returns a token. The old direct `POST /api/v1/auth/register` is deprecated and returns 410 `GONE`, preventing verification bypass. Login remains `POST /api/v1/auth/login` (200). Use the returned access token as `Authorization: Bearer <token>`. Emails are normalized; signup passwords are 12–128 characters, while login accepts 1–128 to preserve older passwords. Registration cannot assign a role. See [email authentication and setup](email-auth.md) for domain restrictions, quotas and SMTP configuration. Tokens identify a user; current database role/account existence are checked on requests. There is no refresh-token or public Author CRUD endpoint; browser logout clears its session cookie.
 
 `GET /users/me` resolves the current user. `GET /users` and `GET /users/:id` require ADMIN. ADMIN does not bypass private author/project ownership. Missing/invalid/expired credentials return 401; an authenticated user denied an explicit role operation receives 403. Missing and inaccessible private resources both return 404. References used in relationships, timeline entities, plot links, tags, media attachments and AI context must belong to the same owned project. Ownership is enforced on mutations and polling as well as reads.
 
@@ -29,6 +29,8 @@ Treat IDs as opaque strings. Route IDs accept 1–128 ASCII letters, digits, `_`
 Lists of scenes, events, plots, plot points and notes use summary schemas that omit large content/detail fields. Fetch the individual resource for its detail schema. AI summaries omit result/input context. Search returns bounded snippets rather than whole manuscript text. Public user responses exclude password hashes; media excludes storage keys/providers/paths; AI excludes prompts, provider credentials, context snapshots, queue/lease metadata and raw provider failures.
 
 ## Route structure
+
+Private Work identities and explicit owned-manuscript source links are implemented separately from Project/Book. See [Work backend](works-backend.md). They provide no publication or reader access.
 
 All paths below are relative to `/api/v1`; the inventory lists every operation and its request/query/response type.
 
@@ -111,7 +113,7 @@ Upload `POST /projects/:projectId/media` with `multipart/form-data`, exactly one
 
 Create AI proposals with `POST /projects/:projectId/ai/generations`: `task` is BRAINSTORM, SUMMARIZE or REWRITE, instructions 1–2,000 characters, optional inputText at most 8,000 characters, and at most eight explicit `{kind,id}` context references. Kinds are SCENE, CHARACTER, TIMELINE_EVENT, PLOT_POINT and NOTE. Ownership is rechecked; provider/model/key/prompt/queue configuration is never accepted from the client. A 202 indicates durable acceptance, not completion. List that project's generation summaries or poll `GET /ai/generations/:id` for QUEUED → RUNNING → COMPLETED/FAILED. Recovery/retries can return a running task to queued. Results always carry `proposal: true`; outputs never automatically change manuscript data.
 
-Completed details contain the bounded text result, task, truncation indicator and usage; token counts can be null when unavailable, and current fake-provider monetary cost is null. Failed details expose safe failure categories, not raw exceptions. Current quotas are five pending, 30 per hour and 200 per day per user. AI is disabled by default. The only implemented adapter is explicit fake development/test, rejected in production; no real provider or paid calls have been enabled. See [AI lifecycle/configuration](ai-backend.md).
+Completed details contain the bounded text result, task, truncation indicator and usage; token counts can be null when unavailable, and monetary cost is not calculated. Failed details expose safe failure categories, not raw exceptions. Current quotas are five pending, 30 per hour and 200 per day per user. AI is disabled by default. The fake development/test adapter is rejected in production; an optional OpenAI text adapter requires explicit server configuration and external-processing opt-in. No live provider calls were made during validation. See [AI lifecycle/configuration](ai-backend.md).
 
 ## Freeze and compatibility
 

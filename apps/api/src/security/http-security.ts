@@ -45,6 +45,7 @@ export function httpSecurity(
   return (req: Request, res: Response, next: NextFunction) => {
     const requestId = randomUUID();
     res.setHeader('X-Request-Id', requestId);
+    res.setHeader('Cache-Control', 'private, no-store');
     const started = Date.now();
     res.once('finish', () => {
       if (res.statusCode >= 500)
@@ -64,16 +65,30 @@ export function httpSecurity(
     let retry = budget.consume(`all:${ip}`, 300);
     const category =
       req.method === 'POST' &&
-      ['/api/v1/auth/login', '/api/v1/auth/google'].includes(path)
+      [
+        '/api/v1/auth/login',
+        '/api/v1/auth/google',
+        '/api/v1/auth/email/verify',
+      ].includes(path)
         ? (['login', 20] as const)
-        : req.method === 'POST' && path === '/api/v1/auth/register'
+        : req.method === 'POST' &&
+            [
+              '/api/v1/auth/register',
+              '/api/v1/auth/email/signup',
+              '/api/v1/auth/email/resend',
+            ].includes(path)
           ? (['register', 10] as const)
           : req.method === 'POST' &&
               /^\/api\/v1\/projects\/[^/]+\/media$/.test(path)
             ? (['upload', 20] as const)
-            : path.endsWith('/search')
-              ? (['search', 60] as const)
-              : undefined;
+            : req.method === 'POST' &&
+                /^\/api\/v1\/works\/[^/]+\/(assets|exports|releases|graphic-releases)$/.test(
+                  path,
+                )
+              ? (['preparation', 20] as const)
+              : path.endsWith('/search')
+                ? (['search', 60] as const)
+                : undefined;
     if (!retry && category)
       retry = budget.consume(`${category[0]}:${ip}`, category[1]);
     if (retry) {

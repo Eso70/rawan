@@ -12,6 +12,7 @@
     "lint": "oxlint --config ../../.oxlintrc.json --type-aware src/"
   },
   "dependencies": {
+    "@rawan/types": "workspace:*",
     "@tabler/icons-react": "^3.49.0",
     "google-auth-library": "^11.1.0",
     "lenis": "^1.3.26",

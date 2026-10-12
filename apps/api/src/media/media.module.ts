@@ -26,6 +26,6 @@ import { UploadProjectGuard } from './upload-project.guard.js';
     StagedUploadInterceptor,
     UploadProjectGuard,
   ],
-  exports: [MediaCleanupService],
+  exports: [MediaCleanupService, STORAGE_PROVIDER],
 })
 export class MediaModule {}

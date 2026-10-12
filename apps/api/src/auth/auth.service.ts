@@ -1,10 +1,9 @@
 import {
-  ConflictException,
+  GoneException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Prisma } from '@rawan/database';
 import type { AuthResponse } from '@rawan/types';
 import * as argon2 from 'argon2';
 import { PrismaService } from '../database/prisma.service.js';
@@ -28,43 +27,10 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto): Promise<AuthResponse> {
-    const email = normalizeEmail(dto.email);
-    // Case-insensitive lookup also supports accounts created before normalization.
-    const existing = await this.prisma.user.findFirst({
-      where: { email: { equals: email, mode: 'insensitive' } },
-      select: { id: true },
-    });
-    if (existing) throw new ConflictException('Email already exists');
-
-    const password = await passwordWork(() =>
-      argon2.hash(dto.password, PASSWORD_HASH_OPTIONS),
+    void dto;
+    throw new GoneException(
+      'Direct registration has been retired. Request and verify an email signup code instead.',
     );
-    const name = dto.name.trim();
-    let user;
-    try {
-      user = await this.prisma.$transaction((tx) =>
-        tx.user.create({
-          data: {
-            email,
-            name,
-            password,
-            role: 'AUTHOR',
-            author: { create: { displayName: name } },
-          },
-          select: PUBLIC_USER_SELECT,
-        }),
-      );
-    } catch (error) {
-      // The unique constraint handles simultaneous registrations of the same email.
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException('Email already exists');
-      }
-      throw error;
-    }
-    return this.createToken(user);
   }
 
   async login(dto: LoginDto): Promise<AuthResponse> {

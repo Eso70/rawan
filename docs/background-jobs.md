@@ -59,9 +59,9 @@ Enqueue returns a generated BullMQ UUID only after successful publication. Statu
 
 ## 6. Worker
 
-The existing `apps/worker` now has config, queues, processors, and an executable index. It is not another HTTP server. Startup loads development `.env` overrides, validates configuration, creates Prisma 7 with PrismaPg, connects PostgreSQL and Redis with bounded startup waits, and starts the maintenance consumer.
+The existing `apps/worker` now has config, queues, processors, and an executable index. It is not another HTTP server. Startup loads development `.env.local` overrides, validates configuration, creates Prisma 7 with PrismaPg, connects PostgreSQL and Redis with bounded startup waits, and starts the maintenance consumer.
 
-Development config precedence: process environment → worker `.env` → API `.env` fallback. Production uses process environment only. Worker does not require JWT/CORS settings. Relative local storage paths resolve from apps/api for both applications; production requires an explicit absolute path. Worker supports a validated PostgreSQL `schema` URL parameter and configures the adapter/search path consistently.
+Development config precedence: process environment → worker `.env.local` → API `.env.local` fallback. Production uses process environment only. Worker does not require JWT/CORS settings. Relative local storage paths resolve from apps/api for both applications; production requires an explicit absolute path. Worker supports a validated PostgreSQL `schema` URL parameter and configures the adapter/search path consistently.
 
 Logs are structured JSON with service/time, queue, safe job identity/type, attempt, lifecycle event, and execution duration. Errors use safe event codes rather than raw credentials, content, filesystem paths, or provider traces. Unexpected consumer-loop failure triggers shutdown with nonzero process status.
 
@@ -134,7 +134,7 @@ The actual entry-point SIGTERM graceful path is asserted on Unix CI. Windows chi
 
 After local PostgreSQL setup and committed migrations, start your locally installed Redis 6.2+ service. Docker is optional; the existing Compose file remains available for developers who already use it. See [native setup](local-development.md).
 
-Set REDIS_URL in `apps/api/.env` using the example; copy the worker example if overrides are needed. Keep queue prefix and storage root aligned. Then:
+Set REDIS_URL in `apps/api/.env.local` using the example; copy the worker example if overrides are needed. Keep queue prefix and storage root aligned. Then:
 
 ```sh
 pnpm dev

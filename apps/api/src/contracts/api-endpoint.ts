@@ -21,7 +21,9 @@ export function ApiEndpoint(options: {
   array?: boolean;
   public?: boolean;
   admin?: boolean;
+  binary?: string[];
   description?: string;
+  deprecated?: boolean;
 }): MethodDecorator {
   return (target, key, descriptor) => {
     const method = descriptor.value as Function;
@@ -33,6 +35,7 @@ export function ApiEndpoint(options: {
     const decorators: MethodDecorator[] = [
       ApiTags(options.tag),
       ApiOperation({
+        ...(options.deprecated ? { deprecated: true } : {}),
         summary: String(key).replace(/([a-z])([A-Z])/g, '$1 $2'),
         description:
           options.description ??
@@ -84,25 +87,52 @@ export function ApiEndpoint(options: {
             maxItems: String(key) === 'reorder' ? 200 : 100,
           }
         : response;
-    decorators.push(
-      ApiResponse({
-        status,
-        headers: {
-          'X-Request-Id': {
-            description: 'Server-generated request correlation ID.',
-            schema: { type: 'string', format: 'uuid' },
+    if (!options.deprecated)
+      decorators.push(
+        ApiResponse({
+          status,
+          headers: {
+            'X-Request-Id': {
+              description: 'Server-generated request correlation ID.',
+              schema: { type: 'string', format: 'uuid' },
+            },
           },
-        },
-        description:
-          status === 204
-            ? 'Deleted; empty response body.'
-            : status === 202
-              ? 'Accepted durably. Poll the generation detail until COMPLETED or FAILED. Results are proposals; no canonical author data is modified.'
-              : 'Success.',
-        ...(status === 204 ? {} : schema ? { schema } : {}),
-      }),
-    );
+          description:
+            status === 204
+              ? 'Deleted; empty response body.'
+              : status === 202
+                ? options.tag === 'Auth'
+                  ? 'Verification request accepted. No account or session is created until code verification.'
+                  : 'Accepted durably. Poll the generation detail until COMPLETED or FAILED. Results are proposals; no canonical author data is modified.'
+                : 'Success.',
+          ...(status === 204
+            ? {}
+            : options.binary
+              ? {
+                  content: Object.fromEntries(
+                    options.binary.map((mime) => [
+                      mime,
+                      { schema: { type: 'string', format: 'binary' } },
+                    ]),
+                  ),
+                }
+              : schema
+                ? { schema }
+                : {}),
+        }),
+      );
     const errors = new Set([500]);
+    if (options.deprecated) errors.add(410);
+    if (options.tag === 'Auth' && String(key).startsWith('email'))
+      errors.add(503);
+    if (options.tag === 'Catalog') {
+      errors.add(400);
+      errors.add(404);
+      errors.add(429);
+      errors.add(503);
+    }
+    if (options.tag === 'Graphics') errors.add(503);
+    if (options.tag === 'Reader' && verb !== 0) errors.add(403);
     if (!options.public || options.tag === 'Auth') errors.add(429);
     if (verb !== 0) {
       errors.add(413);

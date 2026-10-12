@@ -7,6 +7,7 @@ import {
   prismaCleanupRepository,
   bounded,
   FakeAiProvider,
+  OpenAiProvider,
 } from "@rawan/backend";
 import { validateWorkerEnvironment } from "./config/environment.js";
 import { createMaintenanceWorker } from "./queues/maintenance-worker.js";
@@ -14,6 +15,7 @@ import { mediaCleanupProcessor } from "./processors/media-cleanup.js";
 import { aiGenerationProcessor } from "./processors/ai-generation.js";
 import { createAiWorker } from "./queues/ai-worker.js";
 import { closeResources } from "./queues/close-resources.js";
+import { createArtifactRuntime } from "./processors/artifacts.js";
 
 const log = (entry: Record<string, unknown>) =>
   console.log(
@@ -27,8 +29,8 @@ async function main() {
   if (process.env.NODE_ENV !== "production")
     dotenv.config({
       path: [
-        fileURLToPath(new URL("../.env", import.meta.url)),
-        fileURLToPath(new URL("../../api/.env", import.meta.url)),
+        fileURLToPath(new URL("../.env.local", import.meta.url)),
+        fileURLToPath(new URL("../../api/.env.local", import.meta.url)),
       ],
       quiet: true,
     });
@@ -46,6 +48,7 @@ async function main() {
     ),
   });
   const storage = new LocalStorageProvider(config.storage.localPath);
+  const artifactRuntime = createArtifactRuntime(prisma, storage, log);
   const runtime = createMaintenanceWorker(
     config,
     mediaCleanupProcessor(prismaCleanupRepository(prisma), storage),
@@ -63,7 +66,13 @@ async function main() {
           config,
           config.ai,
           prisma,
-          aiGenerationProcessor(prisma, new FakeAiProvider(), config.ai),
+          aiGenerationProcessor(
+            prisma,
+            config.ai.provider === "openai"
+              ? new OpenAiProvider(config.ai.apiKey!)
+              : new FakeAiProvider(),
+            config.ai,
+          ),
           log,
           () => {
             process.exitCode = 1;
@@ -73,7 +82,11 @@ async function main() {
   const close = () => {
     shutdown ??= (async () => {
       await closeResources(
-        [() => runtime.close(), () => aiRuntime?.close() ?? Promise.resolve()],
+        [
+          () => runtime.close(),
+          () => aiRuntime?.close() ?? Promise.resolve(),
+          () => artifactRuntime.close(),
+        ],
         () => bounded(prisma.$disconnect(), 5000),
       );
     })();
@@ -91,6 +104,7 @@ async function main() {
     await bounded(prisma.$connect(), 7000);
     await runtime.start();
     await aiRuntime?.start();
+    artifactRuntime.start();
   } catch {
     process.removeListener("SIGINT", signal);
     process.removeListener("SIGTERM", signal);

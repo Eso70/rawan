@@ -14,6 +14,7 @@ const categories: Record<number, [ApiErrorCode, string]> = {
   403: ['FORBIDDEN', 'Forbidden'],
   404: ['NOT_FOUND', 'Not Found'],
   409: ['CONFLICT', 'Conflict'],
+  410: ['GONE', 'Gone'],
   413: ['PAYLOAD_TOO_LARGE', 'Payload Too Large'],
   415: ['UNSUPPORTED_MEDIA_TYPE', 'Unsupported Media Type'],
   429: ['RATE_LIMITED', 'Too Many Requests'],

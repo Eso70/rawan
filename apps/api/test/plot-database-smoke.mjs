@@ -1,3 +1,4 @@
+import { createAccountFixture } from './account-fixture.mjs';
 import './disable-queues.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -84,20 +85,8 @@ try {
     return expected === 204 ? undefined : response.json();
   }
   const password = `smoke-${randomUUID()}`;
-  const alice = await call(
-    'POST',
-    '/auth/register',
-    null,
-    { email: 'alice@example.invalid', name: 'Alice', password },
-    201,
-  );
-  const bob = await call(
-    'POST',
-    '/auth/register',
-    null,
-    { email: 'bob@example.invalid', name: 'Bob', password },
-    201,
-  );
+  const alice = await createAccountFixture(app, { email: 'alice@example.invalid', name: 'Alice', password });
+  const bob = await createAccountFixture(app, { email: 'bob@example.invalid', name: 'Bob', password });
   const token = alice.accessToken;
   const project = await call(
     'POST',

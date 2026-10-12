@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { isIP } from 'node:net';
+import { validateEmailConfig, type EmailConfig } from '../mail/email-config.js';
 import {
   validateQueueConfig,
   validateStorageConfig,
@@ -11,6 +12,7 @@ export interface Environment {
   HTTP_RATE_LIMIT_ENABLED: boolean;
   HTTP_TRUSTED_PROXIES: string[];
   AI_CONFIG: AiConfig;
+  EMAIL_CONFIG: EmailConfig;
   NODE_ENV: 'development' | 'test' | 'production';
   DATABASE_URL: string;
   JWT_SECRET: string;
@@ -29,6 +31,14 @@ export function validateEnvironment(
   input: Record<string, unknown>,
 ): Environment {
   const errors: string[] = [];
+  let emailConfig: EmailConfig | undefined;
+  try {
+    emailConfig = validateEmailConfig(input);
+  } catch {
+    errors.push(
+      'Invalid email configuration. Check sender, application origin and required secrets.',
+    );
+  }
   const nodeEnv = input.NODE_ENV ?? 'development';
   if (
     typeof nodeEnv !== 'string' ||
@@ -174,11 +184,12 @@ export function validateEnvironment(
     !['true', 'false', true, false].includes(scheduleValue as string | boolean)
   )
     errors.push('MEDIA_CLEANUP_SCHEDULE_ENABLED must be true or false');
-  if (errors.length || !queue || !storage || !ai)
+  if (errors.length || !queue || !storage || !ai || !emailConfig)
     throw new Error(`Invalid API environment: ${errors.join('; ')}`);
   return {
     ...input,
     AI_CONFIG: ai,
+    EMAIL_CONFIG: emailConfig,
     OPENAPI_ENABLED: docsValue === true || docsValue === 'true',
     HTTP_RATE_LIMIT_ENABLED: rateValue === true || rateValue === 'true',
     HTTP_TRUSTED_PROXIES: proxies,

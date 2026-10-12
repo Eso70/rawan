@@ -9,6 +9,8 @@ export * from "./storage/local-storage.js";
 export * from "./storage/config.js";
 export * from "./ai/config.js";
 export * from "./ai/provider.js";
+export * from "./ai/openai-provider.js";
 export * from "./ai/tasks.js";
 export * from "./ai/context.js";
 export * from "./ai/queue.js";
+export * from "./artifacts/processing.js";

@@ -19,7 +19,7 @@ describe('V1 OpenAPI contract generated from compiled controllers and DTOs', () 
     document.components!.schemas![name] as SchemaObject;
   it('covers every existing public operation once with stable IDs', () => {
     const inventory = publicRouteInventory();
-    expect(inventory).toHaveLength(116);
+    expect(inventory).toHaveLength(268);
     const operations = Object.values(document.paths).flatMap((path) =>
       Object.entries(path).filter(([key]) =>
         ['get', 'post', 'patch', 'delete'].includes(key),
@@ -42,6 +42,67 @@ describe('V1 OpenAPI contract generated from compiled controllers and DTOs', () 
       .map((f) => readFileSync(f, 'utf8').match(/export class (\w+)/)![1]);
     expect([...new Set(inventory.map((r) => r.controller))].sort()).toEqual(
       sourceControllers.sort(),
+    );
+  });
+  it('documents the Horizon 2 publication and account-private boundaries', () => {
+    expect(
+      document.paths['/api/v1/catalog/releases/{id}'].get!.security,
+    ).toBeUndefined();
+    expect(document.paths['/api/v1/reader/library'].get!.security).toEqual([
+      { bearer: [] },
+    ]);
+    expect(
+      document.paths['/api/v1/works/{workId}/releases/{id}/publish'].post!
+        .security,
+    ).toEqual([{ bearer: [] }]);
+    expect(
+      document.paths[
+        '/api/v1/catalog/releases/{releaseId}/assets/{assetId}/{role}'
+      ].get!.responses['404'],
+    ).toBeDefined();
+    for (const name of [
+      'CreatorResponse',
+      'AssetResponse',
+      'ExportResponse',
+      'PublicCollectionMemberResponse',
+      'ReleaseResponse',
+      'PrivateReleaseResponse',
+    ]) {
+      const properties = schema(name).properties!;
+      for (const privateField of [
+        'ownerUserId',
+        'userId',
+        'email',
+        'storageKey',
+        'storageProvider',
+        'leaseToken',
+        'snapshot',
+        'originalBytes',
+      ])
+        expect(properties[privateField]).toBeUndefined();
+    }
+  });
+  it('documents real nested content and numeric/boolean preferences', () => {
+    expect(schema('PreferenceValuesDto').properties!.fontSize).toMatchObject({
+      type: 'number',
+      minimum: 12,
+      maximum: 40,
+    });
+    expect(schema('CreatorDto').properties!.public).toMatchObject({
+      type: 'boolean',
+    });
+    expect(schema('ReplaceDocumentDto').properties!.sections).toMatchObject({
+      type: 'array',
+      maxItems: 100,
+      items: { $ref: '#/components/schemas/DocumentSectionDto' },
+    });
+    expect(schema('PanelsDto').properties!.panels).toMatchObject({
+      type: 'array',
+      maxItems: 100,
+      items: { $ref: '#/components/schemas/PanelDto' },
+    });
+    expect(schema('GraphicProgressDto').properties!.pageProgress).toMatchObject(
+      { type: 'number', minimum: 0, maximum: 1 },
     );
   });
   it('has no unresolved schema references or leaked implementation contracts', () => {

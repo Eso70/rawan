@@ -1,16 +1,40 @@
 # Rawan product scope and backend capabilities
 
+Implementation update (12 October 2026): originally Horizon 2 backend scopes N01–N26 are now implemented in bounded form; see the [current backend guide](backend-horizon-2.md) and [validation ledger](backend-horizon-2-implementation.md). These backend capabilities are available to a future frontend. Horizon 3 remains deferred and no frontend changes accompany this implementation. The study below preserves its original research baseline; its old capability gaps/horizon labels must be read alongside the current register, not as current implementation status.
+
+## Mandatory product horizons
+
+The [feature register](product-horizons.md) supplies backend support/gaps, frontend/data implications and ADR requirements for every major recommendation below. Its classifications govern the earlier four-category overview; “appropriate for the frontend” means H1 only for the bounded existing scope.
+
+| Horizon                 | Major recommendations and register IDs                                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| H1 — Current Rawan      | Existing private creator workflows, preferences, local presentation and owned-draft preview: C01–C12                                                    |
+| H2 — Near future        | Work/release bridge, readers/libraries, public metadata/discovery/profiles, new content/reference/visual tools, production text AI and exports: N01–N26 |
+| H3 — Long-term platform | Broad ecosystem, shared universes, community/recommendations/rankings, commerce/distribution, native graphics, collaboration and automation: L01–L12    |
+
 Reviewed against the working repository on 7 October 2026. This is a product and architecture scope audit, not a new feature implementation or a production readiness certification.
 
 ## Product definition
 
-Rawan is a platform for creators and readers around writing, books, literature, storytelling, comics and graphic narratives, fiction and nonfiction, research, authorship, libraries, publishing workflows, discovery, and experiencing written works. Writing novels and organizing fictional worlds are parts of this platform, not its entire identity.
+**Rawan is a platform around the creation, organization, exploration, and experience of books and literary works.**
+
+Creators and readers participate in one ecosystem centered on the work. Its scope includes fiction and nonfiction, prose and graphic narratives, research, authorship, libraries, publishing workflows and discovery. Writing and optional worldbuilding support that larger purpose; reading is a primary experience with its own needs.
+
+The creative work is the connecting product concept. [Work-centered architecture](work-centered-product-architecture.md) explains how private development, optional supporting material, releases and personal reader relationships can form one ecosystem while retaining distinct permissions and lifecycles.
 
 The intended lifecycle is idea → research → plan → write → organize → illustrate/visualize → edit → prepare → publish/share → discover → read → collect → discuss/engage → explore. V1 does not need to implement every stage. Premium describes the intended product positioning; it does not mean subscriptions or payments already exist.
 
-The [Prisma schema](../packages/database/prisma/schema.prisma), API controllers/services/DTOs, [shared API types](../packages/types/src), and [reviewed OpenAPI contract](contracts/backend-v1.openapi.json) determine what is supported now. Product language and landing-page demonstrations cannot extend that contract. The current contract contains 116 HTTP operations, including health and authentication operations; this count does not represent 116 product features.
+Create and Experience are two parts of the same ecosystem. The [Create and Experience bridge investigation](create-and-experience-bridge.md) defines a proposed connection through work identity, explicit releases and reader access, while preserving private creative source material.
+
+The [works, projects and content types investigation](works-projects-and-content-types.md) examines the current manuscript hierarchy and recommends terminology and incremental format extensions without implementing speculative types.
+
+The [optional worldbuilding and workspace research](optional-worldbuilding-and-workspaces.md) describes how the future creator interface can adapt to different tasks without changing tool permissions or requiring worldbuilding setup.
+
+The [Prisma schema](../packages/database/prisma/schema.prisma), API controllers/services/DTOs, [shared API types](../packages/types/src), and [reviewed OpenAPI contract](contracts/backend-v1.openapi.json) determine what is supported now. Product language and landing-page demonstrations cannot extend that contract. The current contract contains 124 HTTP operations, including eight private Work operations plus health and authentication operations; this count does not represent 124 product features.
 
 ## 1. Functionality supported by the current backend
+
+Private Work identities and explicit owned-manuscript source links are now supported (C13). See [Work backend](works-backend.md) for exact operations and deletion/ownership semantics. This does not add a public catalogue, releases, creator credits or reader state.
 
 | Area                     | Available now                                                                                    | Boundary                                                                                                       |
 | ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |

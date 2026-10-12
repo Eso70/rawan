@@ -1,3 +1,4 @@
+import { createAccountFixture } from './account-fixture.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { readFile, readdir, mkdtemp, rm } from 'node:fs/promises';
@@ -28,7 +29,7 @@ import { configureApp } from '../dist/config/configure-app.js';
 import pg from 'pg';
 
 try {
-  process.loadEnvFile(new URL('../.env', import.meta.url));
+  process.loadEnvFile(new URL('../.env.local', import.meta.url));
 } catch (error) {
   if (error.code !== 'ENOENT') throw error;
 }
@@ -147,17 +148,7 @@ try {
   rawQueue = new Queue(MAINTENANCE_QUEUE, { connection: redis, prefix });
   await bounded(rawQueue.waitUntilReady());
   const base = (await app.getUrl()) + '/api/v1';
-  const register = await fetch(base + '/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: 'Queue Author',
-      email: 'queue@example.invalid',
-      password: 'queue-integration-password-long',
-    }),
-  });
-  assert.equal(register.status, 201);
-  const author = await register.json();
+  const author = await createAccountFixture(app, {name:'Queue Author',email:'queue@example.invalid',password:'queue-integration-password-long'});
   const projectResponse = await fetch(base + '/projects', {
     method: 'POST',
     headers: {

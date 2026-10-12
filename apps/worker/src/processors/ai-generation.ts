@@ -19,20 +19,22 @@ export function aiGenerationProcessor(
   config: AiConfig,
 ) {
   return async (id: string): Promise<void> => {
+    // A crashed external call may have been billed. Never automatically submit it twice.
+    const maxAttempts = provider.id === "openai" ? 1 : 3;
     const token = randomUUID();
     const rows = await prisma.$queryRaw<{ id: string }[]>(Prisma.sql`
       UPDATE "AiGeneration" SET status='RUNNING', "leaseToken"=${token},
       "leaseUntil"=CURRENT_TIMESTAMP + ${config.timeoutMs + 30000} * INTERVAL '1 millisecond',
       "startedAt"=coalesce("startedAt", CURRENT_TIMESTAMP), "updatedAt"=CURRENT_TIMESTAMP,
       attempts=attempts+1, "errorCode"=NULL
-      WHERE id=${id} AND attempts < 3 AND (status='QUEUED' OR (status='RUNNING' AND "leaseUntil" < CURRENT_TIMESTAMP)) RETURNING id`);
+      WHERE id=${id} AND attempts < ${maxAttempts} AND (status='QUEUED' OR (status='RUNNING' AND "leaseUntil" < CURRENT_TIMESTAMP)) RETURNING id`);
     if (!rows.length) {
       const row = await prisma.aiGeneration.findUnique({
         where: { id },
         select: { status: true, attempts: true, leaseUntil: true },
       });
       if (!row || row.status === "COMPLETED" || row.status === "FAILED") return;
-      if (row.attempts >= 3) {
+      if (row.attempts >= maxAttempts) {
         await prisma.aiGeneration.updateMany({
           where: {
             id,
@@ -111,7 +113,8 @@ export function aiGenerationProcessor(
         where: { id },
         select: { attempts: true },
       });
-      const retry = failure.transient && (row?.attempts ?? 3) < 3;
+      const retry =
+        failure.transient && (row?.attempts ?? maxAttempts) < maxAttempts;
       await prisma.aiGeneration.updateMany({
         where: fence,
         data: {

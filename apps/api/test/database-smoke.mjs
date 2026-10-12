@@ -1,3 +1,4 @@
+import { createAccountFixture } from './account-fixture.mjs';
 import './disable-queues.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -71,13 +72,11 @@ try {
 
   assert.equal((await get('/health')).status, 200);
   assert.equal((await get('/users/me')).status, 401);
-  const registered = await post('/auth/register', {
-    email: ` ${email.toUpperCase()} `,
+  const auth = await createAccountFixture(app, {
+    email: email.toUpperCase(),
     password,
     name,
   });
-  assert.equal(registered.status, 201);
-  const auth = await registered.json();
   assert.equal(auth.user.role, 'AUTHOR');
   assert.equal(auth.user.email, email);
   assert.equal(Object.hasOwn(auth.user, 'password'), false);
@@ -89,7 +88,7 @@ try {
   assert.equal((await get('/users', auth.accessToken)).status, 403);
   assert.equal(
     (await post('/auth/register', { email, password, name })).status,
-    409,
+    410,
   );
   const login = await post('/auth/login', {
     email: email.toUpperCase(),
@@ -115,13 +114,17 @@ try {
   });
   assert.equal((await get('/users', auth.accessToken)).status, 403);
 
-  const race = await Promise.all([
-    post('/auth/register', { email: raceEmail, password, name }),
-    post('/auth/register', { email: raceEmail.toUpperCase(), password, name }),
+  const race = await Promise.allSettled([
+    createAccountFixture(app, { email: raceEmail, password, name }),
+    createAccountFixture(app, {
+      email: raceEmail.toUpperCase(),
+      password,
+      name,
+    }),
   ]);
-  assert.deepEqual(
-    race.map((response) => response.status).sort((left, right) => left - right),
-    [201, 409],
+  assert.equal(
+    race.filter((result) => result.status === 'fulfilled').length,
+    1,
   );
   assert.equal(await prisma.user.count({ where: { email: raceEmail } }), 1);
   assert.equal(
