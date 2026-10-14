@@ -1,11 +1,12 @@
 "use client";
 
 import { BrandMark } from "./brand-mark";
+import { SearchTrigger } from "./library/library-search";
 import { useState } from "react";
 import { useLandingNavigationVisibility } from "./use-landing-navigation";
 import styles from "./landing-navigation.module.css";
 
-export function LandingNavigation() {
+export function LandingNavigation({ current }: { current?: "library" }) {
   const visible = useLandingNavigationVisibility();
   const [notice, setNotice] = useState("");
   const onAction = () =>
@@ -21,6 +22,13 @@ export function LandingNavigation() {
           <a className={styles.brand} href="/" aria-label="Rawan home">
             <BrandMark className={styles.brandMark} priority />
             <span>rawan</span>
+          </a>
+          <a
+            className={styles.library}
+            href="/library"
+            aria-current={current === "library" ? "page" : undefined}
+          >
+            Library
           </a>
           <div className={styles.navLinks}>
             <button disabled title="Coming later">
@@ -51,6 +59,7 @@ export function LandingNavigation() {
           </span>
         </div>
         <div className={styles.navRight}>
+          {current === "library" && <SearchTrigger />}
           <a className={styles.login} href="/login">
             Login
           </a>

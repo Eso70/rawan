@@ -95,6 +95,16 @@
   background: #fff1;
   color: #fff;
 }
+.library {
+  color: #fffc;
+  padding-block: 8px;
+}
+.library:hover,
+.library[aria-current="page"] {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
 .language {
   display: inline-flex;
   align-items: center;
@@ -159,5 +169,20 @@
 @media (prefers-reduced-motion: reduce) {
   .brandMark {
     animation: none;
+  }
+}
+@media (max-width: 359px) {
+  .navRight {
+    gap: 6px;
+  }
+  .navCta {
+    padding-inline: 8px;
+    font-size: 11px;
+  }
+  .language {
+    display: none;
+  }
+  .navLeft {
+    gap: 12px;
   }
 }

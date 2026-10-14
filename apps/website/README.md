@@ -1,5 +1,7 @@
 # Rawan home page
 
+For future frontend work, start with the [frontend design reference](../../docs/frontend-design-reference.md). It documents the original pages, visual foundations, component structure, responsive behavior and consistency guidance, and identifies historical notes that no longer match the implementation.
+
 This website contains the landing page, Google popup sign-in, email/password sign-in, email code verification and authenticated workspace routes. Email signup stays on `/login` through code verification; both methods then open an empty `/workspace`. Use `http://localhost:3000/login` for authentication; the loopback-IP login URL redirects there to keep popup windows on the same origin. Email sending is disabled until the Gmail app password is configured; see [email setup](../../docs/email-auth.md). The onboarding page and author dashboard route have been removed; the reader dashboard shell remains separately accessible. `apps/app` and `packages/ui` remain empty. Landing content uses local assets; authentication connects to the API.
 
 From the repository root, run `pnpm dev:website`, then open <http://127.0.0.1:3000>. For a production preview, run `pnpm --filter @rawan/website build` followed by `pnpm --filter @rawan/website start`.

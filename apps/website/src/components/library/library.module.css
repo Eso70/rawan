@@ -1,0 +1,191 @@
+.page {
+  min-height: 100vh;
+}
+.main {
+  max-width: 1143px;
+  margin: 0 auto;
+  padding: 120px 34px 80px;
+}
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 28px;
+  margin-bottom: 46px;
+}
+.eyebrow {
+  color: #a8bdcb;
+  font:
+    11px/1.6 "Rawan Inter",
+    sans-serif;
+  margin: 0 0 10px;
+}
+.intro h1 {
+  margin: 0;
+  font:
+    400 50.4px/1.25 "Rawan Lora",
+    Georgia,
+    serif;
+  letter-spacing: -0.025em;
+}
+.description {
+  color: #b8c5d1;
+  font:
+    14px/1.7 "Rawan Space Grotesk",
+    sans-serif;
+  margin: 12px 0 0;
+}
+.collection {
+  margin-top: 40px;
+}
+.collectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.collectionTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.collectionTitle h2 {
+  margin: 0;
+  font:
+    400 25px/1.4 "Rawan Lora",
+    Georgia,
+    serif;
+  letter-spacing: -0.5px;
+}
+.count {
+  font:
+    11px/1.5 "Rawan Inter",
+    sans-serif;
+  color: #a5b9ca;
+  white-space: nowrap;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.grid > li {
+  min-width: 0;
+}
+.book {
+  scroll-margin-top: 90px;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #ffffff1a;
+  border-radius: 14px;
+  background: #0a0f1a26;
+}
+.book:target {
+  border-color: #ffffff70;
+}
+.coverStage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 208px;
+  padding: 20px;
+  border-bottom: 1px solid #ffffff12;
+  background: #ffffff06;
+}
+.cover {
+  position: relative;
+  height: 168px;
+  width: 120px;
+}
+.cover img {
+  object-fit: contain;
+  border-radius: 2px;
+  filter: drop-shadow(0 5px 7px #0004);
+}
+.bookInfo {
+  padding: 17px 18px 20px;
+}
+.genre {
+  color: #a4bacb;
+  margin: 0 0 8px;
+  font:
+    10px/1.5 "Rawan Inter",
+    sans-serif;
+}
+.book h3 {
+  font:
+    500 16px/1.5 "Rawan Lora",
+    Georgia,
+    serif;
+  margin: 0 0 7px;
+}
+.author {
+  margin: 0;
+  color: #aebfcc;
+  font:
+    11px/1.7 "Rawan Inter",
+    sans-serif;
+}
+.note {
+  color: #a5b9ca;
+  font:
+    11px/1.8 "Rawan Inter",
+    sans-serif;
+  margin: 30px 0 0;
+}
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .main {
+    padding: 100px 24px 60px;
+  }
+  .intro {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+    margin-bottom: 30px;
+  }
+  .intro h1 {
+    font-size: 40px;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+@media (max-width: 479px) {
+  .main {
+    padding-inline: 20px;
+  }
+  .collection {
+    margin-top: 30px;
+  }
+  .collectionTitle {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .collectionTitle h2 {
+    font-size: 23px;
+  }
+  .coverStage {
+    min-height: 172px;
+    padding: 14px;
+  }
+  .cover {
+    height: 142px;
+    width: 100px;
+  }
+  .bookInfo {
+    padding: 14px 12px 16px;
+  }
+  .book h3 {
+    font-size: 14px;
+  }
+}

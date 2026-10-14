@@ -26,6 +26,9 @@ export function SiteFooter({ current }: { current?: "terms" | "privacy" }) {
           <summary>Resources</summary>
           <ul>
             <li>
+              <a href="/library">Library</a>
+            </li>
+            <li>
               <a href="/#toolkit">The toolkit</a>
             </li>
             <li>
