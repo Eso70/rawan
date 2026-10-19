@@ -67,6 +67,7 @@ export class GoogleAuthService {
             googleSubject: identity.sub,
             emailVerifiedAt: new Date(),
             role: 'AUTHOR',
+            onboarding: { create: { setupRequired: true } },
             author: { create: { displayName: name } },
           },
           select: PUBLIC_USER_SELECT,

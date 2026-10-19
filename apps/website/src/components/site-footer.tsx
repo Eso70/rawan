@@ -4,8 +4,8 @@ import {
   IconBrandInstagram,
   IconBrandDiscordFilled,
 } from "@tabler/icons-react";
-import { BrandMark } from "./brand-mark";
-import { DISCORD_INVITE } from "./site-links";
+import { BrandMark } from "./shared/brand-mark";
+import { DISCORD_INVITE } from "./shared/site-links";
 import styles from "./closing-section.module.css";
 
 const social = [

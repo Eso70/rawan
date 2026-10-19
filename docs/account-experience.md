@@ -1,5 +1,7 @@
 # Author and reader experience
 
+> Historical implementation record: the questionnaire and author route described below were removed before 17 October 2026. Parts 3–7 now implement a different authenticated `/onboarding` flow and `/api/setup` proxy. See [the current implementation](onboarding-persistence-parts-6-7.md); the narrative below is historical and is not the current routing contract.
+
 Google sign-in and sign-up redirect to `/workspace`. The server validates the session and reads authenticated account preferences. Accounts without an `experience` preference see `/onboarding`, a simple three-step optional questionnaire. This replaces the removed narrated sample-world tutorial.
 
 - Author → `/workspace/author`.

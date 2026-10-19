@@ -156,6 +156,6 @@ These are proposed acceptance scenarios. No new settings, preference endpoints, 
 ## Repository and related references
 
 - [Current preference DTO](../apps/api/src/users/onboarding.dto.ts) and [database schema](../packages/database/prisma/schema.prisma)
-- [Account experience](account-experience.md) and [global styles](../apps/website/src/app/globals.css)
+- [Account experience](account-experience.md) and [global styles](../apps/website/src/styles/globals.css)
 - [Creator workspace scopes](optional-worldbuilding-and-workspaces.md), [reader settings](reader-experience-research.md) and [comic behavior](comics-product-research.md)
 - [Visual identity](visual-identity-across-modes.md) and [work-centered architecture](work-centered-product-architecture.md)

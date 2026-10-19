@@ -121,6 +121,8 @@ Private media defaults to ignored `apps/api/.data/media`. Production requires an
 
 ## Domain documentation
 
+- [Rawan frontend design system: tokens, components, page references and verification](docs/design-system/README.md)
+
 - [Part 15 cleanup and Backend V1 freeze report](docs/backend-v1-report.md)
 
 - [Stable backend v1 API, documentation access and OpenAPI export](docs/api.md)
@@ -140,3 +142,7 @@ Private media defaults to ignored `apps/api/.data/media`. Production requires an
 - [Plot and story structure](docs/plot-domain.md)
 
 Root ignore rules protect local credentials, dependencies, generated code, builds, caches, and logs. Existing database migrations must be committed. No open-source license has been selected.
+
+## Frontend onboarding
+
+The authenticated onboarding implementation and local/manual test instructions are documented in [Rawan onboarding](docs/onboarding-guide.md). [Parts 8–10 verification](docs/onboarding-finalization-parts-8-10.md) records final UX and QA results; no author or reader dashboard is included.

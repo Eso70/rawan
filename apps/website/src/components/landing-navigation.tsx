@@ -1,16 +1,12 @@
 "use client";
 
-import { BrandMark } from "./brand-mark";
+import { BrandMark } from "./shared/brand-mark";
 import { SearchTrigger } from "./library/library-search";
-import { useState } from "react";
 import { useLandingNavigationVisibility } from "./use-landing-navigation";
 import styles from "./landing-navigation.module.css";
 
 export function LandingNavigation({ current }: { current?: "library" }) {
   const visible = useLandingNavigationVisibility();
-  const [notice, setNotice] = useState("");
-  const onAction = () =>
-    setNotice("The writing workspace is coming next. Your stories begin here.");
   return (
     <header
       className={`${styles.header} ${!visible ? styles.hiddenHeader : ""}`}
@@ -63,16 +59,11 @@ export function LandingNavigation({ current }: { current?: "library" }) {
           <a className={styles.login} href="/login">
             Login
           </a>
-          <button className={styles.navCta} onClick={onAction}>
+          <a className={styles.navCta} href="/account">
             Start Building
-          </button>
+          </a>
         </div>
       </nav>
-      {notice && (
-        <p className={styles.navigationNotice} role="status">
-          {notice}
-        </p>
-      )}
     </header>
   );
 }

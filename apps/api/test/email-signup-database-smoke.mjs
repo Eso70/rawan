@@ -192,6 +192,14 @@ try {
   });
   assert.ok(user.emailVerifiedAt);
   assert.equal(user.role, 'AUTHOR');
+  assert.equal(
+    (
+      await prisma.userOnboarding.findUniqueOrThrow({
+        where: { userId: user.id },
+      })
+    ).setupRequired,
+    true,
+  );
   assert.ok(await prisma.author.findUnique({ where: { userId: user.id } }));
   const consumed = await prisma.emailSignupVerification.findUniqueOrThrow({
     where: { id: row.id },
@@ -210,6 +218,90 @@ try {
     { email: row.email, password: 'wrong-password' },
     401,
   );
+  // Exercise each purpose using real registration, verified email, password login,
+  // persisted setup and a second login. Only delivery is replaced by the local mailbox.
+  for (const purpose of ['create', 'read', 'both']) {
+    const email = `journey-${randomUUID()}@gmail.com`;
+    const password = 'local-journey!Strong-928';
+    const pending = await post('/auth/email/signup', { email, password }, 202);
+    const delivered = mailbox.findLast((message) => message.email === email);
+    assert.ok(delivered);
+    const registered = await post(
+      '/auth/email/verify',
+      {
+        verificationId: pending.verificationId,
+        code: delivered.code,
+      },
+      200,
+    );
+    let signedIn = await post('/auth/login', { email, password }, 200);
+    async function setup(method, body, status = 200) {
+      const response = await fetch(base + '/users/me/setup', {
+        method,
+        headers: {
+          Authorization: `Bearer ${signedIn.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        ...(body ? { body: JSON.stringify(body) } : {}),
+      });
+      const result = await response.json();
+      assert.equal(response.status, status);
+      assertActualResponse(contract, '/users/me/setup', method, status, result);
+      checks++;
+      return result;
+    }
+    let state = await setup('GET');
+    assert.equal(state.required, true);
+    assert.equal(state.status, 'not_started');
+    await setup('PATCH', { expectedRevision: 0, complete: true }, 400);
+    state = await setup('PATCH', {
+      expectedRevision: 0,
+      purpose,
+      step: 'interests',
+    });
+    assert.equal((await setup('GET')).step, 'interests');
+    state = await setup('PATCH', {
+      expectedRevision: state.revision,
+      interfaceLanguage: 'en',
+      step: 'begin',
+      ...(purpose !== 'read' ? { creativeInterests: ['novels'] } : {}),
+      ...(purpose !== 'create' ? { readingFormats: ['comics'] } : {}),
+    });
+    const revision = state.revision;
+    const done = await setup('PATCH', {
+      expectedRevision: revision,
+      complete: true,
+    });
+    assert.equal(done.status, 'completed');
+    assert.equal(done.draft.purpose, purpose);
+    assert.deepEqual(
+      await setup('PATCH', { expectedRevision: revision, complete: true }),
+      done,
+    );
+    signedIn = await post('/auth/login', { email, password }, 200);
+    assert.deepEqual(await setup('GET'), done);
+    const stored = await prisma.userOnboarding.findUniqueOrThrow({
+      where: { userId: registered.user.id },
+    });
+    assert.equal(stored.setupRequired, true);
+    assert.equal(stored.setupStatus, 'completed');
+    assert.equal(stored.ageConfirmedAt, null);
+    assert.equal(stored.agePolicyVersion, null);
+    assert.equal(
+      (
+        await prisma.user.findUniqueOrThrow({
+          where: { id: registered.user.id },
+        })
+      ).role,
+      registered.user.role,
+    );
+    assert.equal(
+      await prisma.userOnboarding.count({
+        where: { userId: registered.user.id },
+      }),
+      1,
+    );
+  }
   const sent = mailbox.length;
   const duplicate = await post('/auth/email/signup', credentials, 202);
   assert.equal(mailbox.length, sent);
@@ -359,7 +451,7 @@ try {
     200,
   );
   console.log(
-    `Email signup PostgreSQL smoke passed: ${checks} contract-checked HTTP cases; account creation only after delivered code, hashing, replay/races, cooldowns/quotas, failures and legacy bypass prevention. No emails sent externally.`,
+    `Email signup PostgreSQL smoke passed: ${checks} contract-checked HTTP cases; registration → login → persisted Create/Read/Both onboarding → completion → next login; hashing, replay/races, cooldowns/quotas, failures and legacy bypass prevention. No emails sent externally.`,
   );
 } finally {
   if (app) await app.close();

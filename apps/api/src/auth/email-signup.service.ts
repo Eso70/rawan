@@ -322,6 +322,7 @@ export class EmailSignupService {
             password: current.passwordHash,
             emailVerifiedAt: now,
             role: 'AUTHOR',
+            onboarding: { create: { setupRequired: true } },
             author: { create: { displayName: current.name } },
           },
           select: PUBLIC_USER_SELECT,

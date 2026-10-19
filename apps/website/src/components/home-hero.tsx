@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { BrandMark } from "./brand-mark";
+import { useEffect, useRef } from "react";
+import { BrandMark } from "./shared/brand-mark";
 import styles from "./home-hero.module.css";
 
 export function HomeHero() {
   const video = useRef<HTMLVideoElement>(null);
-  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -35,12 +34,6 @@ export function HomeHero() {
       element.pause();
     };
   }, []);
-
-  function showNextStep() {
-    setNotice(
-      "The writing workspace is coming next. This page is the first step.",
-    );
-  }
 
   return (
     <section className={styles.hero} aria-label="Welcome to Rawan">
@@ -75,10 +68,10 @@ export function HomeHero() {
           smoothly as your imagination.
         </p>
         <div className={styles.action}>
-          <button className={styles.primaryCta} onClick={showNextStep}>
+          <a className={styles.primaryCta} href="/account">
             <strong>Start building</strong>
             <span>– it&apos;s free</span>
-          </button>
+          </a>
         </div>
         <div className={styles.community}>
           <span className={styles.avatars} aria-hidden="true">
@@ -88,9 +81,6 @@ export function HomeHero() {
           </span>
           <span>A home for your stories</span>
         </div>
-        <p className={styles.notice} role="status" aria-live="polite">
-          {notice}
-        </p>
       </section>
       <span className={styles.scrollCue} aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">

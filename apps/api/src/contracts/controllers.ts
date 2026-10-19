@@ -1,5 +1,6 @@
 import { AiController } from '../ai/ai.controller.js';
 import { AppController } from '../app.controller.js';
+import { StudioController } from '../studio/studio.controller.js';
 import { AuthController } from '../auth/auth.controller.js';
 import { JobsController } from '../jobs/jobs.controller.js';
 import { ManuscriptController } from '../manuscript/manuscript.controller.js';
@@ -29,6 +30,7 @@ import { PlaceController } from '../worldbuilding/place.controller.js';
 export const PUBLIC_CONTROLLERS = [
   AiController,
   AppController,
+  StudioController,
   AuthController,
   JobsController,
   ManuscriptController,

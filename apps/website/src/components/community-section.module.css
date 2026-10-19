@@ -1,7 +1,7 @@
 .section {
   position: relative;
   overflow: hidden;
-  padding: 67.2px 0;
+  padding: var(--space-m8) 0;
 }
 .heading {
   max-width: 1075px;
@@ -12,19 +12,19 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid #fbbf244d;
+  border: var(--border-width) solid #fbbf244d;
   border-radius: 13px;
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   color: #fbbf24cc;
-  font-size: 12.6px;
+  font-size: var(--text-12-6);
   line-height: 17px;
   margin-bottom: 17px;
 }
 .heading h2 {
   margin: 0;
-  font-family: "Arizona Flare", "Rawan Lora", Georgia, serif;
-  font-size: 37.8px;
-  font-weight: 400;
+  font-family: "Arizona Flare", var(--font-literary), Georgia, serif;
+  font-size: var(--text-37-8);
+  font-weight: var(--weight-regular);
   line-height: 1.25;
   text-wrap: balance;
 }
@@ -36,12 +36,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid;
-  border-radius: 22px;
+  border: var(--border-width) solid;
+  border-radius: var(--radius-22);
   padding: 2px 13px;
-  font-size: 31.5px;
+  font-size: var(--text-31-5);
   line-height: 1.4;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   white-space: nowrap;
 }
 .genre svg {
@@ -61,7 +61,7 @@
   top: 0;
   left: 0;
   display: flex;
-  gap: 24px;
+  gap: var(--space-5);
   height: 100%;
   align-items: center;
 }
@@ -74,8 +74,8 @@
   flex-shrink: 0;
   overflow: hidden;
   border-radius: 17px;
-  background: #000;
-  box-shadow: 0 20px 25px #0006;
+  background: var(--color-black);
+  box-shadow: 0 20px 25px var(--black-a40);
   transform-origin: center;
   cursor: pointer;
   transition:
@@ -103,10 +103,10 @@
 }
 @media (max-width: 1023px) {
   .heading h2 {
-    font-size: 31.5px;
+    font-size: var(--text-31-5);
   }
   .genre {
-    font-size: 25.2px;
+    font-size: var(--text-25-2);
   }
 }
 @media (max-width: 767px) {
@@ -114,9 +114,9 @@
     padding-block: 50px;
   }
   .heading h2 {
-    font-size: 25.2px;
+    font-size: var(--text-25-2);
   }
   .genre {
-    font-size: 21px;
+    font-size: var(--text-21);
   }
 }

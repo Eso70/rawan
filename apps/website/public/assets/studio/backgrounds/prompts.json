@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "spring-dawn",
+    "label": "Spring dawn",
+    "season": "Spring",
+    "time": "Dawn",
+    "prompt": "Create one original landscape background image for a quiet creative writing app, wide 16:9 composition. Scene: a spring orchard and small still pond at dawn, pale blossoms, rolling green hills disappearing into morning mist, delicate warm sunlight at the horizon. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, gentle atmosphere, no crisp distracting details, subtle soft focus. Full-bleed artwork, subdued contrast, broad calm areas through the center for interface controls. No people, no text, no logos, no UI, no borders, no collage. This is one standalone wallpaper. High resolution, landscape."
+  },
+  {
+    "slug": "spring-rain",
+    "label": "Spring rain",
+    "season": "Spring",
+    "time": "Afternoon",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: A lush spring garden seen through softly rain-streaked glass, fresh ferns and flowering branches, distant garden wall and pale overcast light, gentle rain, soft sage and blue-gray palette. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "summer-noon",
+    "label": "Summer coast",
+    "season": "Summer",
+    "time": "Noon",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: A quiet summer coastline at midday, distant turquoise sea, pale sand, muted coastal grasses, soft blue sky and lazy white clouds, sunlit but subdued, broad open horizon. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "summer-golden-hour",
+    "label": "Summer golden hour",
+    "season": "Summer",
+    "time": "Sunset",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: An open summer meadow of tall grasses and tiny wildflowers at golden hour, low amber sunlight and distant wooded hills, restful olive gold and dusky blue colors, spacious sky. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "summer-night",
+    "label": "Summer starlight",
+    "season": "Summer",
+    "time": "Night",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: A calm summer lake at night beneath a softly starry navy sky, distant forested shoreline, faint milky way, muted moonlight reflected on still water, rich midnight blues with subtle silvery light. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "autumn-morning",
+    "label": "Autumn mist",
+    "season": "Autumn",
+    "time": "Morning",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: An autumn woodland clearing in early morning mist, amber birch leaves and warm rust foliage beside a winding stream, soft low sunlight, quiet earthy copper and slate tones. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "autumn-evening",
+    "label": "Autumn evening",
+    "season": "Autumn",
+    "time": "Evening",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: A quiet autumn reading room at evening, a rain-speckled large window looking onto copper-colored trees and distant rooftops, warm dim lamplight at the edge, bookshelves only subtly suggested, calm broad shadowed central space, blue-gray rain and subdued amber highlights. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "winter-dawn",
+    "label": "Winter dawn",
+    "season": "Winter",
+    "time": "Dawn",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: A wide snow-covered pine forest and distant mountains at winter dawn, powder snow with lavender shadows, soft peach horizon, blue fog over a frozen river, elegant quiet icy blue and pale rose colors. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "winter-night",
+    "label": "Winter moonlight",
+    "season": "Winter",
+    "time": "Night",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: A tiny remote wooden cabin with one warm lit window at the far edge of a snowy mountain valley on a winter night, silver moonlight, dark pine trees and soft falling snow, mostly deep navy and muted icy blue, very peaceful. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  },
+  {
+    "slug": "blue-hour-valley",
+    "label": "Blue hour valley",
+    "season": "All seasons",
+    "time": "Twilight",
+    "prompt": "Create one original wide 16:9 landscape wallpaper for a quiet creative writing app. Scene: Layered mountain ridges and a mist-covered valley at blue hour, a distant still river reflecting the last faint light, atmospheric indigo teal and muted slate, peaceful expansive landscape. Style: cinematic painterly realism, softly textured digital landscape painting, sophisticated natural colors, subtle soft focus and soft edges, gentle atmosphere, no crisp distracting details. Full-bleed artwork with subdued contrast and broad calm central areas for interface controls. No people, no text, no logos, no UI, no borders, no collage. One standalone high-resolution landscape wallpaper."
+  }
+]

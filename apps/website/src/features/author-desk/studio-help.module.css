@@ -1,0 +1,75 @@
+.trigger {
+  position: absolute;
+  right: 16px;
+  bottom: 15px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #dce9f211 !important;
+  border-radius: 50%;
+  background: #c9e2ed1a !important;
+  color: #dce3e9 !important;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+.trigger:is(:hover, :focus-visible, [aria-expanded="true"]) {
+  background: #0c1e35 !important;
+  border-color: #668cbd33 !important;
+  box-shadow: 0 0 0 3px #253c5c70, inset 0 0 0 1px #5476a51a;
+}
+.panel {
+  position: fixed;
+  inset: auto 14px 62px auto;
+  margin: 0;
+  width: min(340px, calc(100vw - 28px));
+  max-height: calc(100svh - 88px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  border: 1px solid #aac6df1c;
+  border-radius: 17px;
+  padding: 0;
+  color: #e8edf2;
+  background: linear-gradient(135deg, #10273bec, #1a2c40ed 60%, #0c1c30f5);
+  backdrop-filter: blur(30px);
+  box-shadow: 0 12px 40px #00102030;
+  font: 500 13px/1.5 "Rawan Inter", Arial, sans-serif;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 160ms ease, transform 180ms ease, display 180ms allow-discrete, overlay 180ms allow-discrete;
+}
+.panel:popover-open { opacity: 1; transform: translateY(0); }
+@starting-style { .panel:popover-open { opacity: 0; transform: translateY(6px); } }
+.panel button:disabled { cursor: default; opacity: 1; }
+.heading { display: flex; align-items: center; gap: 8px; min-height: 50px; padding: 9px 14px; border-bottom: 1px solid #adc5da0c; }
+.heading h2 { margin: 0; font-size: 13px; font-weight: 650; flex: 1; }
+.heading button { width: 28px; height: 28px; border-radius: 7px; color: #9eafbd; }
+.section { padding: 12px 14px 5px; border-bottom: 1px solid #adc5da0c; }
+.section h3 { margin: 0 0 10px; font-size: 10px; line-height: 1.4; text-transform: uppercase; color: #8e9eac; font-weight: 700; }
+.sectionTitle { display: flex; align-items: baseline; justify-content: space-between; }
+.sectionTitle > span { color: #8496a5; font-size: 10px; }
+.tutorial { width: calc(100% + 20px); margin-left: -10px; text-align: left; justify-content: flex-start !important; gap: 9px; padding: 5px 10px !important; border-radius: 15px; }
+.tutorial > span:nth-child(2) { min-width: 0; flex: 1; }
+.panel strong { display: block; font-size: 13px; line-height: 1.5; font-weight: 600; }
+.tutorial small { display: block; color: #b4c1ce; font-size: 11px; line-height: 1.5; margin-top: 1px; }
+.lessonIcon { display: grid; place-items: center; flex: 0 0 29px; height: 29px; border-radius: 10px; background: #c0d7ed0a; color: #8b9cac; }
+.arrow { margin-left: auto; flex-shrink: 0; color: #738596; opacity: 0.65; }
+.disclosure { display: flex !important; width: 100%; height: 23px; border-radius: 6px; color: #8093a4 !important; }
+.video { display: flex; width: calc(100% + 20px); margin-left: -10px; min-height: 55px; gap: 13px; justify-content: flex-start !important; text-align: left; padding: 8px 10px !important; border-radius: 20px; color: #b9c7d5 !important; }
+.panel :is(.video, .tutorial, .actions a, .actions button) { transition: background-color 150ms ease, color 150ms ease; }
+.panel :is(.video, .tutorial, .actions a, .actions button):is(:hover, :focus-visible) { background-color: #2b3c52 !important; color: #fff !important; }
+.video strong { font-size: 13px; }
+.thumbnail { position: relative; display: grid; place-items: center; width: 66px; height: 38px; flex: 0 0 66px; border-radius: 9px; color: #a3b8cc; background: linear-gradient(135deg, #325168, #091526 75%); overflow: hidden; }
+.video:nth-of-type(2) .thumbnail { background: linear-gradient(135deg, #3a4565, #0d1b30 75%); }
+.video:nth-of-type(3) .thumbnail { background: linear-gradient(135deg, #395753, #0c1c2b 75%); }
+.thumbnail > span { position: absolute; display: grid; place-items: center; width: 17px; height: 13px; border-radius: 3px; color: white; background: #061323c9; }
+.videoEnd { height: 16px; display: grid; place-items: center; color: #74899c; }
+.actions { padding: 2px 14px; }
+.actions :is(a, button) { display: flex; align-items: center; justify-content: flex-start; gap: 9px; width: calc(100% + 20px); margin-left: -10px; padding: 0 10px; height: 40px; color: #e0e8ef; text-decoration: none; border-radius: 13px; }
+.actions :is(a, button) > svg:first-child { color: #a8bac9; }
+.actions a:hover, .community a:hover { background: #d5e4f00d; }
+.community { display: flex; align-items: center; gap: 11px; padding: 13px 14px 15px; color: #b2bfca; }
+.community > span { margin-right: auto; font-size: 12px; }
+.community :is(a, button) { display: grid; place-items: center; width: 23px; height: 23px; color: #99a9b8; border-radius: 5px; }
+.guide { padding: 4px 18px 20px; color: #b9c7d3; }
+.guide ol { padding-left: 20px; }
+.guide li { padding: 7px 0 7px 4px; }
+@media (prefers-reduced-motion: reduce) { .panel, .trigger, .panel :is(.video, .tutorial, .actions a, .actions button) { transition: none; } }

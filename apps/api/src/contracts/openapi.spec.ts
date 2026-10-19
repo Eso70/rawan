@@ -19,7 +19,7 @@ describe('V1 OpenAPI contract generated from compiled controllers and DTOs', () 
     document.components!.schemas![name] as SchemaObject;
   it('covers every existing public operation once with stable IDs', () => {
     const inventory = publicRouteInventory();
-    expect(inventory).toHaveLength(268);
+    expect(inventory).toHaveLength(271);
     const operations = Object.values(document.paths).flatMap((path) =>
       Object.entries(path).filter(([key]) =>
         ['get', 'post', 'patch', 'delete'].includes(key),
@@ -45,6 +45,12 @@ describe('V1 OpenAPI contract generated from compiled controllers and DTOs', () 
     );
   });
   it('documents the Horizon 2 publication and account-private boundaries', () => {
+    expect(
+      document.paths['/api/v1/studio/background'].get!.security,
+    ).toBeUndefined();
+    expect(
+      schema('StudioBackgroundResponseDto').properties!.backgroundId,
+    ).toMatchObject({ type: 'string' });
     expect(
       document.paths['/api/v1/catalog/releases/{id}'].get!.security,
     ).toBeUndefined();

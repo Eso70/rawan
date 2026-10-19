@@ -9,8 +9,10 @@ import {
   Patch,
   Query,
   UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import { OnboardingService } from './onboarding.service.js';
+import { SetupResponseDto, UpdateSetupDto } from './setup.dto.js';
 import {
   OnboardingResponseDto,
   UpdateOnboardingDto,
@@ -23,12 +25,38 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import type { AuthenticatedUser } from '../auth/auth.types.js';
 
 @Controller('users')
+@SetMetadata('rawan:setup-access', true)
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly onboarding: OnboardingService,
   ) {}
+
+  @ApiEndpoint({
+    tag: 'Users',
+    model: SetupResponseDto,
+    description:
+      'Authenticated account setup state. Existing accounts retain workspace access.',
+  })
+  @Get('me/setup')
+  getSetup(@CurrentUser() user: AuthenticatedUser) {
+    return this.onboarding.getSetup(user.userId);
+  }
+
+  @ApiEndpoint({
+    tag: 'Users',
+    model: SetupResponseDto,
+    description:
+      'Merge validated partial setup with optimistic revision checking. Completion timestamps are server-owned.',
+  })
+  @Patch('me/setup')
+  saveSetup(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateSetupDto,
+  ) {
+    return this.onboarding.saveSetup(user.userId, dto);
+  }
 
   @ApiEndpoint({
     tag: 'Users',

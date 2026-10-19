@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPage } from "../../components/legal/legal-page";
-import { DISCORD_INVITE } from "../../components/site-links";
+import { DISCORD_INVITE } from "../../components/shared/site-links";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions — Rawan",
@@ -36,10 +36,10 @@ export default function TermsPage() {
             Google sign-in is enabled for localhost testing and creates a local
             author account on your first successful sign-in.
           </li>
-          <li>Other website sign-in methods remain unavailable.</li>
+          <li>Email sign-up verifies a code before creating an account.</li>
           <li>
-            Future workspace access will have its own published eligibility and
-            account requirements.
+            New accounts complete the required setup question before workspace
+            access. Existing accounts keep access without repeating setup.
           </li>
         </ul>
       </section>

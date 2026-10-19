@@ -9,19 +9,19 @@
   background: #ffffff08;
   color: #d4dce4;
   font:
-    11px "Rawan Inter",
+    var(--text-11) var(--font-ui),
     sans-serif;
 }
 .trigger:hover {
   background: #ffffff15;
-  color: #fff;
+  color: var(--color-white);
 }
 .trigger kbd {
   color: #aabbca;
   font:
-    10px "Rawan Inter",
+    var(--text-10) var(--font-ui),
     sans-serif;
-  margin-left: 8px;
+  margin-left: var(--space-2);
 }
 .dialog {
   --search-top: 12dvh;
@@ -30,14 +30,14 @@
   margin: var(--search-top) auto auto;
   padding: 0;
   overflow: hidden;
-  border: 1px solid #ffffff0d;
-  border-radius: 18px;
-  background: #ffffff0d;
+  border: var(--border-width) solid var(--white-a05);
+  border-radius: var(--radius-18);
+  background: var(--white-a05);
   backdrop-filter: blur(24px);
-  color: #fff;
-  box-shadow: 0 24px 80px #0006;
+  color: var(--color-white);
+  box-shadow: var(--shadow-search);
   font:
-    13px/1.6 "Rawan Inter",
+    var(--text-13)/1.6 var(--font-ui),
     sans-serif;
 }
 .dialog[open] {
@@ -56,18 +56,18 @@
   min-height: 52px;
   margin: 0;
   padding: 0 14px;
-  color: #ffffffb3;
+  color: var(--white-a70);
 }
 .searchBar input {
   flex: 1;
   min-width: 0;
   border: 0;
   outline: 0;
-  padding: 16px 0;
-  color: #fff;
+  padding: var(--space-4) 0;
+  color: var(--color-white);
   background: transparent;
   font:
-    500 13px/1.5 "Rawan Lora",
+    var(--weight-medium) var(--text-13)/1.5 var(--font-literary),
     Georgia,
     serif;
 }
@@ -89,11 +89,11 @@
   background: #ffffff08;
   color: #ffffffa6;
   font:
-    10px "Rawan Inter",
+    var(--text-10) var(--font-ui),
     sans-serif;
 }
 .close:hover {
-  color: #fff;
+  color: var(--color-white);
   background: #ffffff15;
 }
 .results {
@@ -104,37 +104,37 @@
   scroll-padding-block: 6px;
   mask-image: linear-gradient(
     transparent,
-    #000 8px,
-    #000 calc(100% - 8px),
+    var(--color-black) 8px,
+    var(--color-black) calc(100% - 8px),
     transparent
   );
 }
 .results ul {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   padding: 0;
   margin: 0;
   list-style: none;
 }
 .results a {
-  scroll-margin-block: 8px;
+  scroll-margin-block: var(--space-2);
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 9px 12px;
+  gap: var(--space-3);
+  padding: 9px var(--space-3);
   border-radius: 8px;
   outline: none;
 }
 .results a[data-active="true"] {
-  background: #ffffff0d;
+  background: var(--white-a05);
   transition: background-color 0.12s ease-out;
 }
 .results a > span {
   flex: 1;
   min-width: 0;
   font:
-    500 13px/1.5 "Rawan Lora",
+    var(--weight-medium) var(--text-13)/1.5 var(--font-literary),
     Georgia,
     serif;
 }
@@ -145,23 +145,23 @@
   display: block;
   color: #999fa8;
   font:
-    400 11px/1.5 "Rawan Inter",
+    var(--weight-regular) var(--text-11)/1.5 var(--font-ui),
     sans-serif;
   margin-top: 3px;
 }
 .empty {
-  padding: 24px 8px;
+  padding: var(--space-5) var(--space-2);
   color: #b7bec6;
 }
 .hint {
   display: flex;
   justify-content: flex-start;
-  gap: 16px;
+  gap: var(--space-4);
   flex-shrink: 0;
   margin: 0;
-  padding: 8px 14px;
+  padding: var(--space-2) 14px;
   color: #999fa8;
-  font-size: 10px;
+  font-size: var(--text-10);
 }
 .srOnly {
   position: absolute;
@@ -180,14 +180,14 @@
     display: none;
   }
   .trigger {
-    padding-inline: 8px;
+    padding-inline: var(--space-2);
   }
   .dialog {
     --search-top: 8dvh;
   }
   .hint {
     flex-wrap: wrap;
-    gap: 6px 12px;
+    gap: 6px var(--space-3);
   }
 }
 

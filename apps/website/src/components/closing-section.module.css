@@ -1,13 +1,13 @@
 .closing {
   position: relative;
-  color: #fff;
+  color: var(--color-white);
 }
 .section {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 16.8px;
+  padding: 60px var(--space-m4);
 }
 .content {
   position: relative;
@@ -23,23 +23,23 @@
   width: 32px;
   height: 32px;
   object-fit: contain;
-  margin-bottom: 16.8px;
+  margin-bottom: var(--space-m4);
   opacity: 0.9;
   animation: featherSway 6s ease-in-out infinite;
 }
 .content h2 {
-  font-family: "Rawan Lora", Georgia, serif;
-  font-size: 31.5px;
+  font-family: var(--font-literary), Georgia, serif;
+  font-size: var(--text-31-5);
   line-height: 37.8px;
-  font-weight: 400;
-  margin: 0 0 16.8px;
+  font-weight: var(--weight-regular);
+  margin: 0 0 var(--space-m4);
 }
 .showcase {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 8.4px;
+  gap: var(--space-m2);
   margin-bottom: 21px;
   min-height: 24px;
 }
@@ -50,16 +50,16 @@
   display: inline-flex;
   align-items: center;
   gap: 6.3px;
-  padding: 2.1px 8.4px;
-  border: 1px solid;
+  padding: 2.1px var(--space-m2);
+  border: var(--border-width) solid;
   border-radius: 6.3px;
-  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
-  font-size: 12.6px;
+  font-family: var(--font-display), var(--font-ui), sans-serif;
+  font-size: var(--text-12-6);
   line-height: 16.8px;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   white-space: nowrap;
   backdrop-filter: blur(12px);
-  transition: background-color 0.2s;
+  transition: background-color var(--duration-ui);
 }
 .chip:hover {
   background-color: color-mix(
@@ -71,23 +71,23 @@
 .cta {
   display: inline-flex;
   align-items: center;
-  gap: 8.4px;
-  padding: 10.5px 16.8px;
-  border: 1px solid #fff3;
-  border-radius: 12.6px;
-  background: #ffffff1a;
-  color: #fff;
-  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
-  font-size: 14.7px;
+  gap: var(--space-m2);
+  padding: 10.5px var(--space-m4);
+  border: var(--border-width) solid var(--white-a20);
+  border-radius: var(--radius-12-6);
+  background: var(--white-a10);
+  color: var(--color-white);
+  font-family: var(--font-display), var(--font-ui), sans-serif;
+  font-size: var(--text-14-7);
   line-height: 21px;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   backdrop-filter: blur(4px);
   transition:
-    background-color 0.2s,
-    transform 0.2s;
+    background-color var(--duration-ui),
+    transform var(--duration-ui);
 }
 .cta:hover {
-  background: #fff3;
+  background: var(--white-a20);
 }
 .cta:active {
   transform: scale(0.98);
@@ -96,14 +96,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16.8px;
+  gap: var(--space-m4);
   list-style: none;
   padding: 0;
-  margin: 16.8px 0 0;
-  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
-  font-size: 12.6px;
+  margin: var(--space-m4) 0 0;
+  font-family: var(--font-display), var(--font-ui), sans-serif;
+  font-size: var(--text-12-6);
   line-height: 16.8px;
-  color: #ffffff66;
+  color: var(--white-a40);
 }
 .reassurance li {
   display: flex;
@@ -113,31 +113,22 @@
 .reassurance svg {
   color: #34d399;
 }
-.notice {
-  position: absolute;
-  top: 100%;
-  max-width: 440px;
-  font-size: 12.6px;
-  line-height: 1.6;
-  color: #ffffff99;
-  margin: 14px 0 0;
-}
 .footer {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: start;
-  padding: 8.4px 25.2px;
-  gap: 8.4px;
-  font-family: "Rawan Space Grotesk", "Rawan Inter", sans-serif;
-  color: #ffffff66;
+  padding: var(--space-m2) var(--space-m5);
+  gap: var(--space-m2);
+  font-family: var(--font-display), var(--font-ui), sans-serif;
+  color: var(--white-a40);
 }
 .brand {
   display: flex;
   align-items: center;
   gap: 0;
-  font-size: 25.2px;
+  font-size: var(--text-25-2);
   line-height: 33.6px;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   min-height: 46.2px;
 }
 .footerMark {
@@ -150,7 +141,7 @@
     opacity 0.5s;
 }
 .brand:hover {
-  color: #fff;
+  color: var(--color-white);
 }
 .brand:hover .footerMark {
   transform: rotate(15deg);
@@ -161,15 +152,15 @@
   flex-wrap: wrap;
   align-items: start;
   justify-content: center;
-  gap: 8.4px;
-  font-size: 14.7px;
+  gap: var(--space-m2);
+  font-size: var(--text-14-7);
   line-height: 21px;
 }
 .footerItem,
 .copyright {
   display: inline-flex;
   align-items: center;
-  gap: 8.4px;
+  gap: var(--space-m2);
   min-height: 46.2px;
 }
 .footerItem button {
@@ -180,10 +171,10 @@
 }
 .footerItem a:hover,
 .social a:hover {
-  color: #fff;
+  color: var(--color-white);
 }
 .footerItem a[aria-current="page"] {
-  color: #ffffffb3;
+  color: var(--white-a70);
 }
 .resources summary {
   display: flex;
@@ -197,23 +188,23 @@
 }
 .resources summary:hover,
 .resources a:hover {
-  color: #fff;
+  color: var(--color-white);
 }
 .resources ul {
   list-style: none;
   margin: 0;
-  padding: 0 0 12.6px;
+  padding: 0 0 var(--space-m3);
   text-align: left;
 }
 .resources a {
   display: flex;
   align-items: center;
   min-height: 46.2px;
-  color: #ffffffb3;
+  color: var(--white-a70);
 }
 .social {
   display: flex;
-  gap: 12.6px;
+  gap: var(--space-m3);
   min-height: 46.2px;
   align-items: center;
   justify-self: end;
@@ -249,7 +240,7 @@
 }
 @media (max-width: 767px) {
   .content h2 {
-    font-size: 25.2px;
+    font-size: var(--text-25-2);
     line-height: 33.6px;
   }
 }
@@ -258,7 +249,7 @@
     flex-direction: column;
   }
   .section {
-    padding: 70px 25.2px;
+    padding: 70px var(--space-m5);
   }
   .showcase {
     max-width: 360px;

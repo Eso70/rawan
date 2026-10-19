@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { GooglePopupComplete } from "../../../../components/login/google-popup-complete";
-import { isPopupId } from "../../../../lib/google-popup";
+import { GooglePopupComplete } from "../../../../features/auth/components/google-popup-complete";
+import { isPopupId } from "../../../../features/auth/lib/google-popup";
 
 export const metadata = {
   title: "Sign-in complete — Rawan",

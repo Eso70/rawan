@@ -21,7 +21,7 @@ import {
   IconArrowRight,
   IconCheck,
 } from "@tabler/icons-react";
-import { BrandMark } from "./brand-mark";
+import { BrandMark } from "./shared/brand-mark";
 import styles from "./closing-section.module.css";
 import { usePageVisible } from "./use-page-visible";
 import { SiteFooter } from "./site-footer";
@@ -50,7 +50,6 @@ export function ClosingSection() {
   const [slots, setSlots] = useState([0, 1, 2, 3, 4]);
   const sequence = useRef(5);
   const slot = useRef(0);
-  const [notice, setNotice] = useState("");
   const reduced = useReducedMotion();
   const pageVisible = usePageVisible();
   useEffect(() => {
@@ -133,18 +132,10 @@ export function ClosingSection() {
               );
             })}
           </div>
-          <button
-            type="button"
-            className={styles.cta}
-            onClick={() =>
-              setNotice(
-                "The writing workspace is coming next. Your stories begin here.",
-              )
-            }
-          >
+          <a className={styles.cta} href="/account">
             Start Building Now
             <IconArrowRight size={17} stroke={1.75} aria-hidden="true" />
-          </button>
+          </a>
           <ul className={styles.reassurance}>
             {[
               "Start for free",
@@ -157,9 +148,6 @@ export function ClosingSection() {
               </li>
             ))}
           </ul>
-          <p className={styles.notice} role="status" aria-live="polite">
-            {notice}
-          </p>
         </motion.div>
       </section>
       <SiteFooter />

@@ -1,12 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { decodeFlow, encodeFlow } from "../src/lib/google-auth.ts";
+import {
+  decodeFlow,
+  encodeFlow,
+} from "../src/features/auth/lib/google-auth.ts";
 import {
   decodePopupResult,
   encodePopupResult,
   isPopupId,
-} from "../src/lib/google-popup.ts";
+} from "../src/features/auth/lib/google-popup.ts";
 
 test("popup completion requires the signed result for that exact attempt", () => {
   const secret = "test-only-secret";

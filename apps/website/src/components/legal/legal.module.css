@@ -1,6 +1,6 @@
 .page {
   min-height: 100svh;
-  font-family: "Rawan Space Grotesk", sans-serif;
+  font-family: var(--font-display), sans-serif;
 }
 .main {
   width: min(768px, calc(100% - 48px));
@@ -12,68 +12,68 @@
   margin-bottom: 48px;
 }
 .heading h1 {
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-4);
   font:
-    600 36px/40px "Rawan Inter",
+    var(--weight-semibold) 36px/40px var(--font-ui),
     sans-serif;
-  color: #fff;
+  color: var(--color-white);
   letter-spacing: -1px;
 }
 .heading p {
   margin: 0;
-  color: #fff9;
-  font-size: 14px;
+  color: var(--white-a60);
+  font-size: var(--text-14);
   line-height: 20px;
 }
 .document {
-  border: 1px solid #fff3;
-  background: #ffffff1a;
-  border-radius: 18px;
-  padding: 32px;
+  border: var(--border-width) solid var(--white-a20);
+  background: var(--white-a10);
+  border-radius: var(--radius-18);
+  padding: var(--space-6);
   backdrop-filter: blur(8px);
-  color: #fffc;
-  font-size: 14px;
+  color: var(--white-a80);
+  font-size: var(--text-14);
   line-height: 20px;
   overflow-wrap: anywhere;
 }
 .document section + section {
-  margin-top: 24px;
+  margin-top: var(--space-5);
 }
 .document h2 {
   font:
-    500 16px/24px "Rawan Inter",
+    var(--weight-medium) var(--text-16)/24px var(--font-ui),
     sans-serif;
-  color: #fff;
-  margin: 0 0 8px;
+  color: var(--color-white);
+  margin: 0 0 var(--space-2);
 }
 .document h3 {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-14);
+  font-weight: var(--weight-semibold);
   line-height: 20px;
-  color: #fff;
-  margin: 12px 0 8px;
+  color: var(--color-white);
+  margin: var(--space-3) 0 var(--space-2);
 }
 .document p {
   margin: 0;
 }
 .document p + p {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 .document ul {
   padding-left: 20px;
-  margin: 8px 0 0 8px;
+  margin: var(--space-2) 0 0 var(--space-2);
 }
 .document li + li {
-  margin-top: 4px;
+  margin-top: var(--space-1);
 }
 .document ul + p {
-  margin-top: 8px;
+  margin-top: var(--space-2);
 }
 .document a {
-  color: #fff;
+  color: var(--color-white);
   text-decoration: underline;
   text-underline-offset: 3px;
-  transition: color 0.15s;
+  transition: color var(--duration-fast);
 }
 .document a:hover {
   color: #93c5fd;
@@ -84,7 +84,7 @@
     padding-bottom: 64px;
   }
   .document {
-    padding: 24px;
+    padding: var(--space-5);
   }
 }
 @media (max-width: 360px) {

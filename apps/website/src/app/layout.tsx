@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "lenis/dist/lenis.css";
-import "./globals.css";
+import "../styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Rawan — Your stories, your worlds",

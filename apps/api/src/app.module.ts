@@ -21,6 +21,7 @@ import { JobsModule } from './jobs/jobs.module.js';
 import { AiModule } from './ai/ai.module.js';
 import { fileURLToPath } from 'node:url';
 import { validateEnvironment } from './config/environment.js';
+import { StudioController } from './studio/studio.controller.js';
 
 @Module({
   imports: [
@@ -51,6 +52,6 @@ import { validateEnvironment } from './config/environment.js';
     JobsModule,
     AiModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, StudioController],
 })
 export class AppModule {}

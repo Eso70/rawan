@@ -1,8 +1,12 @@
 # Rawan home page
 
-For future frontend work, start with the [frontend design reference](../../docs/frontend-design-reference.md). It documents the original pages, visual foundations, component structure, responsive behavior and consistency guidance, and identifies historical notes that no longer match the implementation.
+## Author Studio local prototype
 
-This website contains the landing page, Google popup sign-in, email/password sign-in, email code verification and authenticated workspace routes. Email signup stays on `/login` through code verification; both methods then open an empty `/workspace`. Use `http://localhost:3000/login` for authentication; the loopback-IP login URL redirects there to keep popup windows on the same origin. Email sending is disabled until the Gmail app password is configured; see [email setup](../../docs/email-auth.md). The onboarding page and author dashboard route have been removed; the reader dashboard shell remains separately accessible. `apps/app` and `packages/ui` remain empty. Landing content uses local assets; authentication connects to the API.
+The independent author-facing mock application is available at `/studio` using the same `pnpm dev:website` command. It requires no sign-in, API, PostgreSQL, Redis or worker. Editing, projects, worldbuilding, planning, media and preferences persist in this browser only; existing authenticated workspace/onboarding routes remain unchanged. See [Author Studio architecture, routes, validation and limitations](../../docs/author-studio-v1.md).
+
+For future frontend work, start with the [Rawan design system](../../docs/design-system/README.md): current tokens, component APIs/examples, page architecture, accessibility/responsive guidance and verified consolidation results. The older [frontend design reference](../../docs/frontend-design-reference.md) retains the original visual baseline and historical notes.
+
+This website contains the landing page, sample Library, legal drafts, Google popup sign-in, email/password sign-in, email code verification, authenticated onboarding and existing workspace routes. Email signup stays on `/login` through code verification; both methods enter `/account`, which sends unfinished new accounts to setup and completed accounts to their selected experience. Existing/completed accounts bypass setup. Use `http://localhost:3000/login` for authentication; the loopback-IP login URL redirects there to keep popup windows on the same origin. Email sending requires configured credentials; see [email setup](../../docs/email-auth.md). Author Studio lives at `/studio`; Reader Experience lives at `/reader`. See [experience routing](../../docs/experience-routing.md). Reusable controls stay in this actual consumer app under `src/components/ui`; no shared UI package was introduced. Landing content uses local assets; authentication connects to the API.
 
 From the repository root, run `pnpm dev:website`, then open <http://127.0.0.1:3000>. For a production preview, run `pnpm --filter @rawan/website build` followed by `pnpm --filter @rawan/website start`.
 
@@ -71,10 +75,24 @@ After the planet section, a sticky scroll sequence changes three illustrated car
 
 ## Closing section and footer
 
-The final viewport centers the Rawan logo, “Ready to get to work?” heading, five automatically changing tool badges, a building button and three checkmark assurances. A responsive footer adds local Resources links, Rawan copyright and placeholders for later pages and social destinations. The building button explains that the workspace comes next. Reduced motion disables badge cycling and logo sway. See [closing-reference.md](closing-reference.md) for measured styling, font substitutions and approximate motion timings.
+The final viewport centers the Rawan logo, “Ready to get to work?” heading, five automatically changing tool badges, a building button and three checkmark assurances. A responsive footer adds local Resources links, Rawan copyright and placeholders for later pages and social destinations. The building button opens `/account`, redirecting signed-out visitors to `/login`. Reduced motion disables badge cycling and logo sway. See [closing-reference.md](closing-reference.md) for measured styling, font substitutions and approximate motion timings.
 
 ## Landing motion audit
 
 Smooth scrolling is owned by one page-level controller; mouse wheels and trackpads use easing, including on touch-capable laptops, while touch gestures stay native. Footer anchors ease to their sections. The graph accepts normal page scrolling and uses Control/Command-wheel for zoom. Nested preview content hands scrolling back at its boundaries. A single navbar hides on downward scroll, returns on upward scroll and remains visible at the final CTA. Two continuous backgrounds span adjacent sections. Videos and rotating content pause in hidden tabs. Full findings, verification and remaining visual differences are recorded in [landing-ui-audit.md](landing-ui-audit.md).
 
 Navigation now responds to upward wheel/touch/keyboard intent before remaining downward momentum finishes. Navigation styles and visibility behavior live separately from hero styles. `creators-section.tsx` owns the sticky stage and a single transitioning heading; `creators-world-scene.tsx` owns its visuals/interactions, and `creators-data.ts` owns the local sample lore. Story previews clip overflow so wheel gestures always continue the narrative into the final CTA. Mobile visuals stay below the heading. No new route or backend behavior is introduced.
+
+## Frontend foundation (Parts 1–2)
+
+The full supplied requirements are saved in [the master onboarding prompt](../../docs/rawan-master-onboarding-prompt.md). The completed repository audit, pre-implementation plan and folder guide are in [Frontend foundation — Parts 1 and 2](../../docs/frontend-foundation-parts-1-2.md).
+
+Authentication UI, hooks, server handlers and session helpers now live together under `src/features/auth`. Login routes are grouped under `src/app/(auth)`; existing protected shells are under `src/app/(application)`. URLs and authentication behavior are unchanged. `src/components/shared` contains the existing brand/site links, and `src/styles/globals.css` owns the existing global styles. Public marketing, legal and sample-library components remain in place. No onboarding UI, new destinations or database migrations are included in this structural phase.
+
+## Account setup (Parts 3–7)
+
+After sign-in, workspace access is checked server-side. New accounts complete the existing five-step setup with a required purpose choice; other profile questions are optional. Existing accounts bypass setup. No age declaration is collected or required. Progress is saved privately on Continue/Back and restored on refresh. Completed accounts bypass setup. Safe existing reader links survive setup; no dashboards were created. See [architecture and verification](../../docs/onboarding-persistence-parts-6-7.md) and [feature guide](src/features/onboarding/README.md).
+
+## Final onboarding guide (Parts 1–10)
+
+See [implementation and manual testing](../../docs/onboarding-guide.md) and [final verification](../../docs/onboarding-finalization-parts-8-10.md). The existing design now includes keyboard/error focus, phone tap targets, reduced-motion-aware transitions and tested recovery/skip behavior. Authentication, migration defaults and workspace shells are preserved.

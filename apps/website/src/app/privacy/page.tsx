@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPage } from "../../components/legal/legal-page";
-import { DISCORD_INVITE } from "../../components/site-links";
+import { DISCORD_INVITE } from "../../components/shared/site-links";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Rawan",
@@ -34,7 +34,8 @@ export default function PrivacyPage() {
         <ul>
           <li>Your Google password is entered on Google, never on Rawan.</li>
           <li>
-            Discord, Apple and email sign-in are not enabled on this website.
+            Email sign-up uses an emailed code before creating an account.
+            Discord and Apple sign-in are not enabled on this website.
           </li>
           <li>
             Google access and refresh tokens are not stored. The account page
@@ -45,12 +46,13 @@ export default function PrivacyPage() {
       <section>
         <h2>3. Browser preferences</h2>
         <p>
-          After sign-in, you may choose an author, reader or combined
-          experience, interests and a goal. These optional preferences are
-          stored privately with your account to choose your dashboard. Skipping
-          starts the reader experience. You can change your choices from the
-          dashboard later. These choices do not grant administrator permissions.
+          New accounts choose whether they want to create, read or do both.
+          Preferred name, interests, discovery source and starting experience
+          are optional and saved privately to your account as you continue
+          through setup. Existing accounts do not have to answer these profile
+          questions. Preferences do not grant administrator permissions.
         </p>
+
         <p>
           The website remembers the last selected Google method in your
           browser’s local storage under <strong>rawan-login-method</strong>.

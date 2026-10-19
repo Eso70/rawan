@@ -133,7 +133,7 @@ Success means recognizable Rawan identity with task-appropriate density and inte
 
 ## Repository and related references
 
-- [Existing global styles](../apps/website/src/app/globals.css), [root layout](../apps/website/src/app/layout.tsx) and [brand assets](../apps/website/public/brand)
+- [Existing global styles](../apps/website/src/styles/globals.css), [root layout](../apps/website/src/app/layout.tsx) and [brand assets](../apps/website/public/brand)
 - [Work-centered architecture](work-centered-product-architecture.md) and [information architecture](expanded-information-architecture-study.md)
 - [Reader research](reader-experience-research.md), [library](library-system-research.md), [discovery](discovery-experience-research.md) and [comics](comics-product-research.md)
 - [Optional creator workspaces](optional-worldbuilding-and-workspaces.md) and [current backend boundaries](product-scope-and-backend-capabilities.md)

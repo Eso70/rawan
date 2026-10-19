@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
+import { getSetup, saveSetup } from './setup.persistence.js';
+import type { UpdateSetupDto } from './setup.dto.js';
 import {
   OnboardingResponseDto,
   UpdateOnboardingDto,
@@ -36,6 +38,8 @@ const defaults = {
 @Injectable()
 export class OnboardingService {
   constructor(private readonly prisma: PrismaService) {}
+  getSetup(userId: string) { return getSetup(this.prisma, userId); }
+  saveSetup(userId: string, dto: UpdateSetupDto) { return saveSetup(this.prisma, userId, dto); }
   async get(userId: string): Promise<OnboardingResponseDto> {
     const state = await this.prisma.userOnboarding.findUnique({
       where: { userId },

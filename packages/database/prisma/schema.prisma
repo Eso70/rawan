@@ -70,6 +70,24 @@ model EmailDeliveryBudget {
 }
 
 model UserOnboarding {
+  setupVersion Int @default(1)
+  setupStatus String @default("not_started")
+  setupRequired Boolean @default(false)
+  setupRevision Int @default(0)
+  setupStep String @default("welcome")
+  preferredName String @default("")
+  purpose String?
+  creativeInterests String[] @default([])
+  readingFormats String[] @default([])
+  readingGenres String[] @default([])
+  readingTopics String[] @default([])
+  interfaceLanguage String @default("en")
+  discoverySource String?
+  discoveryOther String @default("")
+  preferredStart String?
+  ageConfirmedAt DateTime?
+  agePolicyVersion String?
+  setupCompletedAt DateTime?
   userId      String    @id
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   storyType   String?

@@ -1,0 +1,118 @@
+@import "./tokens.css";
+
+@font-face {
+  font-family: "Rawan Lora";
+  src: url("/fonts/lora-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rawan Inter";
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rawan Space Grotesk";
+  src: url("/fonts/space-grotesk.ttf") format("truetype");
+  font-weight: 300 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rawan Caveat";
+  src: url("/fonts/caveat.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: swap;
+}
+:root {
+  color-scheme: dark;
+  background: var(--color-canvas);
+  color: var(--color-white);
+  font-family: var(--font-ui), Arial, sans-serif;
+}
+* {
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+body {
+  margin: 0;
+}
+.landing-surface {
+  position: relative;
+  background-color: var(--color-landing);
+  background-image:
+    radial-gradient(circle, var(--white-a12) 1px, transparent 1px),
+    radial-gradient(ellipse 100% 50% at 50% 50%, #3878a01f, transparent 70%),
+    linear-gradient(
+      var(--color-landing) 0%,
+      var(--color-landing) 10%,
+      var(--color-landing-slate) 30%,
+      var(--color-landing-blue) 50%,
+      var(--color-landing-slate) 70%,
+      var(--color-landing) 90%,
+      var(--color-landing) 100%
+    );
+  background-size:
+    16px 16px,
+    100% 100%,
+    100% 100%;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  font: inherit;
+}
+:where(
+  button,
+  a[href],
+  summary,
+  select,
+  option,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  input[type="file"],
+  [role="button"],
+  [role="tab"],
+  [role="option"],
+  [role="menuitem"],
+  [role="switch"],
+  label:has(input[type="checkbox"], input[type="radio"])
+) {
+  cursor: pointer;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+:disabled,
+[aria-disabled="true"],
+label:has(input:disabled) {
+  cursor: default;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 5px;
+}
+::selection {
+  background: #fff4;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

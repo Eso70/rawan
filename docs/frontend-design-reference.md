@@ -1,5 +1,7 @@
 # Rawan frontend design reference
 
+Current implementation documentation: [Rawan design system](design-system/README.md), including component APIs, tokens, page architecture and verification. The sections below retain the original visual baseline and historical notes; use the consolidated reference when an older behavior description conflicts with current source.
+
 Baseline: the original website design reviewed on 14 October 2026, before the subsequent redesign experiments. The website source has been restored to that original version. This document describes that baseline for future frontend consistency.
 
 ## How to use this reference
@@ -27,7 +29,7 @@ Login at `127.0.0.1:3000` redirects to `localhost:3000` to keep the existing loc
 
 ## Global foundations
 
-Sources: [global CSS](../apps/website/src/app/globals.css), [root layout](../apps/website/src/app/layout.tsx).
+Sources: [global CSS](../apps/website/src/styles/globals.css), [root layout](../apps/website/src/app/layout.tsx).
 
 ### Fonts
 
@@ -105,7 +107,7 @@ Sources: [component](../apps/website/src/components/landing-navigation.tsx), [st
 
 A compact fixed header sits 17px from the top, with 34px desktop horizontal padding and a maximum inner width of 1613px. Brand is 18px Inter beside a 28px feather. Navigation labels use the literary serif fallback at 12.6px.
 
-Why Rawan, Pricing and Download are disabled; EN is a static indicator. Login opens `/login`. Start Building shows workspace-coming-next status feedback. Navigation hides downward, returns on upward intent, and stays visible at the top and final CTA/footer. Hidden navigation is inert. At ≤767px information links hide; at ≤639px the separate Login link hides. There is no mobile disclosure menu in this version.
+Why Rawan, Pricing and Download are disabled; EN is a static indicator. Login opens `/login`. Start Building links to `/workspace`, which redirects signed-out visitors to `/login` through the existing session guard. Navigation hides downward, returns on upward intent, and stays visible at the top and final CTA/footer. Hidden navigation is inert. At ≤767px information links hide; at ≤639px the separate Login link hides. There is no mobile disclosure menu in this version.
 
 ### Hero
 
@@ -159,13 +161,13 @@ Desktop uses a 1344px two-column composition, 67.2px padding and 33.6px gap; the
 
 Sources: [closing](../apps/website/src/components/closing-section.tsx), [footer](../apps/website/src/components/site-footer.tsx), [styles](../apps/website/src/components/closing-section.module.css).
 
-A minimum-100vh closing stage centers a feather, “Ready to get to work?”, five colored cycling tool chips, glass CTA and three assurances with green checks. One chip changes every 2.4s; entrance is .6s, replacement .3s. Cycling pauses hidden/off-screen or for reduced motion. The CTA shows workspace-coming-next feedback. Badges and assurances do not establish integrations or billing.
+A minimum-100vh closing stage centers a feather, “Ready to get to work?”, five colored cycling tool chips, glass CTA and three assurances with green checks. One chip changes every 2.4s; entrance is .6s, replacement .3s. Cycling pauses hidden/off-screen or for reduced motion. Start Building links to `/workspace`; its server session guard redirects signed-out visitors to `/login` and validates sessions before showing the workspace. Badges and assurances do not establish integrations or billing.
 
 Footer uses brand left, navigation/copyright center and social icons right. Resources is a native disclosure linking to the original toolkit/community/creators anchors. Terms and Privacy work; Discord uses the shared supplied destination. What’s new, Careers and unconfigured social channels are disabled. Footer wraps below 960px; assurances stack below 640px.
 
 ## Login and verification
 
-Sources: [page](../apps/website/src/components/login/login-page.tsx), [styles](../apps/website/src/components/login/login.module.css), [email flow](../apps/website/src/components/login/email-signin.tsx).
+Sources: [page](../apps/website/src/features/auth/components/login-page.tsx), [styles](../apps/website/src/features/auth/components/login.module.css), [email flow](../apps/website/src/features/auth/components/email-signin.tsx).
 
 The desktop composition keeps decorative artwork across the page and a form panel beginning at 55% width. Form content is at most 400px; the feather sits above, and Help/Terms/Privacy/English utilities sit near the bottom. There is no enclosing glass form card.
 
@@ -187,7 +189,7 @@ Both use the original navigation, page scroll controller, navy patterned surface
 
 Document: white 10% fill, white 20% border, 18px radius, 8px blur, 32px desktop padding and 24px phone padding. Body is 14px / 20px Space Grotesk; section labels are 16px / 24px Inter. Sections have 24px separation, paragraphs 8px, list items 4px. Links are white and underlined, turning `#93c5fd` on hover.
 
-The original Terms has 12 numbered sections; Privacy has 10. Both are preview drafts with search indexing disabled. There is no policy tab bar or sidebar in this baseline. Their original text contains outdated email/onboarding descriptions; restoring the original design also restores that original copy. Correcting policy copy would be a separate change.
+The original Terms has 12 numbered sections; Privacy has 10. Both are preview drafts with search indexing disabled. There is no policy tab bar or sidebar in this baseline. Parts 6–7 correct the factual sign-in/setup and private storage descriptions while retaining the draft format and design. A broader legal-policy revision remains separate.
 
 ## Assets and future consistency
 
@@ -220,3 +222,29 @@ Use actual backend contracts before advertising a capability. Separate private d
 Historical detail: [toolkit](../apps/website/toolkit-reference.md), [community](../apps/website/community-reference.md), [manifesto](../apps/website/manifesto-reference.md), [creators](../apps/website/creators-reference.md), [closing](../apps/website/closing-reference.md), [legal](../apps/website/legal-reference.md), [login](../apps/website/login-reference.md), [landing audit](../apps/website/landing-ui-audit.md). Some earlier passages describe preview authentication, manual playback or swipe behavior that no longer match the baseline source.
 
 Follow [website AGENTS.md](../apps/website/AGENTS.md), including reading relevant bundled Next.js guides before code changes. Validate affected routes with build/typecheck/lint and browser checks for desktop/phone overflow, keyboard focus, forms, reduced motion and hidden-tab media behavior. Do not infer exhaustive accessibility certification from visual similarity.
+
+### Start Building navigation
+
+The shared navbar, homepage hero and closing Start Building actions are links to `/workspace`, using the existing server-side `requireSession` guard. Missing sessions redirect to `/login`; invalid/expired sessions redirect with the existing session error. Valid sessions continue into the workspace. Do not restore the previous coming-next notice or check HttpOnly session cookies in client components.
+
+## Account setup — Parts 3–7
+
+`/onboarding` is now authenticated and uses server persistence. Existing five-step visuals from Parts 3–5 are preserved: welcome/name, purpose, conditional interests, optional language/discovery, optional starting preference. See [implementation and verified rollout](onboarding-persistence-parts-6-7.md).
+
+Use existing Lora titles (38px desktop, minimum 30px), Inter controls and the quiet solid `#0c131e` surface. Keep the 620px form column, feather brand, restrained exit/header and footer, thin progress, 44–48px controls, 12.6–14px corners, subtle borders and visible focus. Step changes focus the heading without animation. Native radio, checkbox, select and disclosure semantics remain in place. Outer disabled fieldsets must have no browser-default border or extra padding. Preserve reduced-motion behavior.
+
+New accounts answer the required purpose question; other questions remain optional. Existing accounts bypass setup. Age declaration UI and enforcement have been removed. Retain home exit and sign-out. Only English is shown.
+
+Save on Continue/Back and resume account state on refresh. Disable controls during a save. Validation and service failures stay in place with clear retry text; expiry offers sign-in, and concurrent changes require reloading saved state. Optional skips preserve existing answers. Completion uses the safe existing workspace route and returning accounts bypass setup. There is no browser-storage completion authority, clear-account-draft action, role assignment or new dashboard. Existing public marketing and Library search designs remain unchanged.
+
+### Immersive onboarding — current presentation
+
+The subsequent 18 October 2026 redesign replaces onboarding's former solid-only presentation with original responsive atmospheric artwork, centered Lora questions, translucent native controls and restrained scene transitions. It preserves the five steps, all questions, validation, saved progress and authentication/routing. [Current onboarding design](design-system/onboarding.md), [redesign verification](design-system/immersive-onboarding.md) and artwork provenance in `apps/website/public/images/onboarding/README.md` supersede earlier visual descriptions below.
+
+### Final onboarding polish — Parts 8–10
+
+Keep the established palette, font roles and five-step structure. Forms and outer fieldsets have accessible names; hidden legends must remain 1px clipped elements and must not inherit visible legend width. Errors receive focus, are announced, and are linked only to relevant invalid controls. Saving has a polite live announcement and disables input/navigation; home/sign-out remain available. Header/footer links, interest chips and selection labels have at least 44px height. At 320/390px, allow action rows to wrap and keep 20px page gutters without horizontal overflow. The skip-to-setup link appears only on focus.
+
+Use only a 160ms opacity transition for step content under `prefers-reduced-motion: no-preference`; retain the global reduced-motion override. Do not animate layout or block completion. Keep empty/completed/error recovery screens in the same visual system. Optional Skip preserves account-saved answers and ignores that step's unsaved inputs. Use the installed Next.js `retry` callback for server recovery, not merely a local error reset.
+
+See [the final guide](onboarding-guide.md) and [verified QA record](onboarding-finalization-parts-8-10.md). The named Quiet Literary Studio skill was unavailable; this checked-in reference and existing source were the available visual authority. No unsupported RTL language, new illustration, dashboard or decorative design language was introduced.

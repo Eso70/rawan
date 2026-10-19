@@ -1,4 +1,5 @@
 "use client";
+import { Button, TextInput } from "../ui/controls";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -8,7 +9,7 @@ import styles from "./library-search.module.css";
 
 export function SearchTrigger() {
   return (
-    <button
+    <Button
       type="button"
       className={styles.trigger}
       aria-label="Search library (Control K)"
@@ -21,7 +22,7 @@ export function SearchTrigger() {
       <IconSearch size={16} stroke={1.5} aria-hidden="true" />
       <span className={styles.triggerLabel}>Search</span>
       <kbd>Ctrl K</kbd>
-    </button>
+    </Button>
   );
 }
 
@@ -146,7 +147,7 @@ export function LibrarySearch() {
         <label htmlFor="library-search-input" className={styles.srOnly}>
           Search books or authors
         </label>
-        <input
+        <TextInput
           ref={input}
           id="library-search-input"
           type="search"
@@ -155,14 +156,14 @@ export function LibrarySearch() {
           onChange={(event) => setQuery(event.target.value)}
           autoComplete="off"
         />
-        <button
+        <Button
           type="button"
           onClick={close}
           aria-label="Close search"
           className={styles.close}
         >
           esc
-        </button>
+        </Button>
       </div>
       <p className={styles.srOnly} role="status">
         {term

@@ -13,6 +13,15 @@ export async function createAccountFixture(app, { email, name, password }) {
       password: await argon2.hash(password, { type: argon2.argon2id }),
       emailVerifiedAt: new Date(),
       role: 'AUTHOR',
+      // Domain suites start with an completed account; setup-specific suites exercise the gate.
+      onboarding: {
+        create: {
+          setupRequired: true,
+          setupStatus: 'completed',
+          purpose: 'both',
+          setupCompletedAt: new Date(),
+        },
+      },
       author: { create: { displayName: name.trim() } },
     },
     select: PUBLIC_USER_SELECT,

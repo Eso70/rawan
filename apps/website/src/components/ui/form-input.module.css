@@ -1,0 +1,21 @@
+.input {
+  width: 100%;
+  min-height: 46px;
+  border: var(--border-width) solid #ffffff17;
+  border-radius: var(--radius-18-6);
+  padding: var(--space-3);
+  background: var(--white-a05);
+  font: inherit;
+  color: white;
+  outline: none;
+}
+.input:focus {
+  border-color: #ffffff70;
+  background-color: var(--white-a07);
+}
+.input::placeholder {
+  color: #ffffff70;
+}
+.input[aria-invalid="true"] {
+  border-color: var(--color-invalid);
+}

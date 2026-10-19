@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  padding: 100.8px 0;
+  padding: var(--space-m9) 0;
   overflow: clip;
 }
 .layout {
@@ -29,18 +29,18 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 17px;
-  border: 1px solid #fbbf244d;
+  border: var(--border-width) solid #fbbf244d;
   border-radius: 13px;
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   color: #fbbf24cc;
-  font-size: 12.6px;
+  font-size: var(--text-12-6);
   line-height: 17px;
 }
 .intro h2 {
   margin: 0;
-  font-family: "Arizona Flare", "Rawan Lora", Georgia, serif;
-  font-weight: 400;
-  font-size: 50.4px;
+  font-family: "Arizona Flare", var(--font-literary), Georgia, serif;
+  font-weight: var(--weight-regular);
+  font-size: var(--text-50-4);
   line-height: 1.25;
   letter-spacing: -0.025em;
 }
@@ -54,15 +54,15 @@
   max-width: 100%;
   padding: 0;
   text-align: left;
-  color: #fff;
-  border: 1px solid #ffffff1a;
-  border-radius: 22px;
-  background: #ffffff0d;
+  color: var(--color-white);
+  border: var(--border-width) solid var(--white-a10);
+  border-radius: var(--radius-22);
+  background: var(--white-a05);
   backdrop-filter: blur(8px);
   opacity: 0.4;
   transition:
-    opacity 0.3s,
-    background 0.3s;
+    opacity var(--duration-content),
+    background var(--duration-content);
 }
 .card:hover,
 .card:focus-visible {
@@ -75,11 +75,11 @@
 .cardTitle {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 13px;
-  font-size: 14.7px;
+  gap: var(--space-2);
+  padding: var(--space-2) 13px;
+  font-size: var(--text-14-7);
   line-height: 21px;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 .icon {
   display: inline-flex;
@@ -109,8 +109,8 @@
   background: #f472b620;
 }
 .card:not(.active) .icon {
-  color: #ffffff99;
-  background: #ffffff1a;
+  color: var(--white-a60);
+  background: var(--white-a10);
 }
 .cardDetails {
   display: block;
@@ -121,9 +121,9 @@
   overflow: hidden;
   min-height: 0;
   padding-inline: 13px;
-  font-size: 14.7px;
+  font-size: var(--text-14-7);
   line-height: 1.65;
-  color: #ffffffb3;
+  color: var(--white-a70);
 }
 .cardDetails > span {
   padding-bottom: 13px;
@@ -145,10 +145,10 @@
   transform: translateX(var(--reveal-offset, 0px));
   position: relative;
   aspect-ratio: 16 / 9;
-  border: 2px solid #ffffff33;
-  border-radius: 25px;
+  border: 2px solid var(--white-a20);
+  border-radius: var(--radius-25);
   overflow: hidden;
-  background: #09090b;
+  background: var(--color-canvas);
   box-shadow: 0 20px 80px #0003;
 }
 .frame video {
@@ -187,7 +187,7 @@
     display: none;
   }
   .intro h2 {
-    font-size: 37.8px;
+    font-size: var(--text-37-8);
   }
   .panel {
     width: 100%;
@@ -204,26 +204,26 @@
   .mobileCopy h3 {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 18px;
+    gap: var(--space-2);
+    font-size: var(--text-18);
     line-height: 1.4;
-    margin: 0 0 12px;
-    font-weight: 600;
+    margin: 0 0 var(--space-3);
+    font-weight: var(--weight-semibold);
   }
   .mobileCopy p {
-    font-size: 14.7px;
+    font-size: var(--text-14-7);
     line-height: 1.65;
-    color: #ffffffb3;
+    color: var(--white-a70);
     margin: 0;
     max-width: 600px;
   }
 }
 @media (max-width: 767px) {
   .intro h2 {
-    font-size: 31.5px;
+    font-size: var(--text-31-5);
   }
   .frame {
-    border-radius: 22px;
+    border-radius: var(--radius-22);
   }
 }
 @media (prefers-reduced-motion: reduce) {

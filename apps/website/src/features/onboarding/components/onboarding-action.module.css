@@ -1,0 +1,26 @@
+.button {
+  composes: button from "../../../components/ui/glass-button.module.css";
+  width: 104px;
+  min-height: 36px;
+  padding: 8px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+  border-radius: 18px;
+  border-color: var(--white-a12);
+  background: #20212b80;
+  backdrop-filter: blur(24px) saturate(120%);
+  box-shadow: 0 2px 10px #0002;
+}
+.button:hover:not(:disabled) {
+  background: #20212b99;
+  border-color: var(--white-a20);
+}
+.button:disabled:hover {
+  background: #20212b80;
+  border-color: var(--white-a12);
+}
+@media (max-width: 767px), (pointer: coarse) {
+  .button {
+    min-height: 44px;
+  }
+}

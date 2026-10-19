@@ -1,11 +1,26 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  googleApiError,
+  loginErrors,
+} from "../src/features/auth/lib/login-errors.ts";
+import {
   encodeFlow,
   decodeFlow,
   authConfig,
   appConfig,
-} from "../src/lib/google-auth.ts";
+} from "../src/features/auth/lib/google-auth.ts";
+
+test("Google API outages give a server/session error without weakening account protections", () => {
+  for (const status of [500, 502, 503, 504]) {
+    assert.equal(googleApiError(status), "session");
+    assert.match(loginErrors[googleApiError(status)], /server is unavailable/);
+  }
+  assert.equal(googleApiError(409), "linking");
+  assert.equal(googleApiError(429), "limit");
+  for (const status of [400, 401, 403])
+    assert.equal(googleApiError(status), "google");
+});
 
 test("OAuth transaction rejects tampering, expired cookies and missing cookies", () => {
   const secret = "test-only-secret";
@@ -54,6 +69,35 @@ test("email sessions do not require Google credentials", () => {
       else process.env[key] = previous[key];
     }
   }
+});
+test("same-tab OAuth retains only safe destinations in its signed transaction", () => {
+  const secret = "test-only-secret";
+  const flow = {
+    state: "state",
+    nonce: "nonce",
+    verifier: "pkce",
+    expires: Date.now() + 600000,
+    returnTo: "/reader",
+  };
+  assert.equal(
+    decodeFlow(encodeFlow(flow, secret), secret).returnTo,
+    "/reader",
+  );
+  for (const returnTo of [
+    "https://evil.test",
+    "//evil.test",
+    "/onboarding",
+    ["/studio"],
+  ])
+    assert.equal(
+      decodeFlow(encodeFlow({ ...flow, returnTo }, secret), secret),
+      null,
+    );
+  assert.equal(decodeFlow(encodeFlow(flow, secret) + ".extra", secret), null);
+  assert.equal(
+    decodeFlow(encodeFlow({ ...flow, expires: null }, secret), secret),
+    null,
+  );
 });
 test("configuration rejects non-local destinations", () => {
   const previous = process.env.AUTH_ORIGIN;

@@ -59,6 +59,7 @@ describe('Google authentication', () => {
           googleSubject: identity.sub,
           emailVerifiedAt: expect.any(Date),
           role: 'AUTHOR',
+          onboarding: { create: { setupRequired: true } },
           author: { create: { displayName: 'Author' } },
         },
       }),

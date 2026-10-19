@@ -1,0 +1,36 @@
+.page {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+}
+.card {
+  width: min(100%, 520px);
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--white-a20);
+  border-radius: var(--radius-18);
+  background: var(--white-a10);
+  color: white;
+}
+.card h1 {
+  font-size: 28px;
+  margin: var(--space-5) 0 var(--space-4);
+}
+.card p {
+  color: var(--white-a70);
+  line-height: var(--leading-comfortable);
+  overflow-wrap: anywhere;
+}
+.card button {
+  margin-top: var(--space-4);
+  padding: var(--space-3) 20px;
+  border: var(--border-width) solid var(--white-a20);
+  border-radius: 10px;
+  background: #ffffff14;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+}
+.card button:hover {
+  background: #ffffff25;
+}

@@ -134,6 +134,7 @@ export function ApiEndpoint(options: {
     if (options.tag === 'Graphics') errors.add(503);
     if (options.tag === 'Reader' && verb !== 0) errors.add(403);
     if (!options.public || options.tag === 'Auth') errors.add(429);
+    if (!options.public) errors.add(403);
     if (verb !== 0) {
       errors.add(413);
       errors.add(415);
