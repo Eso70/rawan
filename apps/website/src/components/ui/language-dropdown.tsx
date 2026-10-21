@@ -1,84 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { IconChevronDown } from "@tabler/icons-react";
-import { Button } from "./controls";
-import styles from "./language-dropdown.module.css";
+import { useState } from "react";
+import { Dropdown } from "./dropdown";
 
-type LanguageDropdownProps = {
+const languages = [
+  { value: "en", label: "English", prefix: "EN" },
+  { value: "ku", label: "Kurdish", prefix: "KU" },
+  { value: "ar", label: "Arabic", prefix: "AR" },
+] as const;
+
+/** Non-English selections remain local presentation choices until translation is available. */
+export function LanguageDropdown({ variant = "compact", id, labelledBy }: {
   variant?: "compact" | "field";
   id?: string;
   labelledBy?: string;
-};
-
-const languages = [
-  { code: "en", label: "English", short: "EN" },
-  { code: "ku", label: "Kurdish", short: "KU" },
-  { code: "ar", label: "Arabic", short: "AR" },
-] as const;
-
-/** Non-English selections are local UI mocks; the real interface remains English. */
-export function LanguageDropdown({
-  variant = "compact",
-  id,
-  labelledBy,
-}: LanguageDropdownProps) {
-  const menu = useRef<HTMLDetailsElement>(null);
-  const [selected, setSelected] = useState<(typeof languages)[number]>(
-    languages[0],
-  );
-  const close = () => {
-    if (!menu.current) return;
-    menu.current.open = false;
-    menu.current.querySelector("summary")?.focus();
-  };
-  useEffect(() => {
-    const dismiss = (event: PointerEvent) => {
-      if (
-        menu.current &&
-        event.target instanceof Node &&
-        !menu.current.contains(event.target)
-      )
-        menu.current.open = false;
-    };
-    document.addEventListener("pointerdown", dismiss);
-    return () => document.removeEventListener("pointerdown", dismiss);
-  }, []);
-  return (
-    <details
-      ref={menu}
-      className={styles.language}
-      data-variant={variant}
-      onKeyDown={(event) => {
-        if (event.key === "Escape") {
-          event.preventDefault();
-          close();
-        }
-      }}
-    >
-      <summary
-        id={id}
-        aria-label={labelledBy ? undefined : `Language: ${selected.label}`}
-        aria-labelledby={labelledBy}
-      >
-        {variant === "field" ? selected.label : selected.short}
-        <IconChevronDown size={10} aria-hidden="true" />
-      </summary>
-      <div className={styles.menu}>
-        {languages.map((language) => (
-          <Button
-            key={language.code}
-            onClick={() => {
-              setSelected(language);
-              close();
-            }}
-            aria-label={`${language.label}${language.code === "en" ? "" : ", preview only"}`}
-            aria-pressed={selected.code === language.code}
-          >
-            <span aria-hidden="true">{language.short}</span> {language.label}
-          </Button>
-        ))}
-      </div>
-    </details>
-  );
+}) {
+  const [value, setValue] = useState("en");
+  const selected = languages.find((language) => language.value === value) ?? languages[0];
+  return <Dropdown id={id} label={`Language: ${selected.label}`} labelledBy={labelledBy}
+    variant={variant === "compact" ? "inline" : "field"} value={value} onValueChange={setValue}
+    triggerText={variant === "compact" ? selected.prefix : selected.label}
+    options={languages.map((language) => ({ ...language, ariaLabel: `${language.label}${language.value === "en" ? "" : ", preview only"}` }))} />;
 }

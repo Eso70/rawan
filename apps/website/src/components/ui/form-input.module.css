@@ -19,3 +19,11 @@
 .input[aria-invalid="true"] {
   border-color: var(--color-invalid);
 }
+:global([data-studio-theme="light"]) .input { color: #2e4358; background: #f6f8fa57; border-color: #536e8a2b; }
+:global([data-studio-theme="light"]) .input::placeholder { color: #65778a; }
+:global([data-studio-theme="light"]) .input:focus { background-color: #f8fafba6; border-color: #59799a99; }
+:global([data-studio-theme="light"]) .input[aria-invalid="true"] { border-color: #a84b51; }
+:global([data-studio-theme="light"]) .input:not(:disabled):hover { border-color:#6b7c8d90; }
+:global([data-studio-theme="light"]) .input:disabled { background:#dfe3e8; color:#6d7d8e; border-color:#7d8c9b38; cursor:not-allowed; }
+:global([data-studio-theme="light"]) .input[aria-invalid="true"]:is(:hover,:focus) { border-color:#a84b51; }
+:global([data-studio-theme="light"]) .input:-webkit-autofill { -webkit-text-fill-color:#2e4358; -webkit-box-shadow:0 0 0 1000px #e8ecf0 inset; caret-color:#31485f; }

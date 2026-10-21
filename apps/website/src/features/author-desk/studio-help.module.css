@@ -73,3 +73,18 @@
 .guide ol { padding-left: 20px; }
 .guide li { padding: 7px 0 7px 4px; }
 @media (prefers-reduced-motion: reduce) { .panel, .trigger, .panel :is(.video, .tutorial, .actions a, .actions button) { transition: none; } }
+
+:global([data-studio-theme="light"]) .trigger { background:#edf1f5cf !important; color:#3c5772 !important; border-color:#526f8d2b !important; }
+:global([data-studio-theme="light"]) .trigger:is(:hover,:focus-visible,[aria-expanded="true"]) { background:#d7dee5 !important; box-shadow:0 0 0 3px #91a1b130; }
+:global([data-studio-theme="light"]) .panel { background:linear-gradient(135deg,#eef2f5f5,#e2eaf1f5); color:#30475e; border-color:#5b769130; box-shadow:0 12px 40px #465d7529; }
+:global([data-studio-theme="light"]) :is(.heading,.section) { border-color:#637c9620; }
+:global([data-studio-theme="light"]) :is(.heading button,.section h3,.sectionTitle > span,.tutorial small,.community,.guide) { color:#566a7f; }
+:global([data-studio-theme="light"]) :is(.lessonIcon,.arrow,.actions :is(a,button) > svg:first-child,.community :is(a,button)) { color:#5c748c; }
+:global([data-studio-theme="light"]) .lessonIcon { background:#71849616; }
+:global([data-studio-theme="light"]) .actions :is(a,button) { color:#364d64; }
+:global([data-studio-theme="light"]) .panel :is(.tutorial,.actions a,.actions button):is(:hover,:focus-visible) { background:#72849620 !important; color:#25405b !important; }
+
+:global([data-studio-theme="light"]) .heading button:is(:hover,:focus-visible) { background:#cdd6df; color:#2c4762; }
+:global([data-studio-theme="light"]) .community :is(a,button):is(:hover,:focus-visible) { background:#ced8e2; color:#2a4561; }
+:global([data-studio-theme="light"]) .guide :is(button,a):is(:hover,:focus-visible) { background:#cfd8e2; color:#2d4761; }
+:global([data-studio-theme="light"]) .panel :is(button,a):focus-visible { outline:2px solid #4b6178; outline-offset:2px; }

@@ -35,7 +35,7 @@ export function IconButton({ label, ...props }: IconButtonProps) {
   return createElement(Button, { ...props, "aria-label": label });
 }
 export type TextInputProps = Omit<ComponentPropsWithRef<"input">, "type"> & {
-  type?: "text" | "email" | "password" | "search" | "tel" | "url";
+  type?: "text" | "email" | "password" | "search" | "tel" | "url" | "number";
 };
 export function TextInput({ type = "text", ...props }: TextInputProps) {
   return createElement("input", { ...props, type });

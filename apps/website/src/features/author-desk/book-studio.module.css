@@ -1,0 +1,94 @@
+.newBook { display: flex !important; justify-content: flex-start !important; gap: 8px; height: 34px; width: calc(100% - 16px); margin: 8px; padding: 0 11px !important; color: #ccdae5 !important; border: 1px solid #b9d1e41a !important; border-radius: 9px; font-size: 12px !important; }
+.creationWorkspace { height: 100%; overflow: auto; scrollbar-width: thin; padding: 8px 20px 18px; display: flex; flex-direction: column; }
+.backToBooks { height: 35px; flex-shrink: 0; align-self: flex-start; padding: 0 12px !important; gap: 8px; border-radius: 9px; background: #b6ccd31c !important; color: #cedbe5; font-size: 12px !important; }
+.createLayout { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(300px, 1.15fr); align-items: center; gap: clamp(30px, 6vw, 110px); width: 100%; max-width: 1280px; flex: 1 0 auto; margin: 0 auto; padding: 28px 60px 32px 25px; }
+.bookStage { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; gap: 35px; }
+.bookViews { display: flex; gap: 5px; padding: 4px; border: 1px solid #b6cee31a; border-radius: 11px; background: #112b3c55; }
+.bookViews button { min-width: 61px; height: 29px; border-radius: 7px; font-size: 11px !important; color: #adc1d2; }.bookViews button[aria-pressed="true"] { background: #bad4e620; color: #eef4fa; }
+.createFields { align-self: center; min-width: 0; padding: 12px 0; }
+.creationIdentity { min-height: 110px; margin-bottom: 22px; }.creationIdentity > span { font-size: 9px; letter-spacing: 1.6px; color: #90a8bc; }.creationIdentity h1 { margin: 12px 0 8px; font: 400 clamp(25px,2.6vw,39px)/1.35 "Rawan Lora",Georgia,serif; color: #e0e8ee; overflow-wrap: anywhere; }.creationIdentity p { margin: 0; color: #b6c5d0; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.setupTabs { display: flex; gap: 22px; border-bottom: 1px solid #bfd4e61c; margin-bottom: 24px; }.setupTabs button { position: relative; gap: 8px; height: 38px; color: #a0b3c3; font-size: 12px !important; border-radius: 5px 5px 0 0; padding: 0 3px !important; }.setupTabs button[aria-selected="true"] { color: #edf3f7; }.setupTabs button[aria-selected="true"]::after { content: ""; position: absolute; height: 2px; left: 0; right: 0; bottom: -1px; border-radius: 2px; background: #cfdeea; }
+.createFields [role="tabpanel"] { min-height: 253px; }
+.metadata { display: flex; flex-direction: column; gap: 8px; }.metadata label { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #d1dde7; }.metadata label:not(:first-child) { margin-top: 12px; }.metadata label span { font-size: 10px; color: #879fb4; }
+.artworkHint { margin: 0 0 18px; color: #a5b9c9; font-size: 12px; line-height: 1.6; }.imageHint { color: #7f99ae; font-size: 10px; margin: 15px 0 0; }.formError { color: #f0b6ad; font-size: 12px; }
+.createFooter { display: flex; justify-content: flex-end; margin-top: 30px; }.createFooter button { gap: 12px; height: 41px; padding: 0 18px !important; border: 1px solid #a9c8e633 !important; border-radius: 10px; background: #aecde71a !important; color: #e1ecf5; font-size: 12px !important; }.createFooter button:disabled { opacity: .4; cursor: default; }
+.loadingBook { height:440px;display:grid;place-items:center;color:#91aabd;font-size:12px; }
+.coverDesignFields { display:flex;flex-direction:column;gap:17px; }.designLabel{display:flex;flex-direction:column;gap:8px;color:#a9becb;font-size:12px}
+.colorChoices{display:flex;gap:10px;padding:3px 0 20px}.colorChoices button{position:relative;width:32px;height:32px;border-radius:50%;border:2px solid #ffffff12 !important}.colorChoices button[aria-pressed="true"]{outline:1px solid #d2e4d9;outline-offset:4px}.colorChoices button span{position:absolute;top:40px;left:50%;transform:translateX(-50%);font-size:8px;color:#9eb6be;white-space:nowrap}
+.artworkSides{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:15px}.artworkSides button{height:49px;flex-direction:column;gap:4px;border:1px solid #b4cddd20 !important;border-radius:11px;color:#ccdae4;font-size:12px !important}.artworkSides button span{font-size:9px;color:#8ba7b9}.artworkSides button[aria-pressed="true"]{background:#a5cbbd15;border-color:#a5cbbd66 !important}
+.artworkDrop{position:relative;border:1px dashed #b1cdb646;border-radius:15px;background:#9abda509;overflow:hidden}.artworkDrop:has(button:focus-visible),.artworkDrop:hover{border-color:#c2dac980}.artworkBrowse{display:flex !important;flex-direction:column;gap:10px;width:100%;min-height:210px;padding:20px !important;color:#b9cfc7}.artworkBrowse strong{font-size:13px;font-weight:500}.artworkBrowse > span{font-size:11px;color:#92adb5}.artworkBrowse img{max-width:100%;width:auto;height:140px;object-fit:contain;border-radius:4px;box-shadow:0 5px 15px #0003}.artworkDrop[data-filled="true"] .artworkBrowse{padding-bottom:50px !important}.removeArtwork{position:absolute;bottom:10px;right:10px;height:28px;padding:0 9px !important;gap:5px;border-radius:7px;color:#aebfca;font-size:10px !important;background:#122b3b !important}
+.setupTabs{gap:17px}.setupTabs button{white-space:nowrap;font-size:11px !important}
+.bookStage{gap:16px}
+@media (min-width: 1600px) { .createLayout { gap: 120px; } }
+@media (max-width: 1000px) { .createLayout { padding: 30px 20px 40px; gap: 35px; grid-template-columns: minmax(225px,.8fr) minmax(260px,1fr); } }
+@media (max-width: 700px) { .creationWorkspace { padding: 8px 15px 40px; }.createLayout { grid-template-columns: 1fr; gap: 30px; padding: 35px 10px; }.bookStage { gap: 23px; }.createFields { width: min(100%,480px); margin: auto; }.creationIdentity { min-height: 0; margin-bottom: 20px; }.creationIdentity h1 { font-size: 28px; }.createFooter { margin-top: 20px; }.createFields [role="tabpanel"] { min-height: 245px; } }
+.bookList { padding: 6px 8px; overflow: auto; max-height: calc(100% - 150px); }
+.bookRow { display: flex !important; justify-content: flex-start !important; gap: 8px; width: 100%; min-height: 37px; padding: 6px 8px !important; text-align: left; border-radius: 8px; font-size: 12px !important; color: #cbd8e2 !important; }
+.bookRow > span { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.bookRow[aria-current="page"] { background: #bdd7ee13; }
+.chapterList { margin: 3px 0 8px 16px; padding-left: 10px; border-left: 1px solid #afc8dd20; }
+.chapterRow { justify-content: flex-start !important; width: 100%; gap: 8px; min-height: 31px; padding: 5px 7px !important; font-size: 11px !important; color: #a6bace !important; text-align: left; border-radius: 7px; }
+.chapterRow > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chapterRow[aria-current="page"] { color: #e8f0f8 !important; background: #b4d2f00d; }
+.sidebarLabel { color: #7f96aa; font-size: 9px; letter-spacing: .9px; padding: 5px 7px 10px; text-transform: uppercase; }
+.tabTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bookTab { gap: 8px; display: flex; align-items: center; background: #132e44aa; border: 1px solid #b9d7ed19; border-radius: 9px; height: 32px; max-width: 220px; padding: 0 6px 0 11px; }
+.bookTab > button:first-child { gap: 8px; min-width: 0; font-size: 12px; }
+.tabClose { width: 23px; height: 23px; border-radius: 6px; }
+.documentMenu { position: fixed; margin: 0; width: 210px; padding: 6px; border: 1px solid #9bb9d52b; border-radius: 13px; background: #152b40f5; color: #dae5ee; box-shadow: 0 14px 40px #03111d40; backdrop-filter: blur(24px); }
+.documentMenu h3 { margin: 5px 8px 8px; font-size: 10px; color: #92a8bc; font-weight: 500; }
+.documentMenu button { width: 100%; justify-content: flex-start !important; gap: 10px; padding: 9px !important; border-radius: 8px; font-size: 12px !important; }
+.documentMenu small { display: block; margin-top: 2px; font-size: 10px; color: #8fa8bf; }
+@media (max-width: 650px) {
+  .bookTab { max-width: 145px; }
+}
+@media (max-width: 540px) {
+  .bookList { max-height: 88px; padding-top: 0; }
+  .bookTab { max-width: clamp(80px, calc(100vw - 250px), 125px); }
+}
+
+
+:global([data-studio-theme="light"]) :is(.bookTab,.bookViews) { background:#edf0f4a8; border-color:#526e8a26; }
+:global([data-studio-theme="light"]) :is(.newBook,.bookRow,.chapterRow) { color:#344b63 !important; border-color:#546e8829 !important; }
+:global([data-studio-theme="light"]) .bookRow[aria-current="page"] { background:#6e81941f; }
+:global([data-studio-theme="light"]) .chapterRow[aria-current="page"] { background:#667e9714; color:#243f5a !important; }
+:global([data-studio-theme="light"]) :is(.sidebarLabel,.metadata label span,.designLabel,.artworkHint,.imageHint,.loadingBook) { color:#53677c; }
+:global([data-studio-theme="light"]) :is(.creationIdentity h1,.metadata label) { color:#2b4158; }
+:global([data-studio-theme="light"]) :is(.creationIdentity > span,.creationIdentity p) { color:#52667a; }
+:global([data-studio-theme="light"]) .backToBooks { background:#eaeef2b3 !important; color:#3c5268; }
+:global([data-studio-theme="light"]) .setupTabs { border-color:#526e8a29; }
+:global([data-studio-theme="light"]) .setupTabs button { color:#566a7f; }
+:global([data-studio-theme="light"]) .setupTabs button[aria-selected="true"] { color:#264360; }
+:global([data-studio-theme="light"]) .setupTabs button[aria-selected="true"]::after { background:#4b6988; }
+:global([data-studio-theme="light"]) .bookViews button { color:#415972; }
+:global([data-studio-theme="light"]) .bookViews button[aria-pressed="true"] { background:#c6d2dd; color:#29425c; }
+:global([data-studio-theme="light"]) .createFooter button { background:#b8c4d157 !important; color:#2c4660; border-color:#546c854a !important; }
+:global([data-studio-theme="light"]) .colorChoices button span { color:#4e6379; }
+:global([data-studio-theme="light"]) .colorChoices button[aria-pressed="true"] { outline-color:#425d79; }
+:global([data-studio-theme="light"]) .artworkSides button { color:#364c63; border-color:#5c758f2b !important; }
+:global([data-studio-theme="light"]) .artworkSides button span { color:#5a6e82; }
+:global([data-studio-theme="light"]) .artworkSides button[aria-pressed="true"] { background:#6b829a17; border-color:#4c678275 !important; }
+:global([data-studio-theme="light"]) .artworkDrop { background:#eaeef357; border-color:#62748755; }
+:global([data-studio-theme="light"]) .artworkBrowse { color:#3e5266; }
+:global([data-studio-theme="light"]) .artworkBrowse > span { color:#566a7e; }
+:global([data-studio-theme="light"]) .removeArtwork { background:#e2e8ed !important; color:#3d5268; }
+:global([data-studio-theme="light"]) .formError { color:#a33e49; }
+:global([data-studio-theme="light"]) .documentMenu { background:linear-gradient(135deg,#eff2f5f5,#e2ebf2f5); color:#2d455e; border-color:#57728e33; box-shadow:0 12px 35px #3f556b26; }
+:global([data-studio-theme="light"]) .documentMenu :is(h3,small) { color:#5c6e81; }
+
+:global([data-studio-theme="light"]) :is(.newBook,.bookRow,.chapterRow,.tabClose,.bookViews button,.setupTabs button,.artworkSides button):not(:disabled):is(:hover,:focus-visible) { background:#d3dbe3; color:#2b4661 !important; }
+:global([data-studio-theme="light"]) .bookRow[aria-current="page"]:is(:hover,:focus-visible) { background:#bdc9d5; }
+:global([data-studio-theme="light"]) .chapterRow[aria-current="page"]:is(:hover,:focus-visible) { background:#c5d0db; }
+:global([data-studio-theme="light"]) .chapterList { border-color:#6c839b3b; }
+:global([data-studio-theme="light"]) .backToBooks:not(:disabled):is(:hover,:focus-visible) { background:#d4dce5 !important; color:#29425c; }
+:global([data-studio-theme="light"]) .createFooter button:not(:disabled):is(:hover,:focus-visible) { background:#c2cedb !important; color:#25405b; border-color:#5b738b80 !important; box-shadow:0 3px 12px #5b6d7f14; }
+:global([data-studio-theme="light"]) .createFooter button:disabled { background:#e0e4e9 !important; color:#677685; border-color:#7e8d9c33 !important; opacity:.75; }
+:global([data-studio-theme="light"]) .colorChoices button { border-color:#6a7a8a50 !important; }
+:global([data-studio-theme="light"]) .colorChoices button:not(:disabled):is(:hover,:focus-visible) { outline:2px solid #708498; outline-offset:3px; }
+:global([data-studio-theme="light"]) .colorChoices button[aria-pressed="true"] { outline:2px solid #42576c; outline-offset:4px; }
+:global([data-studio-theme="light"]) .artworkSides button[aria-pressed="true"]:is(:hover,:focus-visible) { background:#c8d3de; border-color:#4c678275 !important; }
+:global([data-studio-theme="light"]) .artworkDrop:is(:hover,:focus-within) { background:#e4eaef; border-color:#596e84a6; }
+:global([data-studio-theme="light"]) .artworkBrowse:not(:disabled):is(:hover,:focus-visible) { background:transparent; color:#30475e; }
+:global([data-studio-theme="light"]) .removeArtwork:not(:disabled):is(:hover,:focus-visible) { background:#d3dce4 !important; color:#8e3b42; }
+:global([data-studio-theme="light"]) .documentMenu button:not(:disabled):is(:hover,:focus-visible) { background:#d5dde5; color:#2b4662; }
+:global([data-studio-theme="light"]) .formError { background:#f6e8e4; border:1px solid #ae6b6333; border-radius:9px; padding:9px 12px; color:#913a43; }

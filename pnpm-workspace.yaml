@@ -9,6 +9,8 @@ allowBuilds:
   unrs-resolver: true
   msgpackr-extract: true
   "@scarf/scarf": false
+  core-js: false
+  es5-ext: false
 
 # Security fixes for Prisma CLI transitives; Prisma itself remains 7.10.0.
 overrides:

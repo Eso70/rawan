@@ -2,9 +2,9 @@
 import {
   Button,
   IconButton,
-  TextInput,
   FieldError,
 } from "../../../components/ui/controls";
+import { FormInput as TextInput } from "../../../components/ui/form-input";
 
 import { useEffect, useRef, useState } from "react";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";

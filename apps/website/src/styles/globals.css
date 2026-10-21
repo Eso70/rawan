@@ -116,3 +116,28 @@ a:focus-visible {
     transition: none !important;
   }
 }
+
+/* Interpolated sidebar stops keep theme changes in the actual UI, without snapshots. */
+@property --studio-sidebar-start { syntax:"<color>"; inherits:true; initial-value:#233d4dc7; }
+@property --studio-sidebar-end { syntax:"<color>"; inherits:true; initial-value:#14283fc2; }
+
+/* One CSS-owned animation per theme change: no persistent Web Animation effects. */
+html[data-studio-theme-reveal]::view-transition-group(root) { animation:none; }
+html[data-studio-theme-reveal]::view-transition-image-pair(root) { isolation:auto; }
+html[data-studio-theme-reveal]::view-transition-old(root),
+html[data-studio-theme-reveal]::view-transition-new(root) { animation:none; mix-blend-mode:normal; }
+html[data-studio-theme-reveal="light"]::view-transition-old(root) { z-index:1; }
+html[data-studio-theme-reveal="light"]::view-transition-new(root) { z-index:2; animation:studio-theme-open 900ms cubic-bezier(.45,0,.55,1) both; }
+html[data-studio-theme-reveal="dark"]::view-transition-new(root) { z-index:1; }
+html[data-studio-theme-reveal="dark"]::view-transition-old(root) { z-index:2; animation:studio-theme-close 900ms cubic-bezier(.45,0,.55,1) both; }
+html[data-studio-theme-reveal] [data-studio-theme],
+html[data-studio-theme-reveal] [data-studio-theme] * { transition:none !important; }
+@keyframes studio-theme-open {
+  from { clip-path:circle(0px at var(--theme-x) var(--theme-y)); }
+  to { clip-path:circle(var(--theme-radius) at var(--theme-x) var(--theme-y)); }
+}
+@keyframes studio-theme-close {
+  from { clip-path:circle(var(--theme-radius) at var(--theme-x) var(--theme-y)); }
+  to { clip-path:circle(0px at var(--theme-x) var(--theme-y)); }
+}
+@media (prefers-reduced-motion:reduce) { html[data-studio-theme-reveal]::view-transition { display:none; } }
